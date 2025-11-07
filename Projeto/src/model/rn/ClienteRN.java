@@ -15,10 +15,15 @@ public class ClienteRN {
     public ClienteRN() {}
 
     public void salvarNovo(ClienteVO cliente, List<TelefoneVO> telefones, List<EnderecoVO> enderecos) throws Exception {
-        if (cliente == null) throw new Exception("Cliente obrigatorio.");
+        if (cliente == null) 
+            throw new Exception("Cliente obrigatorio.");
+
         String documento = cliente.getPes_cpf();
-        if (documento == null || documento.isBlank()) throw new Exception("Documento obrigatorio.");
-        if (cliente.getPes_nome() == null || cliente.getPes_nome().isBlank()) throw new Exception("Nome obrigatorio.");
+        if (documento == null || documento.isBlank()) 
+            throw new Exception("Documento obrigatorio.");
+
+        if (cliente.getPes_nome() == null || cliente.getPes_nome().isBlank()) 
+            throw new Exception("Nome obrigatorio.");
 
         Connection con = null;
         try {
@@ -36,9 +41,13 @@ public class ClienteRN {
             if (clienteDAO.buscarPorDocumento(documento) != null)
                 throw new Exception("Cliente ja cadastrado para o documento informado.");
 
-            if (cliente.getCli_dtCadastro() == null) cliente.setCli_dtCadastro(LocalDate.now());
+            if (cliente.getCli_dtCadastro() == null) 
+                cliente.setCli_dtCadastro(LocalDate.now());
+
             int id = clienteDAO.adicionarNovoCliente(cliente);
-            if (id <= 0) throw new Exception("Falha ao inserir cliente.");
+
+            if (id <= 0) 
+                throw new Exception("Falha ao inserir cliente.");
 
             if (telefones != null && !telefones.isEmpty()) {
                 TelefoneDAO telDAO = new TelefoneDAO(con);
@@ -59,15 +68,19 @@ public class ClienteRN {
 
             con.commit();
         } catch (SQLException e) {
-            if (con != null) con.rollback();
+            if (con != null) 
+                con.rollback();
             throw new Exception("Erro ao salvar cliente: " + e.getMessage(), e);
         } finally { if (con != null) con.close(); }
     }
 
     public void atualizarCliente(ClienteVO cliente) throws Exception {
-        if (cliente == null) throw new Exception("Objeto Cliente nao informado.");
+        if (cliente == null) 
+            throw new Exception("Objeto Cliente nao informado.");
+
         String documento = cliente.getPes_cpf();
-        if (documento == null || documento.isBlank()) throw new Exception("Documento obrigatorio para atualizacao.");
+        if (documento == null || documento.isBlank()) 
+            throw new Exception("Documento obrigatorio para atualizacao.");
 
         Connection con = null;
         try {
@@ -80,23 +93,32 @@ public class ClienteRN {
             pessoaDAO.atualizarPessoa(cliente);
             clienteDAO.atualizarCliente(cliente);
             con.commit();
-        } catch (SQLException e) { if (con != null) con.rollback(); throw new Exception("Erro ao atualizar cliente: " + e.getMessage(), e); }
-        finally { if (con != null) con.close(); }
+        } catch (SQLException e) { 
+            if (con != null) con.rollback(); throw new Exception("Erro ao atualizar cliente: " + e.getMessage(), e); 
+        }
+        finally { 
+            if (con != null) con.close(); 
+        }
     }
 
     public ClienteVO buscarPorDocumento(String documento) throws Exception {
-        if (documento == null || documento.isBlank()) throw new Exception("Documento obrigatorio.");
+        if (documento == null || documento.isBlank()) 
+            throw new Exception("Documento obrigatorio.");
         try (Connection con = ConexaoDAO.getConexao()) {
             this.clienteDAO = new ClienteDAO(con);
             return clienteDAO.buscarPorDocumento(documento);
-        } catch (SQLException e) { throw new Exception("Erro ao buscar cliente: " + e.getMessage(), e); }
+        } catch (SQLException e) { 
+            throw new Exception("Erro ao buscar cliente: " + e.getMessage(), e); 
+        }
     }
 
     public List<ClienteVO> buscarComFiltros(String nome, String tipoCodigo, Boolean ativo) throws Exception {
         try (Connection con = ConexaoDAO.getConexao()) {
             this.clienteDAO = new ClienteDAO(con);
             return clienteDAO.buscarComFiltros(nome, tipoCodigo, ativo);
-        } catch (SQLException e) { throw new Exception("Erro ao buscar clientes: " + e.getMessage(), e); }
+        } catch (SQLException e) { 
+            throw new Exception("Erro ao buscar clientes: " + e.getMessage(), e); 
+        }
     }
 
     public List<ClienteVO> buscarTodosClientes(String nomeLike) throws Exception {

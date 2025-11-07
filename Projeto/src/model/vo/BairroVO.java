@@ -26,4 +26,9 @@ public class BairroVO {
     public void setBairro_descricao(String bairro_descricao) {
         this.bairro_descricao = bairro_descricao;
     }
+
+    @Override
+    public String toString() {
+        return bairro_descricao;
+    }
 }

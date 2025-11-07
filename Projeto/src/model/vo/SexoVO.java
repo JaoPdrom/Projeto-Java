@@ -26,4 +26,9 @@ public class SexoVO {
     public void setSex_descricao(String sex_descricao) {
         this.sex_descricao = sex_descricao;
     }
+
+    @Override
+    public String toString() {
+        return sex_descricao;
+    }
 }

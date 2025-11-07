@@ -47,8 +47,12 @@ CREATE TABLE IF NOT EXISTS tb_endPostal(
     endP_est_sigla CHAR(2) NOT NULL,
     endP_bairro_id INT NOT NULL,
     FOREIGN KEY (endP_logradouro_id) REFERENCES tb_logradouro (logradouro_id),
-    FOREIGN KEY (endP_cid_id) REFERENCES tb_cidEst (cidEstPai_cid_id),
-    FOREIGN KEY (endP_est_sigla) REFERENCES tb_cidEst (cidEstPai_est_sigla),
+    
+    FOREIGN KEY (endP_cid_id, endP_est_sigla) REFERENCES tb_cidEst (cidEstPai_cid_id, cidEstPai_est_sigla),
+    
+--     FOREIGN KEY (endP_cid_id) REFERENCES tb_cidEst (cidEstPai_cid_id),
+--     FOREIGN KEY (endP_est_sigla) REFERENCES tb_cidEst (cidEstPai_est_sigla),
+    
     FOREIGN KEY (endP_bairro_id) REFERENCES tb_bairro(bairro_id)
 );
 
@@ -139,11 +143,11 @@ CREATE TABLE IF NOT EXISTS tb_tipoPagamento(
 CREATE TABLE IF NOT EXISTS tb_venda(
     venda_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     venda_data DATE NOT NULL,
-    venda_pes_documento VARCHAR(14) NOT NULL,
+    venda_cli_id INT NOT NULL, 
     venda_fnc_id INT NOT NULL,
     venda_statusVenda INT NOT NULL,
     venda_tipo_pagamento INT NOT NULL,
-    FOREIGN KEY (venda_pes_documento) REFERENCES tb_pessoa (pes_documento),
+    FOREIGN KEY (venda_cli_id) REFERENCES tb_cliente (cli_id),
     FOREIGN KEY (venda_fnc_id) REFERENCES tb_funcionario (fnc_id),
     FOREIGN KEY (venda_statusVenda) REFERENCES tb_statusVenda (statusVenda_id),
     FOREIGN KEY (venda_tipo_pagamento) REFERENCES tb_tipoPagamento (tipoPagamento_id)
@@ -187,7 +191,7 @@ CREATE TABLE IF NOT EXISTS tb_estoque(
     est_dtCompra DATE NOT NULL,
     est_produto_id INT NOT NULL,
     est_custo DOUBLE NOT NULL,
-    est_qtdToal DOUBLE NOT NULL,
+    est_qtdTotal DOUBLE NOT NULL,
     est_lote VARCHAR(45) NOT NULL,
     est_dtValidade DATE NOT NULL,
     est_forn_cnpj CHAR(14) NOT NULL,
@@ -233,7 +237,7 @@ CREATE TABLE IF NOT EXISTS tb_debito(
     FOREIGN KEY (deb_status_id) REFERENCES tb_statusDebito(statusDeb_id)
 );
 
-CREATE TABLE IF NOT EXISTS td_despesa(
+CREATE TABLE IF NOT EXISTS tb_despesa(
     despesa_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     despesa_descricao VARCHAR(45) NOT NULL,
     despesa_dtRealiazacao DATE NOT NULL,
@@ -304,9 +308,9 @@ CREATE TABLE IF NOT EXISTS tb_formula(
 
 CREATE TABLE IF NOT EXISTS tb_formIngre(
     formIngre_formula_id INT NOT NULL,
-    formIgre_produto_id INT NOT NULL,
+    formIngre_produto_id INT NOT NULL,
     formIngre_qtd DOUBLE NOT NULL,
-    PRIMARY KEY(formIngre_formula_id, formIgre_produto_id),
+    PRIMARY KEY(formIngre_formula_id, formIngre_produto_id),
     FOREIGN KEY (formIngre_formula_id) REFERENCES tb_formula(formula_id),
-    FOREIGN KEY (formIgre_produto_id) REFERENCES tb_produto(produto_id)
+    FOREIGN KEY (formIngre_produto_id) REFERENCES tb_produto(produto_id)
 );

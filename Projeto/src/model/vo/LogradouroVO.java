@@ -26,4 +26,9 @@ public class LogradouroVO {
     public void setLogradouro_descricao(String logradouro_descricao) {
         this.logradouro_descricao = logradouro_descricao;
     }
+
+    @Override
+    public String toString() {
+        return logradouro_descricao;
+    }
 }

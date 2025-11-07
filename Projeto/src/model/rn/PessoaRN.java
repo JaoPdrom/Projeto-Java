@@ -71,7 +71,8 @@ public class PessoaRN {
                     // cria o EndPostal se ainda não tiver ID
                     if (endP.getEndP_id() == 0) {
                         int novoEndPId = endPostalDAO.adicionarNovo(endP);
-                        if (novoEndPId <= 0) throw new Exception("Falha ao criar EndPostal.");
+                        if (novoEndPId <= 0)    
+                            throw new Exception("Falha ao criar EndPostal.");
                         endP.setEndP_id(novoEndPId);
                     }
 

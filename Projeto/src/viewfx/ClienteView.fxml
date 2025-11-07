@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClienteController">
+<BorderPane prefHeight="679.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClienteC">
     <top>
         <ToolBar>
            <items>
@@ -67,7 +67,7 @@
                                         <TextField fx:id="txtDocumento" promptText="CPF (11)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                         <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                        <TextField fx:id="txtNomeRazao" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                        <TextField fx:id="txtNome" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                                         <Label text="Nascimento:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                                         <DatePicker fx:id="dpNascimentoFundacao" GridPane.columnIndex="1" GridPane.rowIndex="4" />
@@ -80,9 +80,6 @@
 
                                         <Label text="Ativo:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
                                         <CheckBox fx:id="chkAtivo" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-
-                                        <Label text="Observacoes:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-                                        <TextArea fx:id="txtObservacoes" prefRowCount="3" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 
                                         <Label text="Telefone (opcional):" GridPane.columnIndex="0" GridPane.rowIndex="9" />
                                         <HBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="9">
@@ -102,11 +99,11 @@
                                                 <TextField fx:id="txtCep" prefWidth="90" promptText="CEP (8)" />
                                             </children>
                                         </HBox>
-                              <HBox prefHeight="33.0" prefWidth="714.0" GridPane.columnIndex="1" GridPane.rowIndex="11" spacing="6">
+                              <HBox prefHeight="33.0" prefWidth="714.0" spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="11">
                                  <children>
                                                 <TextField fx:id="txtRua" prefWidth="220" promptText="Nome da Rua" />
                                                 <ComboBox fx:id="cbBairro" prefWidth="160" promptText="Bairro" />
-                                                <TextField fx:id="txtEndNumero" prefWidth="80" promptText="Numero" />
+                                                <TextField fx:id="txtEndNumero" prefWidth="80" promptText="N" />
                                                 <TextField fx:id="txtEndComplemento" prefWidth="180" promptText="Complemento (Opcional)" />
                                  </children>
                               </HBox>
