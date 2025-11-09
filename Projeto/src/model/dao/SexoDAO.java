@@ -89,18 +89,22 @@ public class SexoDAO {
     }
 
     public List<SexoVO> buscarTodosSexo() throws SQLException {
-        List<SexoVO> sexo = new ArrayList<>();
+        List<SexoVO> sexos = new ArrayList<>();
         String sql = "SELECT sex_id, sex_descricao FROM tb_sexo";
-        try (PreparedStatement sex_bsc_id = con_sex.prepareStatement(sql);
-            ResultSet rs = sex_bsc_id.executeQuery()) {
+
+        try (Connection con = ConexaoDAO.getConexao();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                sexo.add(new SexoVO(
-                        rs.getInt("sex_id"),
-                        rs.getString("sex_descricao")
-                ));
+                SexoVO sexo = new SexoVO();
+                sexo.setSex_id(rs.getInt("sex_id"));
+                sexo.setSex_descricao(rs.getString("sex_descricao"));
+                sexos.add(sexo);
             }
         }
-        return sexo;
+
+        return sexos;
     }
+
 }

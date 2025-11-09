@@ -108,11 +108,9 @@ public class ClienteC implements Initializable {
 
     private PessoaRN pessoaRN() throws Exception {
         if (this.pessoaRN == null) {
-            try {
+            
                 this.pessoaRN = new PessoaRN();
-            } catch (SQLException e) {
-                throw new Exception("Falha ao inicializar PessoaRN: " + e.getMessage(), e);
-            }
+            
         }
         return this.pessoaRN;
     }
@@ -389,7 +387,7 @@ public class ClienteC implements Initializable {
                 cliente.setCli_dtCadastro(dt);
             }
 
-            clienteRN.salvarNovo(cliente, null, null);
+            clienteRN.salvarNovo(cliente);
             showInfo("Cliente criado com sucesso para o documento: " + documento);
         } catch (Exception e) {
             e.printStackTrace();

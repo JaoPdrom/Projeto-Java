@@ -19,11 +19,18 @@ public class PessoaRN {
     private TelefoneDAO telefoneDAO;
     private PesEndDAO pesEndDAO;
     private EnderecoDAO enderecoDAO;
+    private TipoPessoaDAO tipoPesDAO;
     private LogDAO logDAO;
 
-    public PessoaRN() throws SQLException {
-        this.pessoaDAO = new PessoaDAO(null);
-        this.logDAO = new LogDAO(null);
+    public PessoaRN() {
+        try {
+            this.pessoaDAO = new PessoaDAO(null);
+ 
+        } catch (Exception e) {
+            System.err.println("Erro ao inicializar DAOs em pessoaRN." + e.getMessage());
+        }
+        
+        // this.logDAO = new LogDAO(null);
     }
 
     // add pessoa
@@ -246,4 +253,16 @@ public class PessoaRN {
 
         return pessoas;
     }
+
+    public List<TipoPessoaVO> listarTipoPessoa() throws Exception {
+        TipoPessoaDAO tipoPesDAO = new TipoPessoaDAO();
+        return tipoPesDAO.listarTodos();
+    }
+
+    public List<SexoVO> listarSexo() throws Exception {
+        SexoDAO sexoDAO = new SexoDAO();
+        List<SexoVO> sexos = sexoDAO.buscarTodosSexo();
+        return sexos;
+    }
+
 }

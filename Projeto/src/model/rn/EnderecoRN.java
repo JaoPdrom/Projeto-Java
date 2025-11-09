@@ -39,6 +39,47 @@ public class EnderecoRN {
         }
     }
 
+    public BairroVO obterOuCriarBairro(String descricao) throws Exception {
+        if (descricao == null) {
+            throw new Exception("Descrição do bairro é obrigatória.");
+        }
+
+        String desc = descricao.trim();
+        if (desc.isBlank()) {
+            throw new Exception("Descrição do bairro é obrigatória.");
+        }
+
+        try (Connection con = ConexaoDAO.getConexao()) {
+            BairroDAO bairroDAO = new BairroDAO(con);
+
+            BairroVO existente = bairroDAO.buscarPorDescricao(desc);
+            if (existente != null) {
+                return existente;
+            }
+
+            BairroVO bairroNovo = new BairroVO();
+            bairroNovo.setBairro_descricao(desc);
+
+            int id = bairroDAO.adicionarNovo(bairroNovo);
+            if (id <= 0) {
+                throw new Exception("Falha ao inserir bairro.");
+            }
+
+            bairroNovo.setBairro_id(id);
+            return bairroNovo;
+        } catch (SQLException e) {
+            try (Connection con2 = ConexaoDAO.getConexao()) {
+                BairroDAO bairroDAO2 = new BairroDAO(con2);
+                BairroVO existente = bairroDAO2.buscarPorDescricao(descricao.trim());
+                if (existente != null) {
+                    return existente;
+                }
+            } catch (SQLException ignore) { }
+
+            throw new Exception("Erro ao obter/criar bairro: " + e.getMessage(), e);
+        }
+    }
+
     public List<LogradouroVO> listarLogradouros() throws Exception {
         try (Connection con = ConexaoDAO.getConexao()) {
             LogradouroDAO dao = new LogradouroDAO(con);

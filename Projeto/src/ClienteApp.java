@@ -11,12 +11,12 @@ public class ClienteApp extends Application {
     public void start(Stage stage) throws Exception {
         Parent root;
         try {
-            URL url = getClass().getResource("/viewfx/ClienteView.fxml");
+            URL url = getClass().getResource("/viewfx/VboxMain.fxml");
             if (url == null) throw new RuntimeException("FXML '/viewfx/ClienteView.fxml' nao encontrado no classpath");
             root = FXMLLoader.load(url);
         } catch (Exception ex) {
             System.err.println("Falha ao carregar FXML do classpath: " + ex.getMessage());
-            File f = new File("Projeto/src/viewfx/ClienteView.fxml");
+            File f = new File("Projeto/src/viewfx/VboxMain.fxml");
             System.err.println("Tentando fallback via arquivo: " + f.getAbsolutePath());
             root = FXMLLoader.load(f.toURI().toURL());
         }

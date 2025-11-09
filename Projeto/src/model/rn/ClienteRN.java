@@ -14,65 +14,77 @@ public class ClienteRN {
 
     public ClienteRN() {}
 
-    public void salvarNovo(ClienteVO cliente, List<TelefoneVO> telefones, List<EnderecoVO> enderecos) throws Exception {
-        if (cliente == null) 
-            throw new Exception("Cliente obrigatorio.");
+    public void salvarNovo(ClienteVO cliente) throws Exception {
+        if (cliente == null)
+            throw new Exception("Cliente obrigatório.");
 
         String documento = cliente.getPes_cpf();
-        if (documento == null || documento.isBlank()) 
-            throw new Exception("Documento obrigatorio.");
+        if (documento == null || documento.isBlank())
+            throw new Exception("Documento obrigatório.");
 
-        if (cliente.getPes_nome() == null || cliente.getPes_nome().isBlank()) 
-            throw new Exception("Nome obrigatorio.");
+        if (cliente.getPes_nome() == null || cliente.getPes_nome().isBlank())
+            throw new Exception("Nome obrigatório.");
 
         Connection con = null;
         try {
             con = ConexaoDAO.getConexao();
             con.setAutoCommit(false);
+
             this.pessoaDAO = new PessoaDAO(con);
             this.clienteDAO = new ClienteDAO(con);
 
+            // verifica se a pessoa existe
             if (pessoaDAO.buscarPesCpf(documento) == null) {
                 pessoaDAO.adicionarNovaPessoa(cliente);
             } else {
                 pessoaDAO.atualizarPessoa(cliente);
             }
 
+            // verifica se já existe cliente
             if (clienteDAO.buscarPorDocumento(documento) != null)
-                throw new Exception("Cliente ja cadastrado para o documento informado.");
+                throw new Exception("Cliente já cadastrado para o documento informado.");
 
-            if (cliente.getCli_dtCadastro() == null) 
+            if (cliente.getCli_dtCadastro() == null)
                 cliente.setCli_dtCadastro(LocalDate.now());
 
             int id = clienteDAO.adicionarNovoCliente(cliente);
-
-            if (id <= 0) 
+            if (id <= 0)
                 throw new Exception("Falha ao inserir cliente.");
 
+            // Telefones (do próprio cliente)
+            List<TelefoneVO> telefones = cliente.getTelefone();
             if (telefones != null && !telefones.isEmpty()) {
                 TelefoneDAO telDAO = new TelefoneDAO(con);
                 for (TelefoneVO t : telefones) {
-                    if (t.getTel_numero() == null || t.getTel_numero().isBlank()) continue;
+                    if (t.getTel_numero() == null || t.getTel_numero().isBlank())
+                        continue;
                     telDAO.adicionarNovo(t, documento);
                 }
             }
 
+            // Endereços (do próprio cliente)
+            List<EnderecoVO> enderecos = cliente.getEndereco();
             if (enderecos != null && !enderecos.isEmpty()) {
                 EnderecoDAO endDAO = new EnderecoDAO(con);
                 PesEndDAO pesEndDAO = new PesEndDAO(con);
                 for (EnderecoVO e : enderecos) {
                     int endId = endDAO.adicionarNovo(e);
-                    if (endId > 0) pesEndDAO.vincular(documento, endId);
+                    if (endId > 0)
+                        pesEndDAO.vincular(documento, endId);
                 }
             }
 
             con.commit();
         } catch (SQLException e) {
-            if (con != null) 
+            if (con != null)
                 con.rollback();
             throw new Exception("Erro ao salvar cliente: " + e.getMessage(), e);
-        } finally { if (con != null) con.close(); }
+        } finally {
+            if (con != null)
+                con.close();
+        }
     }
+
 
     public void atualizarCliente(ClienteVO cliente) throws Exception {
         if (cliente == null) 
