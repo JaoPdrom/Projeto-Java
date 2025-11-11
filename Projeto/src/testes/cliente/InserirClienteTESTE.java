@@ -55,7 +55,7 @@ public class InserirClienteTESTE {
 
             // Chama RN
             ClienteRN clienteRN = new ClienteRN();
-            clienteRN.salvarNovo(cli, telefones, enderecos);
+            // clienteRN.salvarNovo(cli, telefones, enderecos);
 
             System.out.println("OK. Cliente cadastrado com sucesso!");
         } catch (Exception e) {

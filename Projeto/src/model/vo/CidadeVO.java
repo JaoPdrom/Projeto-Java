@@ -3,14 +3,12 @@ package model.vo;
 public class CidadeVO {
     private int cid_id;
     private String cid_descricao;
-//    private EstadoVO estado;
 
     public CidadeVO() {}
 
     public CidadeVO(int cid_id, String cid_descricao) {
         this.cid_id = cid_id;
         this.cid_descricao = cid_descricao;
-//        this.estado = estado;
     }
 
     public int getCid_id() {

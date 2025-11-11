@@ -10,16 +10,16 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
-                <Button fx:id="btnClienteNovo" mnemonicParsing="false" text="Novo" />
+                <Button fx:id="btnClienteNovo" mnemonicParsing="false" onAction="#handleBtnClienteNovoAction" text="Novo" />
                   <Button fx:id="btnClienteSalvar" mnemonicParsing="false" onAction="#handleBtnClienteSalvarAction" text="Salvar" />
-                  <Button fx:id="btnClienteEditar" mnemonicParsing="false" text="Editar" />
-                  <Button fx:id="btnClienteAtualizar" mnemonicParsing="false" text="Atualizar" />
+                  <Button fx:id="btnClienteEditar" mnemonicParsing="false" onAction="#handleBtnClienteEditar" text="Editar" />
+                  <Button fx:id="btnClienteAtualizar" mnemonicParsing="false" onAction="#handleBtnClienteAtualizar" text="Atualizar" />
                   <Button fx:id="btnClienteExcluir" mnemonicParsing="false" text="Excluir" />
-                  <Button fx:id="btnClienteCancelar" mnemonicParsing="false" text="Cancelar" />
+                  <Button fx:id="btnClienteCancelar" mnemonicParsing="false" onAction="#handleBtnClienteCancelarAction" text="Cancelar" />
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                   <Label text="Busca:" />
                   <TextField fx:id="txtClienteBusca" promptText="Nome ou Documento" />
-                  <Button fx:id="btnClienteBuscar" mnemonicParsing="false" text="Buscar" />
+                  <Button fx:id="btnClienteBuscar" onAction="#handleBtnClienteBuscarAction" mnemonicParsing="false" text="Buscar" />
               </items>
             </ToolBar>
          </top>
@@ -28,7 +28,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <TableView fx:id="tbvCliente" layoutX="11.0" layoutY="29.0" prefHeight="358.0" prefWidth="221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TableView fx:id="tbvCliente" layoutX="11.0" layoutY="29.0" onMouseClicked="#selecionarItemTabelaCliente" prefHeight="358.0" prefWidth="221.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columns>
                             <TableColumn fx:id="tbcClienteId" prefWidth="75.0" text="ID" />
                             <TableColumn fx:id="tbcClientePesNome" prefWidth="162.0" text="Nome" />

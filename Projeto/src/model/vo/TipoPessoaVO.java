@@ -1,5 +1,7 @@
 package model.vo;
 
+import java.util.Objects;
+
 public class TipoPessoaVO {
     private int tipo_pessoa_id;
     private String codigo; // 'F' ou 'J'
@@ -40,6 +42,14 @@ public class TipoPessoaVO {
     @Override
     public String toString() {
         return codigo + " - " + descricao;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TipoPessoaVO tipoPessoaVO = (TipoPessoaVO) o;
+        return Objects.equals(tipoPessoaVO, tipoPessoaVO);
     }
 
 }

@@ -5,8 +5,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.beans.property.SimpleStringProperty;
-import model.dao.TipoPessoaDAO;
+// import model.dao.TipoPessoaDAO;
 import model.rn.ClienteRN;
 import model.rn.EnderecoRN;
 import model.rn.PessoaRN;
@@ -28,8 +29,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
-// import com.mysql.cj.result.StringValueFactory;
 
 public class ClienteController implements Initializable{
     //atributos de botoes
@@ -86,6 +85,9 @@ public class ClienteController implements Initializable{
     private EnderecoVO endereco = new EnderecoVO();
     private PessoaVO pesCliente = new PessoaVO();
     private ClienteVO clienteVO = new ClienteVO();
+    // IDs do item selecionado para permitir atualização correta
+    private Integer telefoneSelecionadoId;
+    private Integer enderecoSelecionadoId;
 
     // -- CARREGADORES DE COMBOBOX
     public void carregarTipoPessoa() throws SQLException{
@@ -93,9 +95,9 @@ public class ClienteController implements Initializable{
             List<TipoPessoaVO> tipos = pessoaRN.listarTipoPessoa();
             ObservableList<TipoPessoaVO> observableTipos = FXCollections.observableArrayList(tipos);
             cbClientePesTipo.setItems(observableTipos);
-            System.out.println("Lista de tipos de pessoas carregada.");
+            info("Lista de tipos de pessoas carregada");
         } catch (Exception e) {
-            System.err.println("Erro ao lista tipos de pessoa" + e.getMessage());
+            erro("Erro ao lista tipos de pessoa", e);
         }
     }
 
@@ -104,54 +106,61 @@ public class ClienteController implements Initializable{
             List<SexoVO> listaSexo = pessoaRN.listarSexo();
             ObservableList<SexoVO> observableSexo = FXCollections.observableArrayList(listaSexo);
             cbClientePesSexo.setItems(observableSexo);
-            System.out.println("Lista de sexos carregados.");
+            info("Lista de sexos carregados");
         } catch (Exception e) {
-            System.err.println("Erro ao carregador lista de sexos. " + e.getMessage());
+            erro("Erro ao carregador lista de sexos", e);
         }
         
     }
 
-    // EnderecoRN enderecoRN = new EnderecoRN();
     public void carregarEstados(){
         try {
             List<EstadoVO> estados = enderecoRN.listarEstados();
             ObservableList<EstadoVO> observableEstados = FXCollections.observableArrayList(estados);
             cbClienteEndEstado.setItems(observableEstados);
-            System.out.println("Estados carregados com sucesso.");
+            info("Estados carregados com sucesso");
         } catch (Exception e) {
-            System.err.println("Erro ao carregar estados: " + e.getMessage());
-            e.printStackTrace();
+            erro("Erro ao carregar estados", e);
         }
     }
 
-    public void carregarCidadesPorEstado(String sigla){
+    public List<CidadeVO> carregarCidadesPorEstado(String sigla) {
+        List<CidadeVO> cidades = new ArrayList<>();
+
         try {
-            List<CidadeVO> cidades = enderecoRN.listarCidadesPorEstado(sigla);
-            ObservableList<CidadeVO> observableCidades = FXCollections.observableArrayList(cidades);
-            cbClienteEndCidade.setItems(observableCidades);
-            System.out.println("Cidades carregadas com sucesso para o estado: " + sigla);
+            cbClienteEndCidade.getItems().clear();
+
+            if (sigla != null && !sigla.isEmpty()) {
+                cidades = enderecoRN.listarCidadesPorEstado(sigla);
+                ObservableList<CidadeVO> observableCidades = FXCollections.observableArrayList(cidades);
+                cbClienteEndCidade.setItems(observableCidades);
+                info("Cidades carregadas com sucesso para o estado: " + sigla);
+            } else {
+                alerta("Sigla do estado não informada");
+            }
         } catch (Exception e) {
-            System.err.println("Erro ao carregar cidades para o estado " + sigla + ": " + e.getMessage());
-            e.printStackTrace();
+            erro("Erro ao carregar cidades para o estado " + sigla, e);
         }
+
+        return cidades;
     }
+
 
     public void carregarLogradouros(){
         try {
             List<LogradouroVO> logradouros = enderecoRN.listarLogradouros();
             ObservableList<LogradouroVO> observableLogradouros = FXCollections.observableArrayList(logradouros);
             cbClienteEndLogradouro.setItems(observableLogradouros);
-            System.out.println("Logradouros carregados com sucesso.");
+            info("Logradouros carregados com sucesso");
         } catch (Exception e) {
-            System.err.println("Erro ao carregar logradouros: " + e.getMessage());
-            e.printStackTrace();
+            erro("Erro ao carregar logradouros", e);
         }
     }
     
     // -- SELECAO DE COMBOBOX
     private TipoPessoaVO obterCbTipoPessoaSelecionada() {
         if (cbClientePesTipo != null){
-            System.out.println("Tipo pessoa selecionada.");
+            info("Tipo pessoa selecionada");
             return cbClientePesTipo.getValue(); 
         }
         return null;
@@ -159,7 +168,7 @@ public class ClienteController implements Initializable{
 
     private SexoVO obterCbSexoSelecionado() {
         if (cbClientePesSexo != null){
-            System.out.println("Sexo selecionado.");
+            info("Sexo selecionado");
             return cbClientePesSexo.getValue();
         }
         return null;
@@ -167,7 +176,7 @@ public class ClienteController implements Initializable{
 
     private EstadoVO obterCbEstadoSelecionado(){
         if (cbClienteEndEstado != null){
-            System.out.println("Sexo selecionado.");
+            info("Estado selecionado");
             return cbClienteEndEstado.getValue();
         }
         return null;
@@ -175,7 +184,7 @@ public class ClienteController implements Initializable{
 
     private CidadeVO obterCbCidadeSelecionado(){
         if (cbClienteEndCidade != null){
-            System.out.println("Cidade selecionada.");
+            info("Cidade selecionada");
             return cbClienteEndCidade.getValue();
         }
         return null;
@@ -183,7 +192,7 @@ public class ClienteController implements Initializable{
 
     private LogradouroVO obterCbLogradouroSelecionado(){
         if (cbClienteEndLogradouro != null){
-            System.out.println("Logradouro selecionado.");
+            info("Logradouro selecionado");
             return cbClienteEndLogradouro.getValue();
         }
         return null;
@@ -194,30 +203,58 @@ public class ClienteController implements Initializable{
         List<TelefoneVO> telefones = new ArrayList<>();
 
         String codPais = null;
-        if (txtClienteTelCodPais.getText() != null) {
-            codPais = txtClienteTelCodPais.getText().trim();
+        if (txtClienteTelCodPais != null) {
+            String v = txtClienteTelCodPais.getText();
+            if (v != null) {
+                info("Cod pais obtido: " + codPais);
+                codPais = v.trim();
+            }
         }
 
         String ddd = null;
-        if (txtClienteTelDdd.getText() != null) {
-            ddd = txtClienteTelDdd.getText().trim();
+        if (txtClienteTelDdd != null) {
+            String v = txtClienteTelDdd.getText();
+            if (v != null) {
+                info("DDD obtido: " + ddd);
+                ddd = v.trim();
+            }
         }
 
         String numero = null;
-        if (txtClienteTelNumero.getText() != null) {
-            numero = txtClienteTelNumero.getText().trim();
+        if (txtClienteTelNumero != null) {
+            String v = txtClienteTelNumero.getText();
+            if (v != null) {
+                info("Numero obtido: " + numero);
+                numero = v.trim();
+            }
         }
 
-        if (numero != null && !numero.isBlank()) {
-            // TelefoneVO telCli = new TelefoneVO();
-
-            telCli.setTel_codPais(codPais);
-            telCli.setTel_ddd(ddd);
-            telCli.setTel_numero(numero);
-            telCli.setTel_pes_cpf(documento);
-
-            telefones.add(telCli);
+        // Validação: todos os campos de telefone são obrigatórios
+        if (codPais == null || codPais.isBlank()) {
+            alerta("Código do país do telefone é obrigatório.");
+            throw new IllegalArgumentException("Código do país do telefone é obrigatório.");
         }
+        if (ddd == null || ddd.isBlank()) {
+            alerta("DDD do telefone é obrigatório.");
+            throw new IllegalArgumentException("DDD do telefone é obrigatório.");
+        }
+        if (numero == null || numero.isBlank()) {
+            alerta("Número do telefone é obrigatório.");
+            throw new IllegalArgumentException("Número do telefone é obrigatório.");
+        }
+
+        TelefoneVO tel = new TelefoneVO();
+        tel.setTel_codPais(codPais);
+        info("setTel_codPais FEITO");
+        tel.setTel_ddd(ddd);
+        info("setTel_ddd FEITO");
+        tel.setTel_numero(numero);
+        info("setTel_numero FEITO");
+        tel.setTel_pes_cpf(documento);
+        info("setTel_pes_cpf FEITO");
+
+        telefones.add(tel);
+        info("Telefone de cliente criado.");
 
         return telefones;
     }
@@ -228,19 +265,24 @@ public class ClienteController implements Initializable{
         cbClienteEndEstado.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, novoEstado) -> {
             // Limpa ComboBox de cidades
             cbClienteEndCidade.getItems().clear();
+            info("cbClienteEndCidade CLEAR");
+
             cbClienteEndCidade.getSelectionModel().clearSelection();
+            info("cbClienteEndCidade CLEAR SELECTION");
 
             if (novoEstado != null) {
                 try {
                     // Carrega cidades do estado selecionado
                     carregarCidadesPorEstado(novoEstado.getEst_sigla());
                     cbClienteEndCidade.setDisable(false);
+                    info("Cidades carregadas por estado.");
                 } catch (Exception e) {
-                    System.err.println("Erro ao carregar cidades: " + e.getMessage());
+                    erro("Erro ao carregar cidades: ", e);
                     cbClienteEndCidade.setDisable(true);
                 }
             } else {
                 cbClienteEndCidade.setDisable(true);
+                info("Campos cbClienteEndCidade desabilitados.");
             }
 
             // Limpa campos de endereço dependentes
@@ -295,9 +337,9 @@ public class ClienteController implements Initializable{
                 v = v.trim();
                 if (!v.isBlank()){
                     bairro = v;
-                    }
                 }
             }
+        }
 
         // Ler seleções dos combos
         EstadoVO estado = obterCbEstadoSelecionado();
@@ -306,30 +348,37 @@ public class ClienteController implements Initializable{
 
         // Validações obrigatórias
         if (estado == null) {
+            alerta("Estado é obrigatório");
             throw new IllegalArgumentException("Estado é obrigatório.");
         }
 
         if (cidade == null) {
+            alerta("Cidade é obrigatória");
             throw new IllegalArgumentException("Cidade é obrigatória.");
         }
 
         if (logradouro == null) {
+            alerta("Logradouro é obrigatório");
             throw new IllegalArgumentException("Logradouro é obrigatório.");
         }
 
         if (bairro == null) {
+            alerta("Bairro é obrigatório");
             throw new IllegalArgumentException("Bairro é obrigatório.");
         }
 
         if (rua == null || rua.isBlank()) {
+            alerta("Nome rua é obrigatório");
             throw new IllegalArgumentException("Nome da rua é obrigatório.");
         }
 
         if (cep == null || cep.isBlank()) {
+            alerta("CEP é obrigatório");
             throw new IllegalArgumentException("CEP é obrigatório.");
         }
 
         if (numero == null || numero.isBlank()) {
+            alerta("Numero é obrigatório");
             throw new IllegalArgumentException("Número é obrigatório.");
         }
 
@@ -430,7 +479,6 @@ public class ClienteController implements Initializable{
             
 
             //montar pessoaVO
-            // pesCliente = new PessoaVO();
             pesCliente.setPes_cpf(documento);
             pesCliente.setPes_nome(nome);
             pesCliente.setPes_email(email);
@@ -444,17 +492,17 @@ public class ClienteController implements Initializable{
             return pesCliente;
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage());
+            alerta("Erro de validação: " + e.getMessage());
             return null;
         } catch (Exception e) {
-            System.err.println("Erro ao criar pessoa: " + e.getMessage());
-            e.printStackTrace();
+            erro("Erro ao criar pessoa", e);
             return null;
         }
     }
 
     private void criarCliente(PessoaVO pessoaVO) throws Exception {
         if (pessoaVO == null){
+            erro("Objeto PessoaVO está nulo ao criar cliente", null);
             throw new Exception("ERRO: informe o objeto de pessoa");
         }
         
@@ -474,69 +522,271 @@ public class ClienteController implements Initializable{
         
         
     }
+
+    // METODOS FMXL
+    @FXML
+    private void handleBtnClienteNovoAction(ActionEvent event){
+        info("Botao NOVO pressionado.");
+        limparCamposCliente();
+        info("Campos zerados.");
+        habilitarCampos(true);
+        btnClienteSalvar.setDisable(false);
+        info("Campos habilitados.");
+    }
+
+    @FXML
+    private void handleBtnClienteCancelarAction(ActionEvent event){
+        limparCamposCliente();
+        habilitarCampos(false);
+        if (tbvCliente != null && tbvCliente.getSelectionModel() != null) {
+            tbvCliente.getSelectionModel().clearSelection();
+        }
+        info("Campos limpos, desabilitados e seleção da tabela limpa.");
+    }
     
     @FXML
     private void handleBtnClienteSalvarAction(ActionEvent event) throws Exception {
         PessoaVO pesCriada = criarBasePessoa();
         if (pesCriada == null){
-            System.out.println("erro ao criar base pessoa");
+            alerta("Erro ao criar base pessoa");
             return;
         }
-        System.out.println("Pessoa criada!");
+        info("Pessoa criada!");
 
         try {
             criarCliente(pesCriada);
-            System.out.println("Cliente criado!");
+            info("Cliente criado!");
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar cliente: " + e.getMessage());
+            erro("Erro ao adicionar cliente", e);
             return;
         }
 
         try {
             criarEndereco();
-            System.out.println("Endereco criado a cliente");
+            info("Endereço criado para cliente");
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar endereco: " + e.getMessage());
+            erro("Erro ao adicionar endereco", e);
+        }
+    }
+
+    @FXML
+    private void handleBtnClienteEditar(ActionEvent event){
+        try {
+            // Habilita edição, mas mantém documento bloqueado
+            habilitarCampos(true);
+            btnClienteSalvar.setDisable(true);
+            btnClienteAtualizar.setDisable(false);
+            if (txtClientePesDocumento != null) {
+                txtClientePesDocumento.setDisable(true);
+            }
+            info("Modo edição habilitado. Documento bloqueado.");
+        } catch (Exception e) {
+            erro("Erro ao entrar em modo de edição", e);
+        }
+
+    }
+
+    @FXML
+    private void handleBtnClienteAtualizar(ActionEvent event){
+        try {
+            // Monta base pessoa (sem endereço) para atualizar pessoa e telefones
+            PessoaVO pessoa = criarBasePessoa();
+            if (pessoa == null) {
+                alerta("Não foi possível montar os dados da pessoa para atualização.");
+                return;
+            }
+
+            // garantir tel_id do telefone selecionado, se houver
+            if (pessoa.getTelefone() != null && !pessoa.getTelefone().isEmpty()) {
+                TelefoneVO t = pessoa.getTelefone().get(0);
+                if (telefoneSelecionadoId != null) {
+                    t.setTel_id(telefoneSelecionadoId);
+                }
+            }
+
+            // Atualiza dados básicos + telefones
+            try {
+                pessoaRN.atualizarPessoa(pessoa);
+                info("Pessoa e telefones atualizados.");
+            } catch (Exception e) {
+                erro("Falha ao atualizar pessoa/telefones", e);
+                return;
+            }
+
+            // Monta endereço a partir dos campos e sincroniza via EnderecoRN
+            try {
+                // Leitura e validação dos campos de endereço
+                EstadoVO estado = obterCbEstadoSelecionado();
+                CidadeVO cidade = obterCbCidadeSelecionado();
+                LogradouroVO logradouro = obterCbLogradouroSelecionado();
+
+                String cep = txtClienteEndCep != null && txtClienteEndCep.getText() != null ? txtClienteEndCep.getText().trim() : null;
+                String rua = txtClienteEndNomeRua != null && txtClienteEndNomeRua.getText() != null ? txtClienteEndNomeRua.getText().trim() : null;
+                String numero = txtClienteEndNumero != null && txtClienteEndNumero.getText() != null ? txtClienteEndNumero.getText().trim() : null;
+                String complemento = txtClienteEndComplemento != null && txtClienteEndComplemento.getText() != null ? txtClienteEndComplemento.getText().trim() : null;
+                String bairroTxt = txtClienteEndBairro != null && txtClienteEndBairro.getText() != null ? txtClienteEndBairro.getText().trim() : null;
+
+                if (estado == null) { alerta("Estado é obrigatório"); return; }
+                if (cidade == null) { alerta("Cidade é obrigatória"); return; }
+                if (logradouro == null) { alerta("Logradouro é obrigatório"); return; }
+                if (bairroTxt == null || bairroTxt.isBlank()) { alerta("Bairro é obrigatório"); return; }
+                if (rua == null || rua.isBlank()) { alerta("Nome da rua é obrigatório"); return; }
+                if (cep == null || cep.isBlank()) { alerta("CEP é obrigatório"); return; }
+                if (numero == null || numero.isBlank()) { alerta("Número é obrigatório"); return; }
+
+                EndPostalVO ep = new EndPostalVO();
+                ep.setEndP_estado(estado);
+                ep.setEndP_cidade(cidade);
+                ep.setEndP_logradouro(logradouro);
+                ep.setEndP_nomeRua(rua);
+                ep.setEndP_cep(cep);
+                // garantir/obter bairro
+                BairroVO bairroVO = enderecoRN.obterOuCriarBairro(bairroTxt);
+                ep.setEndP_bairro(bairroVO);
+
+                EnderecoVO end = new EnderecoVO();
+                end.setEnd_endP_id(ep);
+                end.setEnd_numero(numero);
+                end.setEnd_complemento(complemento != null && !complemento.isBlank() ? complemento : null);
+                if (enderecoSelecionadoId != null) {
+                    end.setEnd_id(enderecoSelecionadoId);
+                }
+
+                // sincroniza endereços garantindo EndPostal id
+                enderecoRN.sincronizarEnderecos(pessoa.getPes_cpf(), List.of(end));
+                info("Endereço atualizado/sincronizado.");
+            } catch (Exception e) {
+                erro("Falha ao atualizar endereço", e);
+                // não retorna; pessoa já foi atualizada. Apenas avisa.
+            }
+
+            carregarTabela();
+            alerta("Cliente atualizado com sucesso.");
+        } catch (Exception e) {
+            erro("Erro geral no fluxo de atualização", e);
+        }
+    }
+
+    @FXML
+    private void handleBtnClienteBuscarAction(ActionEvent event) {
+        try {
+            String termo = null;
+            if (txtClienteBusca != null) {
+                String s = txtClienteBusca.getText();
+                if (s != null) {
+                    termo = s.trim();
+                }
+            }
+
+            if (termo == null || termo.isBlank()) {
+                carregarTabela();
+                return;
+            }
+
+            //apenasDigitos com 11 caracteres eh CPF; apenasDigitos (outro tamanho) eh ID; caso contrário -> nome
+            String apenasDigitos = termo.replaceAll("\\D", "");
+            List<ClienteVO> resultado = new ArrayList<>();
+            if (!apenasDigitos.isBlank() && apenasDigitos.length() == 11) {
+                // Busca por CPF
+                try {
+                    ClienteVO cli = clienteRN.buscarPorDocumento(apenasDigitos);
+                    if (cli != null) {
+                        resultado.add(cli);
+                    }
+                } catch (Exception e) {
+                    erro("Erro na busca por CPF", e);
+                }
+            } else if (!apenasDigitos.isBlank() && termo.equals(apenasDigitos)) {
+                // Somente números mas não 11 dígitos: tratar como ID
+                try {
+                    int id = Integer.parseInt(apenasDigitos);
+                    List<ClienteVO> todos = clienteRN.listarClientesCompletos();
+                    for (ClienteVO c : todos) {
+                        if (c != null && c.getCli_id() == id) {
+                            resultado.add(c);
+                        }
+                    }
+                } catch (Exception e) {
+                    erro("Erro na busca por ID", e);
+                }
+            } else {
+                // Busca por nome (like)
+                try {
+                    resultado = clienteRN.buscarTodosClientes(termo);
+                } catch (Exception e) {
+                    erro("Erro na busca por nome", e);
+                }
+            }
+            if (resultado == null || resultado.isEmpty()) {
+                alerta("Nenhum cliente encontrado.");
+                // opcional: limpar tabela ou recarregar tudo
+                tbvCliente.setItems(FXCollections.observableArrayList());
+                return;
+            }
+            ObservableList<ClienteVO> obs = FXCollections.observableArrayList(resultado);
+            tbvCliente.setItems(obs);
+            info("Busca concluída: " + obs.size() + " registro(s).");
+        } catch (Exception e) {
+            erro("Erro geral ao executar busca", e);
         }
     }
 
 
-
-
     //controle de campos
     private void habilitarCampos(boolean habilitar){
-        btnClienteNovo.setDisable(habilitar);
-        btnClienteSalvar.setDisable(habilitar);
-        btnClienteEditar.setDisable(habilitar);
-        btnClienteAtualizar.setDisable(habilitar);
-        btnClienteExcluir.setDisable(habilitar);
-        btnClienteCancelar.setDisable(habilitar);
-        btnClienteBuscar.setDisable(habilitar);
-        txtClienteBusca.setDisable(habilitar);
-        txtClienteId.setDisable(habilitar);
-        txtClientePesDocumento.setDisable(habilitar);
-        txtClientePesNome.setDisable(habilitar);
-        txtClientePesEmail.setDisable(habilitar);
-        txtClienteTelCodPais.setDisable(habilitar);
-        txtClienteTelDdd.setDisable(habilitar);
-        txtClienteTelNumero.setDisable(habilitar);
-        txtClienteEndCep.setDisable(habilitar);
-        txtClienteEndNomeRua.setDisable(habilitar);
-        txtClienteEndBairro.setDisable(habilitar);
-        txtClienteEndNumero.setDisable(habilitar);
-        txtClienteEndComplemento.setDisable(habilitar);
-        cbClientePesTipo.setDisable(habilitar);
-        cbClientePesSexo.setDisable(habilitar); 
-        cbClienteEndEstado.setDisable(habilitar); 
-        cbClienteEndCidade.setDisable(habilitar); 
-        cbClienteEndLogradouro.setDisable(habilitar); 
-        dtpClientePesDataNascimento.setDisable(habilitar);
-        chbClienteAtivo.setDisable(habilitar);
+        btnClienteSalvar.setDisable(!habilitar);
+        btnClienteEditar.setDisable(!habilitar); 
+        btnClienteAtualizar.setDisable(!habilitar);
+        btnClienteExcluir.setDisable(!habilitar);
+        txtClienteId.setDisable(!habilitar);
+        txtClientePesDocumento.setDisable(!habilitar);
+        txtClientePesNome.setDisable(!habilitar);
+        txtClientePesEmail.setDisable(!habilitar);
+        txtClienteTelCodPais.setDisable(!habilitar);
+        txtClienteTelDdd.setDisable(!habilitar);
+        txtClienteTelNumero.setDisable(!habilitar);
+        txtClienteEndCep.setDisable(!habilitar);
+        txtClienteEndNomeRua.setDisable(!habilitar);
+        txtClienteEndBairro.setDisable(!habilitar);
+        txtClienteEndNumero.setDisable(!habilitar);
+        txtClienteEndComplemento.setDisable(!habilitar);
 
+        cbClientePesTipo.setDisable(!habilitar);
+        cbClientePesSexo.setDisable(!habilitar); 
+        cbClienteEndEstado.setDisable(!habilitar); 
+        cbClienteEndCidade.setDisable(!habilitar); 
+        cbClienteEndLogradouro.setDisable(!habilitar); 
+        dtpClientePesDataNascimento.setDisable(!habilitar);
+        chbClienteAtivo.setDisable(!habilitar);
     }
+
+    private void limparCamposCliente() {
+        txtClienteBusca.clear();
+        txtClienteId.clear();
+        txtClientePesDocumento.clear();
+        txtClientePesNome.clear();
+        txtClientePesEmail.clear();
+        txtClienteTelCodPais.clear();
+        txtClienteTelDdd.clear();
+        txtClienteTelNumero.clear();
+        txtClienteEndCep.clear();
+        txtClienteEndNomeRua.clear();
+        txtClienteEndBairro.clear();
+        txtClienteEndNumero.clear();
+        txtClienteEndComplemento.clear();
+        cbClientePesSexo.setValue(null);
+        cbClientePesTipo.setValue(null);
+        cbClienteEndEstado.setValue(null);
+        cbClienteEndCidade.setValue(null);
+        cbClienteEndLogradouro.setValue(null);
+        telefoneSelecionadoId = null;
+        enderecoSelecionadoId = null;
+    }
+
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        info("Inicializando tela de clientes");
         try{
             habilitarCampos(false);
             carregarTipoPessoa();
@@ -546,7 +796,7 @@ public class ClienteController implements Initializable{
             listenerEstado();
             carregarTabela();
         } catch (Exception e){
-            System.err.println("Erro ao inicializar " + e.getMessage());
+            erro("Erro ao inicializar", e);
         }
         // TODO Auto-generated method stub
         // throw new UnsupportedOperationException("Unimplemented method 'initialize'");
@@ -554,6 +804,7 @@ public class ClienteController implements Initializable{
     
     private void carregarTabela(){
         try {
+            info("Carregando lista de clientes");
             String filtro = null;
             if (txtClienteBusca != null) {
                 String v = txtClienteBusca.getText();
@@ -562,7 +813,7 @@ public class ClienteController implements Initializable{
                 }
             }
 
-            List<ClienteVO> lista = clienteRN.buscarTodosClientes(filtro);
+            List<ClienteVO> lista = clienteRN.listarClientesCompletos();
             ObservableList<ClienteVO> obs = FXCollections.observableArrayList(lista);
 
             tbcClienteId.setCellValueFactory(cd -> new SimpleStringProperty(
@@ -588,11 +839,157 @@ public class ClienteController implements Initializable{
                 cd.getValue() != null && cd.getValue().getPes_ativo() != null && cd.getValue().getPes_ativo() ? "Ativo" : "Inativo"));
 
             tbvCliente.setItems(obs);
+            info("Tabela de clientes carregada: " + obs.size() + " registros");
         } catch (Exception e) {
-            System.err.println("Erro ao carregar tabela de clientes: " + e.getMessage());
-            e.printStackTrace();
+            erro("Erro ao carregar tabela de clientes", e);
         }
     }
+
+    @FXML
+    private void selecionarItemTabelaCliente(MouseEvent event) {
+        try {
+            ClienteVO clienteSelecionado = tbvCliente.getSelectionModel().getSelectedItem();
+            limparCamposCliente();
+            btnClienteEditar.setDisable(false);
+            btnClienteAtualizar.setDisable(false);
+            btnClienteExcluir.setDisable(false);
+
+            if (clienteSelecionado == null) {
+                info("Nenhum cliente selecionado na tabela.");
+                return;
+            }
+
+            info("Cliente selecionado: " + clienteSelecionado.getPes_nome());
+
+            // dados basicos
+            txtClienteId.setText(String.valueOf(clienteSelecionado.getCli_id()));
+            txtClientePesDocumento.setText(clienteSelecionado.getPes_cpf());
+            txtClientePesNome.setText(clienteSelecionado.getPes_nome());
+            txtClientePesEmail.setText(clienteSelecionado.getPes_email());
+            dtpClientePesDataNascimento.setValue(clienteSelecionado.getPes_dt_nascimento());
+            info("Dados básicos preenchidos com sucesso.");
+
+            // sexo
+            try {
+                SexoVO sexo = clienteSelecionado.getPes_sexo();
+                if (sexo != null && sexo.getSex_descricao() != null) {
+                    // Seleciona no combo pelo id para garantir referência da lista
+                    cbClientePesSexo.getItems().stream()
+                        .filter(i -> i.getSex_id() == sexo.getSex_id())
+                        .findFirst()
+                        .ifPresent(cbClientePesSexo::setValue);
+                    info("Sexo definido como: " + sexo.getSex_descricao());
+                } else {
+                    alerta("Sexo não definido para o cliente.");
+                }
+            } catch (Exception e) {
+                erro("Erro ao definir sexo", e);
+            }
+
+            // tipo de pessoa
+            try {
+                TipoPessoaVO tipoPessoa = clienteSelecionado.getPes_tipo_pessoa();
+                if (tipoPessoa != null && tipoPessoa.getDescricao() != null) {
+                    cbClientePesTipo.setValue(tipoPessoa);
+                    info("Tipo de pessoa definido como: " + tipoPessoa.getDescricao());
+                } else {
+                    alerta("Tipo de pessoa não definido para o cliente.");
+                }
+            } catch (Exception e) {
+                erro("Erro ao definir tipo de pessoa", e);
+            }
+
+            // telefone
+            try {
+                if (clienteSelecionado.getTelefone() != null && !clienteSelecionado.getTelefone().isEmpty()) {
+                    TelefoneVO tel = clienteSelecionado.getTelefone().get(0);
+                    try { telefoneSelecionadoId = tel.getTel_id(); } catch (Exception ignore) { telefoneSelecionadoId = null; }
+                    txtClienteTelCodPais.setText(tel.getTel_codPais());
+                    txtClienteTelDdd.setText(tel.getTel_ddd());
+                    txtClienteTelNumero.setText(tel.getTel_numero());
+                    info("Telefone carregado: +" + tel.getTel_codPais() + " (" + tel.getTel_ddd() + ") " + tel.getTel_numero());
+                } else {
+                    alerta("Nenhum telefone cadastrado para este cliente.");
+                }
+            } catch (Exception e) {
+                erro("Erro ao definir telefone", e);
+            }
+
+            // endereco
+            try {
+                if (clienteSelecionado.getEndereco() != null && !clienteSelecionado.getEndereco().isEmpty()) {
+                    EnderecoVO end = clienteSelecionado.getEndereco().get(0);
+                    try { enderecoSelecionadoId = end.getEnd_id(); } catch (Exception ignore) { enderecoSelecionadoId = null; }
+                    EndPostalVO endPostal = end.getEnd_endP_id();
+
+                    if (endPostal != null) {
+                        txtClienteEndCep.setText(endPostal.getEndP_cep());
+                        txtClienteEndNomeRua.setText(endPostal.getEndP_nomeRua());
+                        if (endPostal.getEndP_bairro() != null)
+                            txtClienteEndBairro.setText(endPostal.getEndP_bairro().getBairro_descricao());
+
+                        // Seleciona Logradouro no combo se disponível
+                        LogradouroVO logradouro = endPostal.getEndP_logradouro();
+                        if (logradouro != null) {
+                            cbClienteEndLogradouro.getItems().stream()
+                                .filter(i -> i.getLogradouro_id() == logradouro.getLogradouro_id())
+                                .findFirst()
+                                .ifPresent(cbClienteEndLogradouro::setValue);
+                        }
+
+                        EstadoVO estado = endPostal.getEndP_estado();
+                        CidadeVO cidade = endPostal.getEndP_cidade();
+
+                        if (estado != null) {
+                            cbClienteEndEstado.setValue(estado);
+                            carregarCidadesPorEstado(estado.getEst_sigla());
+                            info("Estado definido como: " + estado.getEst_sigla());
+                        } else {
+                            alerta("Estado não definido.");
+                        }
+
+                        if (cidade != null) {
+                            cbClienteEndCidade.setValue(cidade);
+                            info("Cidade definida como: " + cidade.getCid_descricao());
+                        } else {
+                            alerta("Cidade não definida.");
+                        }
+                    }
+
+                    txtClienteEndNumero.setText(end.getEnd_numero());
+                    txtClienteEndComplemento.setText(end.getEnd_complemento());
+                    info("Endereço carregado com sucesso.");
+                } else {
+                    alerta("Nenhum endereço cadastrado para este cliente.");
+                }
+            } catch (Exception e) {
+                erro("Erro ao definir endereço", e);
+            }
+
+        } catch (Exception e) {
+            erro("Erro geral ao selecionar cliente", e);
+        }
+    }
+
+    // Cor ANSI para o console (funciona no VS Code, IntelliJ e CMD moderno)
+    private static final String RESET = "\u001B[0m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String RED = "\u001B[31m";
+
+    private void info(String msg) {
+        System.out.println(GREEN + "[INFO:ClienteController] " + msg + RESET);
+    }
+
+    private void alerta(String msg) {
+        System.out.println(YELLOW + "[AVISO:ClienteController] " + msg + RESET);
+    }
+
+    private void erro(String msg, Exception e) {
+        System.err.println(RED + "[ERRO:ClienteController] " + msg + RESET);
+        if (e != null) e.printStackTrace();
+    }
+
     
     
 }

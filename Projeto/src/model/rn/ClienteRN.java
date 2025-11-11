@@ -118,7 +118,7 @@ public class ClienteRN {
             throw new Exception("Documento obrigatorio.");
         try (Connection con = ConexaoDAO.getConexao()) {
             this.clienteDAO = new ClienteDAO(con);
-            return clienteDAO.buscarPorDocumento(documento);
+            return clienteDAO.buscarClienteCompletoPorDocumento(documento);
         } catch (SQLException e) { 
             throw new Exception("Erro ao buscar cliente: " + e.getMessage(), e); 
         }
@@ -127,7 +127,7 @@ public class ClienteRN {
     public List<ClienteVO> buscarComFiltros(String nome, String tipoCodigo, Boolean ativo) throws Exception {
         try (Connection con = ConexaoDAO.getConexao()) {
             this.clienteDAO = new ClienteDAO(con);
-            return clienteDAO.buscarComFiltros(nome, tipoCodigo, ativo);
+            return clienteDAO.buscarClientesCompletosComFiltros(nome, tipoCodigo, ativo);
         } catch (SQLException e) { 
             throw new Exception("Erro ao buscar clientes: " + e.getMessage(), e); 
         }
@@ -137,6 +137,17 @@ public class ClienteRN {
         // Atalho: busca por nome parcial, sem filtrar tipo/status
         return buscarComFiltros(nomeLike, null, null);
     }
+
+    
+    public List<ClienteVO> listarClientesCompletos() throws Exception {
+        try (Connection con = ConexaoDAO.getConexao()) {
+            this.clienteDAO = new ClienteDAO(con);
+            return clienteDAO.listarClientesCompletos();
+        } catch (SQLException e) {
+            throw new Exception("Erro ao listar clientes completos: " + e.getMessage(), e);
+        }
+    }
+
 
     public void deletarCliente(String documento) throws Exception {
         if (documento == null || documento.isBlank()) throw new Exception("Documento obrigatorio.");
