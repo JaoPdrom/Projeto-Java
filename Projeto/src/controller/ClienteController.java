@@ -468,14 +468,12 @@ public class ClienteController implements Initializable{
             }
 
             if (sexoSelecionado == null) {
-                throw new IllegalArgumentException("Sexo eh obrigatorio");
+                throw new IllegalArgumentException("Sexo eh obrigatorio.");
             }
 
             if (dataNascimento == null) {
-                throw new IllegalArgumentException("Data de nascimento eh obrigatorio");
+                throw new IllegalArgumentException("Data de nascimento eh obrigatorio.");
             }
-
-            //criar telefone
             
 
             //montar pessoaVO
@@ -816,14 +814,24 @@ public class ClienteController implements Initializable{
             List<ClienteVO> lista = clienteRN.listarClientesCompletos();
             ObservableList<ClienteVO> obs = FXCollections.observableArrayList(lista);
 
-            tbcClienteId.setCellValueFactory(cd -> new SimpleStringProperty(
-                cd.getValue() != null && cd.getValue().getCli_id() > 0 ? String.valueOf(cd.getValue().getCli_id()) : ""));
+            tbcClienteId.setCellValueFactory(cd -> {
+                if (cd.getValue() != null && cd.getValue().getCli_id() > 0) {
+                    return new SimpleStringProperty(String.valueOf(cd.getValue().getCli_id()));
+                } else {
+                    return new SimpleStringProperty("");
+                }
+            });
+
+
             tbcClientePesNome.setCellValueFactory(cd -> new SimpleStringProperty(
                 cd.getValue() != null && cd.getValue().getPes_nome() != null ? cd.getValue().getPes_nome() : ""));
+
             tbcClientePesDocumento.setCellValueFactory(cd -> new SimpleStringProperty(
                 cd.getValue() != null && cd.getValue().getPes_cpf() != null ? cd.getValue().getPes_cpf() : ""));
+
             tbcClientePesEmail.setCellValueFactory(cd -> new SimpleStringProperty(
                 cd.getValue() != null && cd.getValue().getPes_email() != null ? cd.getValue().getPes_email() : ""));
+
             tbcClientePesTipo.setCellValueFactory(cd -> {
                 String tipo = "";
                 if (cd.getValue() != null && cd.getValue().getPes_tipo_pessoa() != null) {
