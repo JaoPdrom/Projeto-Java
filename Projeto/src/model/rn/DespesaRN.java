@@ -5,6 +5,13 @@
 
 package model.rn;
 
+import java.sql.Connection;
+import java.util.List;
+
+import model.dao.ConexaoDAO;
+import model.dao.TipoDespesaDAO;
+import model.vo.TipoDespesaVO;
+
 public class DespesaRN {
 
     // Métodos padrão: adicionar, atualizar, consultar por id, consultar por descrição (tipo), consultar todas
@@ -25,10 +32,19 @@ public class DespesaRN {
             }
             // valor: aceita zero, mas não nulo
 
+            if (despesa.getDespesa_tipo() == null || despesa.getDespesa_tipo().getTipoDespesa_id() <= 0) {
+                throw new Exception("Tipo de despesa é obrigatório.");
+            }
+
             con = model.dao.ConexaoDAO.getConexao();
             con.setAutoCommit(false);
 
             model.dao.DespesaDAO dao = new model.dao.DespesaDAO(con);
+            model.dao.TipoDespesaDAO tipoDAO = new model.dao.TipoDespesaDAO(con);
+
+            if (tipoDAO.buscarPorId(despesa.getDespesa_tipo().getTipoDespesa_id()) == null) {
+                throw new Exception("Tipo de despesa não encontrado: id=" + despesa.getDespesa_tipo().getTipoDespesa_id());
+            }
             int id = dao.adicionarNovo(despesa);
             if (id <= 0) {
                 throw new Exception("Falha ao inserir despesa.");
@@ -68,15 +84,24 @@ public class DespesaRN {
                 throw new Exception("Data de realização é obrigatória.");
             }
 
+            if (despesa.getDespesa_tipo() == null || despesa.getDespesa_tipo().getTipoDespesa_id() <= 0) {
+                throw new Exception("Tipo de despesa é obrigatório.");
+            }
+
             con = model.dao.ConexaoDAO.getConexao();
             con.setAutoCommit(false);
 
             model.dao.DespesaDAO dao = new model.dao.DespesaDAO(con);
+            model.dao.TipoDespesaDAO tipoDAO = new model.dao.TipoDespesaDAO(con);
 
             // garante existência
             model.vo.DespesaVO existente = dao.buscarPorId(despesa.getDespesa_id());
             if (existente == null) {
                 throw new Exception("Despesa não encontrada para o ID: " + despesa.getDespesa_id());
+            }
+
+            if (tipoDAO.buscarPorId(despesa.getDespesa_tipo().getTipoDespesa_id()) == null) {
+                throw new Exception("Tipo de despesa não encontrado: id=" + despesa.getDespesa_tipo().getTipoDespesa_id());
             }
 
             // atualiza todos os campos (menos id)
@@ -123,6 +148,15 @@ public class DespesaRN {
             return dao.buscarTodas();
         } catch (java.sql.SQLException e) {
             throw new Exception("Erro ao listar despesas: " + e.getMessage(), e);
+        }
+    }
+
+    public List<TipoDespesaVO> listarTiposDespesaRN() throws Exception {
+        try (java.sql.Connection con = ConexaoDAO.getConexao()) {
+            TipoDespesaDAO tipoDespesaDAO = new TipoDespesaDAO(con);
+            return tipoDespesaDAO.listarTodosTiposDespesa();
+        } catch (Exception e) {
+            throw new Exception("DESPESARN: erro ao listar tipos de despesa. " + e.getMessage(), e);
         }
     }
 }
