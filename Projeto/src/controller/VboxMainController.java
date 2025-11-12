@@ -39,4 +39,21 @@ public class VboxMainController implements Initializable {
 
         anchorPaneMainVbox.getChildren().setAll(root);
     }
+
+    @FXML
+    public void handlerMenuItemMainFinanceiroDespesa() throws IOException {
+        URL fxml = getClass().getResource("/viewfx/DespesaView.fxml");
+        if (fxml == null) {
+            throw new IOException("FMXL /viewfx/DespesaView.fxml nao encontrado.");
+        }
+
+        Parent root = FXMLLoader.load(fxml);
+
+        AnchorPane.setTopAnchor(root, 0.0);
+        AnchorPane.setRightAnchor(root, 0.0);
+        AnchorPane.setBottomAnchor(root, 0.0);
+        AnchorPane.setLeftAnchor(root, 0.0);
+
+        anchorPaneMainVbox.getChildren().setAll(root);
+    }
 }
