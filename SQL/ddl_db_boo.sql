@@ -157,10 +157,9 @@ CREATE TABLE IF NOT EXISTS tb_tipoPdt(
 CREATE TABLE IF NOT EXISTS tb_produto(
     produto_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     produto_nome VARCHAR(45) NOT NULL,
-    produto_qtdMax DOUBLE NOT NULL,
-    produto_qtdMin DOUBLE NOT NULL,
-    produto_tipoPdt INT NOT NULL,
+    produto_peso INT NOT NULL,
     produto_ativo BOOLEAN DEFAULT TRUE NOT NULL,
+    produto_tipoPdt INT NOT NULL,
     FOREIGN KEY (produto_tipoPdt) REFERENCES tb_tipoPdt (tipoPdt_id)
 );
 
@@ -188,6 +187,8 @@ CREATE TABLE IF NOT EXISTS tb_estoque(
     est_produto_id INT NOT NULL,
     est_custo DOUBLE NOT NULL,
     est_qtdToal DOUBLE NOT NULL,
+    est_qtdMin DOUBLE NOT NULL,
+    est_qtdMax DOUBLE NOT NULL,
     est_lote VARCHAR(45) NOT NULL,
     est_dtValidade DATE NOT NULL,
     est_forn_cnpj CHAR(14) NOT NULL,
@@ -214,7 +215,7 @@ CREATE TABLE IF NOT EXISTS tb_pedido(
     pedido_fnc_id INT NOT NULL,
     FOREIGN KEY (pedido_venda_id) REFERENCES tb_venda (venda_id),
     FOREIGN KEY (pedido_fnc_id) REFERENCES tb_funcionario (fnc_id),
-    FOREIGN KEY (pedido_statusPedido) REFERENCES tb_statuspedido (statusPedido_id),
+    FOREIGN KEY (pedido_statusPedido) REFERENCES tb_statusPedido (statusPedido_id),
     FOREIGN KEY (pedido_tipoEntrega) REFERENCES tb_tipoEntrega (tipoEntrega_id)
 );
 
