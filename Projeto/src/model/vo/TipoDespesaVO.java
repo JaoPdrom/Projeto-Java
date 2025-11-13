@@ -26,5 +26,9 @@ public class TipoDespesaVO {
     public void setTipoDespesa_nome(String tipoDespesa_nome) {
         this.tipoDespesa_nome = tipoDespesa_nome;
     }
+
+    public String toString(){
+        return tipoDespesa_nome;
+    }
 }
 

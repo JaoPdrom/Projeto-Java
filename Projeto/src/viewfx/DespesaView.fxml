@@ -17,10 +17,10 @@
                           <items>
                             <Button fx:id="btnDespesaNova" mnemonicParsing="false" onAction="#onNovaDespesa" text="Nova" />
                               <Button fx:id="btnDespesaSalvar" mnemonicParsing="false" onAction="#onSalvarDespesa" text="Salvar" />
-                              <Button fx:id="btnDespesaEditar" mnemonicParsing="false" text="Editar" />
-                              <Button fx:id="btnDespesaAtualizar" mnemonicParsing="false" text="Atualizar" />
-                              <Button fx:id="btnDespesaCancelar" mnemonicParsing="false" text="Cancelar" />
-                              <Button fx:id="btnDespesaExcluir" mnemonicParsing="false" text="Excluir" />
+                              <Button fx:id="btnDespesaEditar" mnemonicParsing="false" onAction="#onEditarDespesa" text="Editar" />
+                              <Button fx:id="btnDespesaAtualizar" mnemonicParsing="false" onAction="#onAtualizarDespesa" text="Atualizar" />
+                              <Button fx:id="btnDespesaCancelar" mnemonicParsing="false" onAction="#onCancelarDespesa" text="Cancelar" />
+                              <Button fx:id="btnDespesaExcluir" mnemonicParsing="false" onAction="#onExcluirDespesa" text="Excluir" />
                           </items>
                         </ToolBar>
                      </children>
@@ -51,7 +51,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <TableView fx:id="tbvDespesa" layoutX="-23.0" layoutY="25.0" prefHeight="518.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TableView fx:id="tbvDespesa" layoutX="-23.0" layoutY="25.0" onMouseClicked="#selecionarItemTabelaDespesa" prefHeight="518.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <columns>
                             <TableColumn fx:id="tbcDespesaId" prefWidth="75.0" text="ID" />
                             <TableColumn fx:id="tbcDespesaDescricao" prefWidth="129.0" text="Descrição" />

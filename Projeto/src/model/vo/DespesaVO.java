@@ -58,4 +58,9 @@ public class DespesaVO {
     public void setDespesa_tipo(TipoDespesaVO despesa_tipo) {
         this.despesa_tipo = despesa_tipo;
     }
+
+    @Override
+    public String toString(){
+        return despesa_descricao;
+    }
 }

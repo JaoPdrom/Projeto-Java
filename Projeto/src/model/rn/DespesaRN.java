@@ -6,10 +6,13 @@
 package model.rn;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import model.dao.ConexaoDAO;
+import model.dao.DespesaDAO;
 import model.dao.TipoDespesaDAO;
+import model.vo.DespesaVO;
 import model.vo.TipoDespesaVO;
 
 public class DespesaRN {
@@ -159,4 +162,22 @@ public class DespesaRN {
             throw new Exception("DESPESARN: erro ao listar tipos de despesa. " + e.getMessage(), e);
         }
     }
+
+    public void removerDespesa(int despesaId) throws Exception {
+        if (despesaId <= 0) {
+            throw new Exception("ID inválido para exclusão.");
+        }
+
+        try (Connection con = ConexaoDAO.getConexao()) {
+            DespesaDAO dao = new DespesaDAO(con);
+            DespesaVO existente = dao.buscarPorId(despesaId);
+            if (existente == null) {
+                throw new Exception("Despesa não encontrada para o ID: " + despesaId);
+            }
+            dao.excluirPorId(despesaId);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao excluir despesa: " + e.getMessage(), e);
+        }
+    }
+
 }

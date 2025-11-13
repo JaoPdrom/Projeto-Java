@@ -134,6 +134,15 @@ public class DespesaDAO {
         return lista;
     }
 
+    // Exclui despesa por id
+    public void excluirPorId(int id) throws SQLException {
+        String sql = "DELETE FROM tb_despesa WHERE despesa_id = ?";
+        try (PreparedStatement ps = con_despesa.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
+    }
+
     // Soma total de despesas no período (inclusive)
     public double somarTotalNoPeriodo(java.util.Date inicio, java.util.Date fim) throws SQLException {
         String sql = "SELECT COALESCE(SUM(despesa_valor_pago),0) AS total FROM tb_despesa WHERE despesa_dtRealiazacao BETWEEN ? AND ?";
