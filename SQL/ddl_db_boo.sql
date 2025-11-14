@@ -174,13 +174,6 @@ CREATE TABLE IF NOT EXISTS tb_itemVenda(
 );
 
 -- Tabelas de Produtos e Estoque
-CREATE TABLE IF NOT EXISTS tb_fornecedor(
-    forn_cnpj VARCHAR(14) NOT NULL PRIMARY KEY,
-    forn_razaSocial VARCHAR(100) NOT NULL,
-    forn_nomeFantasia VARCHAR(45) NOT NULL,
-    forn_ativo BOOLEAN DEFAULT TRUE NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS tb_estoque(
     est_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     est_dtCompra DATE NOT NULL,
@@ -191,9 +184,7 @@ CREATE TABLE IF NOT EXISTS tb_estoque(
     est_qtdMax DOUBLE NOT NULL,
     est_lote VARCHAR(45) NOT NULL,
     est_dtValidade DATE NOT NULL,
-    est_forn_cnpj CHAR(14) NOT NULL,
-    FOREIGN KEY (est_produto_id) REFERENCES tb_produto(produto_id),
-    FOREIGN KEY (est_forn_cnpj) REFERENCES tb_fornecedor(forn_cnpj)
+    FOREIGN KEY (est_produto_id) REFERENCES tb_produto(produto_id)
 );
 
 -- Tabelas de Pedidos e Entregas

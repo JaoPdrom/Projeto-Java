@@ -449,4 +449,25 @@ SELECT * FROM tb_tipoentrega;
 INSERT INTO tb_tipopdt
     VALUES (NULL, 'RACAO PRONTA'),
            (NULL, 'FORMULA');
-SELECT * FROM tb_fornecedor;
+SELECT * FROM tb_tipopdt;
+
+-- -----------------------------------------------------
+-- Table tb_produto
+-- -----------------------------------------------------
+INSERT INTO tb_produto (produto_id, produto_nome, produto_peso, produto_ativo, produto_tipoPdt)
+    VALUES (NULL, 'RACAO PREMIUM FILHOTES', 10, TRUE,
+                    (SELECT tipoPdt_id FROM tb_tipopdt WHERE tipoPdt_descricao = 'RACAO PRONTA')),
+           (NULL, 'RACAO MANUTENCAO ADULTOS', 20, TRUE,
+                    (SELECT tipoPdt_id FROM tb_tipopdt WHERE tipoPdt_descricao = 'RACAO PRONTA')),
+           (NULL, 'FORMULA ESPECIAL SENIOR', 25, TRUE,
+                    (SELECT tipoPdt_id FROM tb_tipopdt WHERE tipoPdt_descricao = 'FORMULA'));
+SELECT * FROM tb_produto;
+
+-- -----------------------------------------------------
+-- Table tb_estoque
+-- -----------------------------------------------------
+INSERT INTO tb_estoque (est_id, est_dtCompra, est_produto_id, est_custo, est_qtdToal, est_qtdMin, est_qtdMax, est_lote, est_dtValidade)
+    VALUES (NULL, '2025-01-05', 1, 150.00, 50, 10, 80, 'L2025-RPF-01', '2025-12-31'),
+           (NULL, '2025-02-12', 2, 220.00, 40, 8, 70, 'L2025-RMA-01', '2025-11-30'),
+           (NULL, '2025-03-08', 3, 260.00, 30, 5, 60, 'L2025-FES-01', '2025-10-15');
+SELECT * FROM tb_estoque;

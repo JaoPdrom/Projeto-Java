@@ -26,4 +26,10 @@ public class TipoProdutoVO {
     public void setTipoPdt_descricao(String tipoPdt_descricao) {
         this.tipoPdt_descricao = tipoPdt_descricao;
     }
+
+    @Override
+    public String toString() {
+        return tipoPdt_descricao;
+    }
+
 }

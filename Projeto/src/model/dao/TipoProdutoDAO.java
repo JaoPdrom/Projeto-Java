@@ -89,4 +89,24 @@ public class TipoProdutoDAO {
         }
         return null;
     }
+
+    public List<TipoProdutoVO> listarTiposProdutos() throws SQLException {
+        List<TipoProdutoVO> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM tb_tipoPdt";
+
+        try (PreparedStatement ps = con_tipoPdt.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                TipoProdutoVO vo = new TipoProdutoVO();
+                vo.setTipoPdt_id(rs.getInt("tipoPdt_id"));
+                vo.setTipoPdt_descricao(rs.getString("tipoPdt_descricao"));
+
+                lista.add(vo);
+            }
+        }
+
+        return lista;
+    }
 }

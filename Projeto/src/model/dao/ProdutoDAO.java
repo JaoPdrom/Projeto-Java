@@ -24,11 +24,15 @@ public class ProdutoDAO {
 
     // adicionar novo
     public int adicionarNovo(ProdutoVO produto) throws SQLException {
-        String sql = "INSERT INTO tb_produto (produto_nome, produto_qtdMax, produto_qtdMin, produto_tipoPdt) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO tb_produto (produto_nome, produto_peso, produto_ativo, produto_tipoPdt) VALUES (?, ?, ?, ?)";
         try (PreparedStatement produto_add = con_produto.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             produto_add.setString(1, produto.getProduto_nome());
-            produto_add.setDouble(2, produto.getProduto_qtdMax());
-            produto_add.setDouble(3, produto.getProduto_qtdMin());
+            produto_add.setInt(2, produto.getProduto_peso());
+            boolean ativo = true;
+            if (produto.getProduto_ativo() != null) {
+                ativo = produto.getProduto_ativo();
+            }
+            produto_add.setBoolean(3, ativo);
             produto_add.setInt(4, produto.getProduto_tipoPdt().getTipoPdt_id());
             produto_add.executeUpdate();
             try (ResultSet rs = produto_add.getGeneratedKeys()) {
@@ -42,11 +46,15 @@ public class ProdutoDAO {
 
     // update produto por id
     public void atualizarPorId(ProdutoVO produto) throws SQLException {
-        String sql = "UPDATE tb_produto SET produto_nome = ?, produto_qtdMax = ?, produto_qtdMin = ?, produto_tipoPdt = ? WHERE produto_id = ?";
+        String sql = "UPDATE tb_produto SET produto_nome = ?, produto_peso = ?, produto_ativo = ?, produto_tipoPdt = ? WHERE produto_id = ?";
         try (PreparedStatement produto_att_id = con_produto.prepareStatement(sql)) {
             produto_att_id.setString(1, produto.getProduto_nome());
-            produto_att_id.setDouble(2, produto.getProduto_qtdMax());
-            produto_att_id.setDouble(3, produto.getProduto_qtdMin());
+            produto_att_id.setInt(2, produto.getProduto_peso());
+            boolean ativo = true;
+            if (produto.getProduto_ativo() != null) {
+                ativo = produto.getProduto_ativo();
+            }
+            produto_att_id.setBoolean(3, ativo);
             produto_att_id.setInt(4, produto.getProduto_tipoPdt().getTipoPdt_id());
             produto_att_id.setInt(5, produto.getProduto_id());
             produto_att_id.executeUpdate();
@@ -55,11 +63,15 @@ public class ProdutoDAO {
 
     // update produto por nome
     public void atualizarPorNome(String nomeAntigo, ProdutoVO produtoNovo) throws SQLException {
-        String sql = "UPDATE tb_produto SET produto_nome = ?, produto_qtdMax = ?, produto_qtdMin = ?, produto_tipoPdt = ? WHERE produto_nome = ?";
+        String sql = "UPDATE tb_produto SET produto_nome = ?, produto_peso = ?, produto_ativo = ?, produto_tipoPdt = ? WHERE produto_nome = ?";
         try (PreparedStatement produto_att_nome = con_produto.prepareStatement(sql)) {
             produto_att_nome.setString(1, produtoNovo.getProduto_nome());
-            produto_att_nome.setDouble(2, produtoNovo.getProduto_qtdMax());
-            produto_att_nome.setDouble(3, produtoNovo.getProduto_qtdMin());
+            produto_att_nome.setInt(2, produtoNovo.getProduto_peso());
+            boolean ativo = true;
+            if (produtoNovo.getProduto_ativo() != null) {
+                ativo = produtoNovo.getProduto_ativo();
+            }
+            produto_att_nome.setBoolean(3, ativo);
             produto_att_nome.setInt(4, produtoNovo.getProduto_tipoPdt().getTipoPdt_id());
             produto_att_nome.setString(5, nomeAntigo);
             produto_att_nome.executeUpdate();
@@ -77,8 +89,8 @@ public class ProdutoDAO {
                     produto = new ProdutoVO();
                     produto.setProduto_id(rs.getInt("produto_id"));
                     produto.setProduto_nome(rs.getString("produto_nome"));
-                    produto.setProduto_qtdMax(rs.getDouble("produto_qtdMax"));
-                    produto.setProduto_qtdMin(rs.getDouble("produto_qtdMin"));
+                    produto.setProduto_peso(rs.getInt("produto_peso"));
+                    produto.setProduto_ativo(rs.getBoolean("produto_ativo"));
 
                     // Buscando o Tipo de Produto
                     TipoProdutoDAO tipoPdtDAO = new TipoProdutoDAO(con_produto);
@@ -90,7 +102,7 @@ public class ProdutoDAO {
         return produto;
     }
 
-    // busca produto por nome
+    // busca produto por nome exato (retorna um)
     public ProdutoVO buscarPorNome(String nome) throws SQLException {
         String sql = "SELECT * FROM tb_produto WHERE produto_nome = ?";
         ProdutoVO produto = null;
@@ -101,8 +113,8 @@ public class ProdutoDAO {
                     produto = new ProdutoVO();
                     produto.setProduto_id(rs.getInt("produto_id"));
                     produto.setProduto_nome(rs.getString("produto_nome"));
-                    produto.setProduto_qtdMax(rs.getDouble("produto_qtdMax"));
-                    produto.setProduto_qtdMin(rs.getDouble("produto_qtdMin"));
+                    produto.setProduto_peso(rs.getInt("produto_peso"));
+                    produto.setProduto_ativo(rs.getBoolean("produto_ativo"));
 
                     // Buscando o Tipo de Produto
                     TipoProdutoDAO tipoPdtDAO = new TipoProdutoDAO(con_produto);
@@ -112,6 +124,28 @@ public class ProdutoDAO {
             }
         }
         return produto;
+    }
+
+    // busca produtos por nome parcial
+    public List<ProdutoVO> buscarPorNomeParcial(String termo) throws SQLException {
+        String sql = "SELECT * FROM tb_produto WHERE produto_nome LIKE ? ORDER BY produto_nome";
+        List<ProdutoVO> lista = new ArrayList<>();
+        try (PreparedStatement ps = con_produto.prepareStatement(sql)) {
+            ps.setString(1, "%" + termo + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                TipoProdutoDAO tipoPdtDAO = new TipoProdutoDAO(con_produto);
+                while (rs.next()) {
+                    ProdutoVO produto = new ProdutoVO();
+                    produto.setProduto_id(rs.getInt("produto_id"));
+                    produto.setProduto_nome(rs.getString("produto_nome"));
+                    produto.setProduto_peso(rs.getInt("produto_peso"));
+                    produto.setProduto_ativo(rs.getBoolean("produto_ativo"));
+                    produto.setProduto_tipoPdt(tipoPdtDAO.buscarPorId(rs.getInt("produto_tipoPdt")));
+                    lista.add(produto);
+                }
+            }
+        }
+        return lista;
     }
 
     // listar todos (opcionalmente apenas ativos)
@@ -125,8 +159,8 @@ public class ProdutoDAO {
                     ProdutoVO p = new ProdutoVO();
                     p.setProduto_id(rs.getInt("produto_id"));
                     p.setProduto_nome(rs.getString("produto_nome"));
-                    p.setProduto_qtdMax(rs.getDouble("produto_qtdMax"));
-                    p.setProduto_qtdMin(rs.getDouble("produto_qtdMin"));
+                    p.setProduto_peso(rs.getInt("produto_peso"));
+                    p.setProduto_ativo(rs.getBoolean("produto_ativo"));
                     p.setProduto_tipoPdt(tipoPdtDAO.buscarPorId(rs.getInt("produto_tipoPdt")));
                     lista.add(p);
                 }
@@ -147,8 +181,8 @@ public class ProdutoDAO {
                     ProdutoVO p = new ProdutoVO();
                     p.setProduto_id(rs.getInt("produto_id"));
                     p.setProduto_nome(rs.getString("produto_nome"));
-                    p.setProduto_qtdMax(rs.getDouble("produto_qtdMax"));
-                    p.setProduto_qtdMin(rs.getDouble("produto_qtdMin"));
+                    p.setProduto_peso(rs.getInt("produto_peso"));
+                    p.setProduto_ativo(rs.getBoolean("produto_ativo"));
                     p.setProduto_tipoPdt(tipoPdtDAO.buscarPorId(rs.getInt("produto_tipoPdt")));
                     lista.add(p);
                 }
@@ -166,12 +200,6 @@ public class ProdutoDAO {
         }
     }
 
-    // remoção física (irá falhar se houver FKs em uso)
-    public void deletarFisicoPorId(int produtoId) throws SQLException {
-        String sql = "DELETE FROM tb_produto WHERE produto_id = ?";
-        try (PreparedStatement ps = con_produto.prepareStatement(sql)) {
-            ps.setInt(1, produtoId);
-            ps.executeUpdate();
-        }
-    }
+    
+
 }

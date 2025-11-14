@@ -56,4 +56,22 @@ public class VboxMainController implements Initializable {
 
         anchorPaneMainVbox.getChildren().setAll(root);
     }
+
+    @FXML
+    public void handlerMenuItemMainProdutoProdutoEstoque() throws IOException {
+        URL fxml = getClass().getResource("/viewfx/ProdutoEstoqueView.fxml");
+        if (fxml == null){
+            throw new IOException("Erro ao carregar /view/ProdutoEstoqueView.fxml");
+        }
+
+        Parent root = FXMLLoader.load(fxml);
+
+        AnchorPane.setTopAnchor(root, 0.0);
+        AnchorPane.setRightAnchor(root, 0.0);
+        AnchorPane.setBottomAnchor(root, 0.0);
+        AnchorPane.setLeftAnchor(root, 0.0);
+
+        anchorPaneMainVbox.getChildren().setAll(root);
+
+    }
 }

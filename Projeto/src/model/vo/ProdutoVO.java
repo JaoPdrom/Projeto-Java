@@ -3,18 +3,25 @@ package model.vo;
 public class ProdutoVO {
     private int produto_id;
     private String produto_nome;
-    private Double produto_qtdMax;
-    private Double produto_qtdMin;
-    private TipoProdutoVO produto_tipoPdt;
+    private int produto_peso;
     private Boolean produto_ativo;
+    private TipoProdutoVO produto_tipoPdt;
+    
 
     public ProdutoVO() {}
 
-    public ProdutoVO(int produto_id, String produto_nome, Double produto_qtdMax, Double produto_qtdMin, TipoProdutoVO produto_tipoPdt) {
+    public ProdutoVO(int produto_id, String produto_nome, int produto_peso, Boolean produto_ativo, TipoProdutoVO produto_tipoPdt) {
         this.produto_id = produto_id;
         this.produto_nome = produto_nome;
-        this.produto_qtdMax = produto_qtdMax;
-        this.produto_qtdMin = produto_qtdMin;
+        this.produto_peso = produto_peso;
+        this.produto_ativo = produto_ativo;
+        this.produto_tipoPdt = produto_tipoPdt;
+    }
+
+    public ProdutoVO(String produto_nome, int produto_peso, Boolean produto_ativo, TipoProdutoVO produto_tipoPdt) {
+        this.produto_nome = produto_nome;
+        this.produto_peso = produto_peso;
+        this.produto_ativo = produto_ativo;
         this.produto_tipoPdt = produto_tipoPdt;
     }
 
@@ -34,22 +41,6 @@ public class ProdutoVO {
         this.produto_nome = produto_nome;
     }
 
-    public Double getProduto_qtdMax() {
-        return produto_qtdMax;
-    }
-
-    public void setProduto_qtdMax(Double produto_qtdMax) {
-        this.produto_qtdMax = produto_qtdMax;
-    }
-
-    public Double getProduto_qtdMin() {
-        return produto_qtdMin;
-    }
-
-    public void setProduto_qtdMin(Double produto_qtdMin) {
-        this.produto_qtdMin = produto_qtdMin;
-    }
-
     public TipoProdutoVO getProduto_tipoPdt() {
         return produto_tipoPdt;
     }
@@ -64,5 +55,18 @@ public class ProdutoVO {
 
     public void setProduto_ativo(Boolean produto_ativo) {
         this.produto_ativo = produto_ativo;
+    }
+
+    public int getProduto_peso() {
+        return produto_peso;
+    }
+
+    public void setProduto_peso(int produto_peso) {
+        this.produto_peso = produto_peso;
+    }
+
+    @Override
+    public String toString() {
+        return produto_nome;
     }
 }

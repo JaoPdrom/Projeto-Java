@@ -119,14 +119,16 @@ public class DespesaController implements Initializable {
                 descricao = txtDespesaDescricao.getText().trim();
             }
 
-                String valorPago = txtDespesaValorPago.getText();
+            String valorPago = txtDespesaValorPago.getText();
             if (valorPago == null || valorPago.isBlank()) {
                 throw new IllegalArgumentException("Valor pago eh um campo obrigatorio.");
             }
+
             // Remove moeda/espacos (inclui NBSP) e normaliza separadores
             String valorLimpo = valorPago.replaceAll("[^\\d,.-]", "");
             valorLimpo = valorLimpo.replace(".", "").replace(",", ".");
             double valor;
+            
             try { 
                 valor = Double.parseDouble(valorLimpo); 
             } catch (NumberFormatException nfe) { 
@@ -310,7 +312,7 @@ public class DespesaController implements Initializable {
 
     @FXML
     private void onNovaDespesa(ActionEvent event) {
-        habilitarCampos(true);
+        habilitarCamposPadrao(true);
         info("Botao nova pressionado");
         btnDespesaSalvar.setDisable(false);
     }
@@ -414,6 +416,7 @@ public class DespesaController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         carregarTabela();
         habilitarCampos(false);
+        habilitarCamposPadrao(false);
         carregarDespesaTipoDespesa();
 
         txtDespesaValorPago.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -430,19 +433,23 @@ public class DespesaController implements Initializable {
     }
 
 
-    // metodo de campos
+    // metodo de campos -- revisar, nem todos os campos precisam ser desabilitados
     private void habilitarCampos(boolean habilitado){
-        txtDespesaDescricao.setDisable(!habilitado);
-        txtDespesaValorPago.setDisable(!habilitado);
-        dtpDespesaDataRealizacao.setDisable(!habilitado);
-        cbDespesaTipoDespesa.setDisable(!habilitado);
-        btnDespesaSalvar.setDisable(!habilitado);
+        btnDespesaSalvar.setDisable(!habilitado); 
         btnDespesaEditar.setDisable(!habilitado);
         btnDespesaAtualizar.setDisable(!habilitado);
         btnDespesaExcluir.setDisable(!habilitado);
         btnDespesaNovoTipoDespesa.setDisable(!habilitado);
         cbDespesaBuscar.setDisable(!habilitado);
         DespesaID.setDisable(!habilitado);
+    }
+
+    // metodo para desabilitar apenas campos que nao pertencem a toolbar
+    private void habilitarCamposPadrao(boolean habilitado){
+        txtDespesaDescricao.setDisable(!habilitado); // tirar
+        txtDespesaValorPago.setDisable(!habilitado); // tirar
+        dtpDespesaDataRealizacao.setDisable(!habilitado); // tirar
+        cbDespesaTipoDespesa.setDisable(!habilitado); // tirar
     }
 
     private void limparCamposDespesa(){
