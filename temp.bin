@@ -17,22 +17,12 @@ public class FuncionarioDAO {
     private PessoaDAO pessoaDAO;
     private CargoDAO cargoDAO;
     private SexoDAO sexoDAO;
-    private TipoPessoaDAO tipoPessoaDAO;
-    private TelefoneDAO telefoneDAO;
-    private EnderecoDAO enderecoDAO;
-    private ContratacaoDAO contratacaoDAO;
-    private DemissaoDAO demissaoDAO;
 
     public FuncionarioDAO(Connection con_fnc) {
         this.con_fnc = con_fnc;
         this.pessoaDAO = new PessoaDAO(con_fnc);
         this.cargoDAO = new CargoDAO(con_fnc);
         this.sexoDAO = new SexoDAO(con_fnc);
-        this.tipoPessoaDAO = new TipoPessoaDAO();
-        this.telefoneDAO = new TelefoneDAO(con_fnc);
-        this.enderecoDAO = new EnderecoDAO(con_fnc);
-        this.contratacaoDAO = new ContratacaoDAO(con_fnc);
-        this.demissaoDAO = new DemissaoDAO(con_fnc);
     }
 
     // adicionar novo funcionario
@@ -221,87 +211,6 @@ public class FuncionarioDAO {
 
 
 
-
-    public List<FuncionarioVO> listarTodosCompletos() throws SQLException {
-        String sql = """
-        SELECT 
-            f.fnc_id,
-            f.fnc_numPis,
-            f.fnc_salario,
-            f.fnc_cargo_id,
-            f.fnc_pes_documento,
-            f.fnc_ativo,
-            p.pes_nome,
-            p.pes_dtNascimento,
-            p.pes_email,
-            p.pes_sex_id,
-            p.pes_tipo_pessoa_id,
-            p.pes_ativo,
-            s.sex_descricao,
-            c.cargo_descricao
-        FROM tb_funcionario f
-        JOIN tb_pessoa p ON p.pes_documento = f.fnc_pes_documento
-        LEFT JOIN tb_sexo s ON s.sex_id = p.pes_sex_id
-        LEFT JOIN tb_cargo c ON c.cargo_id = f.fnc_cargo_id
-        ORDER BY f.fnc_id
-        """;
-
-        List<FuncionarioVO> lista = new ArrayList<>();
-        try (PreparedStatement ps = con_fnc.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                FuncionarioVO funcionario = new FuncionarioVO();
-                funcionario.setFnc_id(rs.getInt("fnc_id"));
-                funcionario.setFnc_numPis(rs.getString("fnc_numPis"));
-                funcionario.setFnc_salario(rs.getDouble("fnc_salario"));
-                funcionario.setPes_cpf(rs.getString("fnc_pes_documento"));
-                funcionario.setPes_nome(rs.getString("pes_nome"));
-                funcionario.setPes_dt_nascimento(rs.getDate("pes_dtNascimento") != null ? rs.getDate("pes_dtNascimento").toLocalDate() : null);
-                funcionario.setPes_email(rs.getString("pes_email"));
-                funcionario.setPes_ativo(rs.getBoolean("fnc_ativo"));
-
-                int sexoId = rs.getInt("pes_sex_id");
-                if (!rs.wasNull()) {
-                    funcionario.setPes_sexo(sexoDAO.buscarPorId(sexoId));
-                }
-
-                int tipoPessoaId = rs.getInt("pes_tipo_pessoa_id");
-                if (!rs.wasNull()) {
-                    TipoPessoaVO tipoPessoa = tipoPessoaDAO.buscarPorId(tipoPessoaId);
-                    funcionario.setPes_tipo_pessoa(tipoPessoa);
-                }
-
-                CargoVO cargo = cargoDAO.buscarPorId(rs.getInt("fnc_cargo_id"));
-                funcionario.setFnc_cargo(cargo);
-
-                List<TelefoneVO> telefones = telefoneDAO.buscarPorCpf(funcionario.getPes_cpf());
-                funcionario.setTelefone(telefones);
-
-                List<EnderecoVO> enderecos = enderecoDAO.buscarPorDocumento(funcionario.getPes_cpf());
-                funcionario.setEndereco(enderecos);
-
-                List<ContratacaoVO> fases = contratacaoDAO.listarPorFuncionario(funcionario.getFnc_id());
-                if (!fases.isEmpty()) {
-                    ContratacaoVO ultima = fases.get(fases.size() - 1);
-                    ultima.setFuncionario(funcionario);
-                    funcionario.setContratacao(ultima);
-                    funcionario.setFnc_dtContratacao(ultima.getContratacao_dtContratacao());
-                }
-
-                List<DemissaoVO> demissoes = demissaoDAO.listarPorFuncionario(funcionario.getFnc_id());
-                if (!demissoes.isEmpty()) {
-                    DemissaoVO ultimaDemissao = demissoes.get(0);
-                    ultimaDemissao.setFuncionario(funcionario);
-                    funcionario.setDemissao(ultimaDemissao);
-                    funcionario.setFnc_dtDemissao(ultimaDemissao.getDemissao_data());
-                    funcionario.setFnc_motivo_demissao(ultimaDemissao.getDemissao_motivo());
-                }
-
-                lista.add(funcionario);
-            }
-        }
-        return lista;
-    }
 
 
     // Constrói um objeto FuncionarioVO completo a partir do ResultSet

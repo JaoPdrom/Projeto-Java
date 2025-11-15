@@ -30,7 +30,7 @@ public class DebitoRN {
             deb.setDeb_status(status);
 
             int id = debitoDAO.adicionarNovo(deb);
-            if (id <= 0) {
+            if (id <= 0) {/*  */
                 throw new Exception("Falha ao inserir débito.");
             }
 

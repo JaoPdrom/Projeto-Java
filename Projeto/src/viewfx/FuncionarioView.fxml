@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FuncionarioController">
+   <children>
+      <BorderPane layoutX="260.0" layoutY="169.0" prefHeight="600.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <Button fx:id="btnFuncionarioNovo" mnemonicParsing="false" onAction="#onNovoFuncionario" text="Novo" />
+                  <Button fx:id="btnFuncionarioSalvar" mnemonicParsing="false" onAction="#onSalvarFuncionario" text="Salvar" />
+                  <Button fx:id="btnFuncionarioEditar" mnemonicParsing="false" onAction="#onEditarFuncionario" text="Editar" />
+                  <Button fx:id="btnFuncionarioAtualizar" mnemonicParsing="false" onAction="#onAtualizarFuncionario" text="Atualizar" />
+                  <Button fx:id="btnFuncionarioExcluir" mnemonicParsing="false" onAction="#onExcluirFuncionario" text="Excluir" />
+                  <Button fx:id="btnFuncionarioCancelar" mnemonicParsing="false" onAction="#onCancelarBusca" text="Cancelar" />
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                  <Label text="Busca:" />
+                  <TextField fx:id="txtFuncionarioBusca" />
+                  <ComboBox fx:id="cbFuncionarioTipoBusca" prefWidth="150.0" promptText="Tipo Busca" />
+                  <Button fx:id="btnFuncionarioBuscar" mnemonicParsing="false" onAction="#onBuscarFuncionario" text="Buscar" />
+              </items>
+            </ToolBar>
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.41652754590984975" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <TableView fx:id="tbvFuncionario" layoutY="120.0" prefHeight="558.0" prefWidth="354.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TableColumn fx:id="tbcFuncionarioId" prefWidth="75.0" text="ID" />
+                            <TableColumn fx:id="tbcFuncionarioNome" prefWidth="211.0" text="Nome" />
+                              <TableColumn fx:id="tbcFuncionarioCargo" prefWidth="113.0" text="Cargo" />
+                              <TableColumn fx:id="tbcFuncionarioAtivo" prefWidth="96.0" text="Ativo" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                     <children>
+                        <GridPane hgap="2.0" layoutX="48.0" layoutY="12.0" prefHeight="534.0" prefWidth="600.0" vgap="2.0">
+                           <children>
+                              <Label text="ID:" />
+                              <Label text="Documento:" GridPane.rowIndex="1" />
+                              <Label text="Nome:" GridPane.rowIndex="2" />
+                              <Label text="Tipo:" GridPane.rowIndex="3" />
+                              <Label text="Sexo:" GridPane.rowIndex="4" />
+                              <Label text="Data Nascimento:" GridPane.rowIndex="5" />
+                              <Label text="Telefone:" GridPane.rowIndex="6" />
+                              <Label text="Endereço" GridPane.rowIndex="7" />
+                              <Label text="Email:" GridPane.rowIndex="9" />
+                              <Label text="Ativo:" GridPane.rowIndex="10" />
+                              <Label text="Data Contratação / Número PIS:" GridPane.rowIndex="11" />
+                              <Label text="Salário:" GridPane.rowIndex="12" />
+                              <Label text="Cargo / Fase de Contrataçao:" GridPane.rowIndex="13" />
+                              <Label text="Data Demissão / Motivo:" GridPane.rowIndex="14" />
+                              <ComboBox fx:id="cbFuncionarioPesSexo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="cbFuncionarioPesTipo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <DatePicker fx:id="dtpFuncionarioPesDtNascimento" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <CheckBox fx:id="chbFuncionarioPesAtivo" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <TextField fx:id="txtFuncionarioPesDocumento" promptText="CPF ou CNPJ" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="txtFuncionarioPesNome" promptText="Nome Completo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                 <children>
+                                    <TextField fx:id="txtFuncionarioPesTelCodPais" promptText="Cod. Pais" />
+                                    <TextField fx:id="txtFuncionarioPesTelDdd" promptText="DDD" />
+                                    <TextField fx:id="txtFuncionarioPesTelNumero" promptText="No." />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                 <children>
+                                    <ComboBox fx:id="cbFuncionarioPesEndEstado" prefWidth="150.0" promptText="Estado" />
+                                    <ComboBox fx:id="cbFuncionarioPesEndCidade" prefWidth="150.0" promptText="Cidade" />
+                                    <ComboBox fx:id="cbFuncionarioPesEndLogradouro" prefWidth="150.0" promptText="Logradouro" />
+                                    <TextField fx:id="txtFuncionarioPesEndCep" promptText="CEP" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                 <children>
+                                    <TextField fx:id="txtFuncionarioPesEndNomeRua" promptText="Nome Rua" />
+                                    <TextField fx:id="txtFuncionarioPesEndBairro" promptText="Bairro" />
+                                    <TextField fx:id="txtFuncionarioPesEndNumero" promptText="No." />
+                                    <TextField fx:id="txtFuncionarioPesEndComplemento" promptText="Complemento" />
+                                 </children>
+                              </HBox>
+                              <TextField fx:id="txtFuncionarioPesEmail" promptText="email@email.com" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <TextField fx:id="txtFuncionarioSalario" promptText="Ex: 10,5 ou 10.5" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                              <Label fx:id="lbFuncionarioId" text="Label" GridPane.columnIndex="1" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                 <children>
+                                    <DatePicker fx:id="dtpFuncionarioDtContratacao" promptText="Data de Contratação" />
+                                    <TextField fx:id="txtFuncionarioNumPis" promptText="No. PIS" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                 <children>
+                                    <ComboBox fx:id="cbFuncionarioCargo" prefWidth="150.0" promptText="Cargo" />
+                                    <ComboBox fx:id="cbFuncionarioContratacaoFase" prefWidth="150.0" promptText="Fase" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                 <children>
+                                    <DatePicker fx:id="dtpFuncionarioDtDemissao" promptText="Data Demissao" />
+                                    <TextField fx:id="txtFuncionarioDemissaoMotivo" promptText="Motivo Demissao" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="261.0" minWidth="10.0" prefWidth="126.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="419.0" minWidth="10.0" prefWidth="408.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

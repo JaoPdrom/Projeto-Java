@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS tb_tipoPessoa(
     codigo CHAR(1) NOT NULL UNIQUE,
     descricao VARCHAR(50) NOT NULL
 );
+INSERT INTO tb_tipopessoa (codigo, descricao) VALUES ('J', 'Juridica');
+
 
 CREATE TABLE IF NOT EXISTS tb_pessoa(
     pes_documento VARCHAR(14) NOT NULL PRIMARY KEY,
@@ -112,11 +114,12 @@ CREATE TABLE IF NOT EXISTS tb_cargo(
     cargo_descricao VARCHAR(45) NOT NULL,
     cargo_ativo BOOLEAN DEFAULT TRUE NOT NULL
 );
+INSERT INTO tb_cargo (cargo_descricao, cargo_ativo) VALUES ('Motorista', true);
+
 
 CREATE TABLE IF NOT EXISTS tb_funcionario(
     fnc_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    fnc_dtContratacao DATE NOT NULL,
-    fnc_dtDemissao DATE NULL,
+    fnc_numPis CHAR(11) NOT NULL,
     fnc_salario DOUBLE NOT NULL,
     fnc_cargo_id INT NOT NULL,
     fnc_pes_documento VARCHAR(14) NOT NULL,
@@ -124,6 +127,23 @@ CREATE TABLE IF NOT EXISTS tb_funcionario(
     FOREIGN KEY (fnc_cargo_id) REFERENCES tb_cargo(cargo_id),
     FOREIGN KEY (fnc_pes_documento) REFERENCES tb_pessoa(pes_documento)
 );
+
+CREATE TABLE tb_contratacao (
+    contratacao_id INT AUTO_INCREMENT PRIMARY KEY,
+    contratacao_fase VARCHAR(45) NOT NULL,
+    contratacao_data DATE NOT NULL,
+    contratacao_fnc_id INT NOT NULL,
+    FOREIGN KEY (contratacao_fnc_id) REFERENCES tb_funcionario(fnc_id)
+);
+
+CREATE TABLE tb_demissao (
+    demissao_id INT AUTO_INCREMENT PRIMARY KEY,
+    demissao_data DATE NOT NULL,
+    demissao_motivo VARCHAR(250) NOT NULL,
+    demissao_fnc_id INT NOT NULL,
+    FOREIGN KEY (demissao_fnc_id) REFERENCES tb_funcionario(fnc_id)
+);
+
 
 -- Tabelas de Vendas e Pagamentos
 CREATE TABLE IF NOT EXISTS tb_statusVenda(
@@ -153,6 +173,8 @@ CREATE TABLE IF NOT EXISTS tb_tipoPdt(
     tipoPdt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     tipoPdt_descricao VARCHAR(45)
 );
+INSERT INTO tb_tipopdt (tipoPdt_descricao) VALUES ('racao');
+
 
 CREATE TABLE IF NOT EXISTS tb_produto(
     produto_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,

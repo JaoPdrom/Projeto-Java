@@ -28,6 +28,11 @@
                 <MenuItem mnemonicParsing="false" onAction="#handlerMenuItemMainProdutoProdutoEstoque" text="Produto/Estoque" />
               </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Recursos Humanos">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#handlerMenuItemMainRhFuncionario" text="Funcionario" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
       <AnchorPane fx:id="anchorPaneMainVbox" prefHeight="600.0" prefWidth="1200.0" />

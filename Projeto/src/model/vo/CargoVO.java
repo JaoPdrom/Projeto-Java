@@ -28,4 +28,9 @@ public class CargoVO {
     public void setCargo_descricao(String cargo_descricao) {
         this.cargo_descricao = cargo_descricao;
     }
+
+    @Override
+    public String toString() {
+        return cargo_descricao != null ? cargo_descricao : "";
+    }
 }

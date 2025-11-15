@@ -22,15 +22,17 @@ public class EnderecoDAO {
     private BairroDAO bairroDAO;
     private CidadeDAO cidadeDAO;
     private EstadoDAO estadoDAO;
+    private EndPostalDAO endPostalDAO;
     private PesEndDAO pesEndDAO;
 
     public EnderecoDAO(Connection con_endp) {
         this.con_endp = con_endp;
         try {
-            this.logradouroDAO = new LogradouroDAO(con_endp);
-            this.bairroDAO = new BairroDAO(con_endp);
-            this.cidadeDAO = new CidadeDAO(con_endp);
-            this.estadoDAO = new EstadoDAO(con_endp);
+        this.logradouroDAO = new LogradouroDAO(con_endp);
+        this.bairroDAO = new BairroDAO(con_endp);
+        this.cidadeDAO = new CidadeDAO(con_endp);
+        this.estadoDAO = new EstadoDAO(con_endp);
+        this.endPostalDAO = new EndPostalDAO(con_endp);
             this.pesEndDAO = new PesEndDAO(con_endp);
         } catch (SQLException e) {
             System.err.println("Erro ao instanciar DAOs auxiliares em EnderecoDAO: " + e.getMessage());
@@ -95,8 +97,7 @@ public class EnderecoDAO {
                     end.setEnd_id(rs.getInt("end_id"));
 
                     // Criar o objeto de referência (EndPostal) se existir
-                    EndPostalVO endPostal = new EndPostalVO();
-                    endPostal.setEndP_id(rs.getInt("end_endP_id"));
+                    EndPostalVO endPostal = endPostalDAO.buscarPorId(rs.getInt("end_endP_id"));
                     end.setEnd_endP_id(endPostal);
 
                     end.setEnd_numero(rs.getString("end_numero"));

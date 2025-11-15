@@ -74,4 +74,21 @@ public class VboxMainController implements Initializable {
         anchorPaneMainVbox.getChildren().setAll(root);
 
     }
+
+    @FXML
+    public void handlerMenuItemMainRhFuncionario() throws IOException {
+        URL fxml = getClass().getResource("/viewfx/FuncionarioView.fxml");
+        if (fxml == null){
+            throw new IOException("Erro ao carregar /viewfx/FuncionarioView.fxml");
+        }
+
+        Parent root = FXMLLoader.load(fxml);
+
+        AnchorPane.setTopAnchor(root, 0.0);
+        AnchorPane.setRightAnchor(root, 0.0);
+        AnchorPane.setBottomAnchor(root, 0.0);
+        AnchorPane.setLeftAnchor(root, 0.0);
+
+        anchorPaneMainVbox.getChildren().setAll(root);
+    }
 }
