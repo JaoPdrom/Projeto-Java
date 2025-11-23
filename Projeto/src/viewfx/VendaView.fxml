@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.VendaController">
+   <children>
+      <BorderPane layoutX="147.0" layoutY="-6.0" prefHeight="600.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <Button fx:id="btnNovaVenda" mnemonicParsing="false" onAction="#onBtnNovaVenda" text="Nova" />
+                  <Button fx:id="btnVendaBuscar" mnemonicParsing="false" onAction="#onBtnVendaBuscar" text="Busca" />
+                  <Button fx:id="btnVendaCancelar" mnemonicParsing="false" onAction="#onBtnVendaCancelar" text="Cancelar" />
+              </items>
+            </ToolBar>
+         </top>
+         <center>
+            <SplitPane prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <items>
+                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab text="Nova venda">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <SplitPane dividerPositions="0.5" layoutX="312.0" layoutY="129.0" prefHeight="529.0" prefWidth="1198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                             <children>
+                                                <VBox layoutX="213.0" layoutY="89.0" prefHeight="527.0" prefWidth="595.0" spacing="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                                        <items>
+                                                            <Label text="Buscar Produto:" />
+                                                            <TextField fx:id="txtVendaBuscarPdt" />
+                                                          <Button fx:id="btnVendaBuscarProduto" mnemonicParsing="false" onAction="#onBtnVendaBuscarProduto" text="Buscar" />
+                                                        </items>
+                                                      </ToolBar>
+                                                      <TableView fx:id="tbvVendaBuscaProduto" prefHeight="200.0" prefWidth="200.0">
+                                                        <columns>
+                                                          <TableColumn fx:id="tbcVendaIdPdtId" prefWidth="75.0" text="ID" />
+                                                          <TableColumn fx:id="tbcVendaIdPdtNome" prefWidth="259.0" text="Nome" />
+                                                            <TableColumn fx:id="tbcVendaIdPdtCusto" prefWidth="145.0" text="Custo" />
+                                                            <TableColumn fx:id="tbcVendaIdPdtEstoque" prefWidth="115.0" text="Em estoque" />
+                                                        </columns>
+                                                      </TableView>
+                                                      <GridPane hgap="6.0" prefHeight="144.0" prefWidth="595.0" vgap="6.0">
+                                                        <columnConstraints>
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="292.0" minWidth="10.0" prefWidth="130.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="465.0" minWidth="10.0" prefWidth="465.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        </rowConstraints>
+                                                         <children>
+                                                            <Label text="Nome produto:" />
+                                                            <Label text="Custo:" GridPane.rowIndex="1" />
+                                                            <Label text="Quantidade do pedido:" GridPane.rowIndex="3" />
+                                                            <Label text="Desconto:" GridPane.rowIndex="2" />
+                                                            <Label fx:id="lbVendaNomeProduto" text="Label" GridPane.columnIndex="1" />
+                                                            <TextField fx:id="txtVendaProdutoCusto" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                            <TextField fx:id="txtVendaProdutoDesconto" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                            <TextField fx:id="txtVendaProdutoQtd" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                         </children>
+                                                      </GridPane>
+                                                      <Button fx:id="btnVendaAdicionarProduto" mnemonicParsing="false" onAction="#onBtnVendaAdicionarProduto" text="Adicionar Produto" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                             <children>
+                                                <VBox layoutX="231.0" layoutY="121.0" prefHeight="527.0" prefWidth="595.0" spacing="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                                        <items>
+                                                            <Label text="Buscar Cliente:" />
+                                                            <TextField fx:id="txtVendaBuscarCliente" />
+                                                          <Button fx:id="btnVendaBuscarCliente" mnemonicParsing="false" onAction="#onBtnVendaBuscarCliente" text="Buscar" />
+                                                            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                                                            <ComboBox fx:id="cbVendaVendedor" prefHeight="25.0" prefWidth="156.0" promptText="Selecionar Vendedor" />
+                                                        </items>
+                                                      </ToolBar>
+                                                      <TableView fx:id="tbvVendaProdutoSelecionado" prefHeight="200.0" prefWidth="200.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="tbcVendaPdtSelecionadoId" prefWidth="75.0" text="ID" />
+                                                            <TableColumn fx:id="tbcVendaPdtSelecionadoNome" prefWidth="165.0" text="Nome" />
+                                                            <TableColumn fx:id="tbcVendaPdtSelecionadoCusto" minWidth="9.0" prefWidth="194.0" text="Custo" />
+                                                            <TableColumn fx:id="tbcVendaPdtSelecionadoQuantidade" prefWidth="160.0" text="Quantidade" />
+                                                         </columns>
+                                                      </TableView>
+                                                      <GridPane hgap="6.0" vgap="6.0">
+                                                        <columnConstraints>
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        </rowConstraints>
+                                                         <children>
+                                                            <Label text="Status da Venda:" />
+                                                            <Label text="Tipo Pagamento:" GridPane.rowIndex="1" />
+                                                            <Label text="Data:" GridPane.rowIndex="2" />
+                                                            <Label text="Tipo Pedido:" GridPane.rowIndex="3" />
+                                                            <Label text="Status Pedido:" GridPane.rowIndex="4" />
+                                                            <Label text="Tipo Entrega:" GridPane.rowIndex="5" />
+                                                            <ComboBox fx:id="cbVendaStatus" prefWidth="150.0" GridPane.columnIndex="1" />
+                                                            <ComboBox fx:id="cbVendaTpPagamento" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                            <ComboBox fx:id="cbVendaTpPedido" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                            <ComboBox fx:id="cbVendaStPedido" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                            <ComboBox fx:id="cbVendaTpEntrega" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                            <Label text="Total:" GridPane.rowIndex="6" />
+                                                            <DatePicker fx:id="dtpVendaTpPagamento" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                            <Label fx:id="lbVendaTotal" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                         </children>
+                                                      </GridPane>
+                                                      <Button fx:id="btnVendaFinalizar" mnemonicParsing="false" onAction="#onBtnVendaFinalizar" text="Finalizar Venda" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                      </items>
+                                    </SplitPane>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab text="Consultar Venda">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="225.0" layoutY="14.0" prefHeight="529.0" prefWidth="1198.0" spacing="6.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Label text="Informe o paremtro de busca:" />
+                                                <TextField fx:id="txtVendaBusca" />
+                                                <ComboBox fx:id="cbVendaTpBusca" prefWidth="150.0" promptText="Tipo Busca" />
+                                              <Button fx:id="btnVendaConsultar" mnemonicParsing="false" onAction="#onBtnVendaConsultar" text="Buscar" />
+                                            </items>
+                                          </ToolBar>
+                                          <TableView fx:id="tbvVendaBusca" prefHeight="571.0" prefWidth="1198.0">
+                                            <columns>
+                                              <TableColumn fx:id="tbcVendaId" prefWidth="75.0" text="ID" />
+                                              <TableColumn fx:id="tbcVendaCliente" prefWidth="197.0" text="Cliente" />
+                                                <TableColumn fx:id="tbcVendaTotal" prefWidth="122.0" text="Total" />
+                                                <TableColumn fx:id="tbcVendaVendedor" prefWidth="241.0" text="Vendedor" />
+                                                <TableColumn fx:id="tbcVendaData" prefWidth="118.0" text="Data" />
+                                                <TableColumn fx:id="tbcVendaStVenda" prefWidth="238.0" text="Status Venda" />
+                                                <TableColumn fx:id="tbcVendaStPedido" prefWidth="206.0" text="Status Pedido" />
+                                            </columns>
+                                          </TableView>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                    </tabs>
+                  </TabPane>
+               </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

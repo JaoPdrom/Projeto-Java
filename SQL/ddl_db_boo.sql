@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS db_poo;
+﻿DROP DATABASE IF EXISTS db_poo;
 
 CREATE DATABASE IF NOT EXISTS db_poo;
 
 USE db_poo;
 
--- Tabelas de localização
+-- Tabelas de localizaÃ§Ã£o
 CREATE TABLE IF NOT EXISTS tb_sexo(
     sex_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     sex_descricao VARCHAR(45) NOT NULL
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS tb_endereco(
     FOREIGN KEY (end_endP_id) REFERENCES tb_endPostal (endP_id)
 );
 
--- Tabela principal de Pessoa (única para clientes, funcionários, etc.)
+-- Tabela principal de Pessoa (Ãºnica para clientes, funcionÃ¡rios, etc.)
 CREATE TABLE IF NOT EXISTS tb_tipoPessoa(
     tipo_pessoa_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     codigo CHAR(1) NOT NULL UNIQUE,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS tb_cliente(
     FOREIGN KEY (cli_pes_documento) REFERENCES tb_pessoa (pes_documento)
 );
 
--- Tabela de relacionamento para permitir múltiplos endereços por pessoa
+-- Tabela de relacionamento para permitir mÃºltiplos endereÃ§os por pessoa
 CREATE TABLE IF NOT EXISTS tb_pesEnd(
     pesEnd_pes_documento VARCHAR(14) NOT NULL,
     pesEnd_end_id INT NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS tb_pesEnd(
     FOREIGN KEY (pesEnd_end_id) REFERENCES tb_endereco(end_id)
 );
 
--- Tabela de relacionamento para permitir múltiplos telefones por pessoa
+-- Tabela de relacionamento para permitir mÃºltiplos telefones por pessoa
 CREATE TABLE IF NOT EXISTS tb_telefone(
     tel_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     tel_codPais CHAR(2) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS tb_telefone(
     FOREIGN KEY (tel_pes_documento) REFERENCES tb_pessoa (pes_documento)
 );
 
--- Tabelas de Funcionários e Cargos
+-- Tabelas de FuncionÃ¡rios e Cargos
 CREATE TABLE IF NOT EXISTS tb_cargo(
     cargo_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     cargo_descricao VARCHAR(45) NOT NULL,
@@ -252,82 +252,11 @@ CREATE TABLE IF NOT EXISTS tb_tipoDespesa(
     tipoDespesa_nome VARCHAR(45) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tb_despesa(
-    despesa_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    despesa_descricao VARCHAR(45) NOT NULL,
-    despesa_dtRealiazacao DATE NOT NULL,
-    despesa_valor_pago DOUBLE NOT NULL,
-    despesa_tipo_despesa_id INT NOT NULL,
-    FOREIGN KEY (despesa_tipo_despesa_id) REFERENCES tb_tipoDespesa(tipoDespesa_id)
-);
-
-CREATE TABLE IF NOT EXISTS tb_infoEmpresa(
-    emp_cnpj VARCHAR(14) NOT NULL PRIMARY KEY,
-    emp_nome VARCHAR(45) NOT NULL,
-    emp_end_id INT NOT NULL,
-    emp_tel_id INT NOT NULL,
-    emp_ativo BOOLEAN DEFAULT TRUE NOT NULL,
-    FOREIGN KEY (emp_end_id) REFERENCES tb_endereco (end_id),
-    FOREIGN KEY (emp_tel_id) REFERENCES tb_telefone (tel_id)
-);
-
-CREATE TABLE IF NOT EXISTS tb_provento(
-    provento_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    provento_descricao VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_desconto(
-    desconto_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    desconto_descricao VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_holerite(
-    holerite_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    holerite_periodo DATE NOT NULL,
-    holerite_valor_liquido DOUBLE NOT NULL,
-    holerite_fnc_id INT NOT NULL,
-    holerite_infoEmpresa_emp_cnpj VARCHAR(14) NOT NULL,
-    FOREIGN KEY (holerite_fnc_id) REFERENCES tb_funcionario(fnc_id),
-    FOREIGN KEY (holerite_infoEmpresa_emp_cnpj) REFERENCES tb_infoEmpresa(emp_cnpj)
-);
-
-CREATE TABLE IF NOT EXISTS tb_holeriteProvento(
-    holeriteProvento_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    holeriteProvento_holerite_id INT NOT NULL,
-    holeriteProvento_provento_id INT NOT NULL,
-    holeriteProvento_valor DOUBLE NOT NULL,
-    FOREIGN KEY (holeriteProvento_holerite_id) REFERENCES tb_holerite(holerite_id),
-    FOREIGN KEY (holeriteProvento_provento_id) REFERENCES tb_provento(provento_id)
-);
-
-CREATE TABLE IF NOT EXISTS tb_holeriteDesconto(
-    holeriteDesconto_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    holeriteDesconto_holerite_id INT NOT NULL,
-    holeriteDesconto_desconto_id INT NOT NULL,
-    holeriteDesconto_valor DOUBLE NOT NULL,
-    FOREIGN KEY (holeriteDesconto_holerite_id) REFERENCES tb_holerite(holerite_id),
-    FOREIGN KEY (holeriteDesconto_desconto_id) REFERENCES tb_desconto(desconto_id)
-);
-
--- Tabelas de Log e Fórmulas
+-- Tabela de Log de auditoria
 CREATE TABLE IF NOT EXISTS tb_log(
     log_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     log_acao VARCHAR(100) NOT NULL,
     log_dataHora DATETIME NOT NULL,
     log_fnc_id INT NOT NULL,
     FOREIGN KEY (log_fnc_id) REFERENCES tb_funcionario(fnc_id)
-);
-
-CREATE TABLE IF NOT EXISTS tb_formula(
-    formula_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    formula_dtValidade DATE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_formIngre(
-    formIngre_formula_id INT NOT NULL,
-    formIgre_produto_id INT NOT NULL,
-    formIngre_qtd DOUBLE NOT NULL,
-    PRIMARY KEY(formIngre_formula_id, formIgre_produto_id),
-    FOREIGN KEY (formIngre_formula_id) REFERENCES tb_formula(formula_id),
-    FOREIGN KEY (formIgre_produto_id) REFERENCES tb_produto(produto_id)
 );
