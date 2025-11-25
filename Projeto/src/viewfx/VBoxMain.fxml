@@ -18,11 +18,6 @@
               <MenuItem mnemonicParsing="false" onAction="#handlerMenuItemMainFinanceiroDespesa" text="Despesa" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Venda">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
             <Menu mnemonicParsing="false" text="Produto">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handlerMenuItemMainProdutoProdutoEstoque" text="Produto/Estoque" />

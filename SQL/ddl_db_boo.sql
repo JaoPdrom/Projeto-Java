@@ -144,31 +144,6 @@ CREATE TABLE tb_demissao (
     FOREIGN KEY (demissao_fnc_id) REFERENCES tb_funcionario(fnc_id)
 );
 
-
--- Tabelas de Vendas e Pagamentos
-CREATE TABLE IF NOT EXISTS tb_statusVenda(
-    statusVenda_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    statusVenda_descricao VARCHAR(45) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_tipoPagamento(
-    tipoPagamento_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    tipoPagamento_descricao VARCHAR(45) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_venda(
-    venda_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    venda_data DATE NOT NULL,
-    venda_pes_documento VARCHAR(14) NOT NULL,
-    venda_fnc_id INT NOT NULL,
-    venda_statusVenda INT NOT NULL,
-    venda_tipo_pagamento INT NOT NULL,
-    FOREIGN KEY (venda_pes_documento) REFERENCES tb_pessoa (pes_documento),
-    FOREIGN KEY (venda_fnc_id) REFERENCES tb_funcionario (fnc_id),
-    FOREIGN KEY (venda_statusVenda) REFERENCES tb_statusVenda (statusVenda_id),
-    FOREIGN KEY (venda_tipo_pagamento) REFERENCES tb_tipoPagamento (tipoPagamento_id)
-);
-
 CREATE TABLE IF NOT EXISTS tb_tipoPdt(
     tipoPdt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     tipoPdt_descricao VARCHAR(45)
@@ -185,16 +160,6 @@ CREATE TABLE IF NOT EXISTS tb_produto(
     FOREIGN KEY (produto_tipoPdt) REFERENCES tb_tipoPdt (tipoPdt_id)
 );
 
-CREATE TABLE IF NOT EXISTS tb_itemVenda(
-    itemVenda_venda_id INT NOT NULL,
-    itemVenda_produto_id INT NOT NULL,
-    itemVenda_qtd DOUBLE NOT NULL,
-    itemVenda_preco DOUBLE NOT NULL,
-    PRIMARY KEY (itemVenda_venda_id, itemVenda_produto_id),
-    FOREIGN KEY (itemVenda_venda_id) REFERENCES tb_venda (venda_id),
-    FOREIGN KEY (itemVenda_produto_id) REFERENCES tb_produto (produto_id)
-);
-
 -- Tabelas de Produtos e Estoque
 CREATE TABLE IF NOT EXISTS tb_estoque(
     est_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -207,44 +172,6 @@ CREATE TABLE IF NOT EXISTS tb_estoque(
     est_lote VARCHAR(45) NOT NULL,
     est_dtValidade DATE NOT NULL,
     FOREIGN KEY (est_produto_id) REFERENCES tb_produto(produto_id)
-);
-
--- Tabelas de Pedidos e Entregas
-CREATE TABLE IF NOT EXISTS tb_statusPedido(
-    statusPedido_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    statusPedido_descricao VARCHAR(45) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_tipoEntrega(
-    tipoEntrega_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    tipoEntrega_descricao VARCHAR(45) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_pedido(
-    pedido_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    pedido_statusPedido INT NOT NULL,
-    pedido_tipoEntrega INT NOT NULL,
-    pedido_venda_id INT NOT NULL,
-    pedido_fnc_id INT NOT NULL,
-    FOREIGN KEY (pedido_venda_id) REFERENCES tb_venda (venda_id),
-    FOREIGN KEY (pedido_fnc_id) REFERENCES tb_funcionario (fnc_id),
-    FOREIGN KEY (pedido_statusPedido) REFERENCES tb_statusPedido (statusPedido_id),
-    FOREIGN KEY (pedido_tipoEntrega) REFERENCES tb_tipoEntrega (tipoEntrega_id)
-);
-
--- Tabelas Financeiras
-CREATE TABLE IF NOT EXISTS tb_statusDebito(
-    statusDeb_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    statusDeb_descricao VARCHAR(45) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS tb_debito(
-    deb_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    deb_venda_id INT NOT NULL,
-    deb_juros DOUBLE,
-    deb_status_id INT NOT NULL,
-    FOREIGN KEY (deb_venda_id) REFERENCES tb_venda(venda_id),
-    FOREIGN KEY (deb_status_id) REFERENCES tb_statusDebito(statusDeb_id)
 );
 
 CREATE TABLE IF NOT EXISTS tb_tipoDespesa(

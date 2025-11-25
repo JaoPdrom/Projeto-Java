@@ -91,4 +91,22 @@ public class VboxMainController implements Initializable {
 
         anchorPaneMainVbox.getChildren().setAll(root);
     }
+
+    
+    // @FXML
+    // public void handlerMenuItemMainVenda() throws IOException {
+    //     URL fxml = getClass().getResource("/viewfx/VendaView.fxml");
+    //     if (fxml == null) {
+    //         throw new IOException("Erro ao carregar /view/VendaView.fxml");
+    //     }
+
+    //     Parent root = FXMLLoader.load(fxml);
+
+    //     AnchorPane.setTopAnchor(root, 0.0);
+    //     AnchorPane.setRightAnchor(root, 0.0);
+    //     AnchorPane.setBottomAnchor(root, 0.0);
+    //     AnchorPane.setLeftAnchor(root, 0.0);
+
+    //     anchorPaneMainVbox.getChildren().setAll(root);
+    // }
 }

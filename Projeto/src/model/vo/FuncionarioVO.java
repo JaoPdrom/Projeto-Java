@@ -108,4 +108,12 @@ public class FuncionarioVO extends PessoaVO{
     public void setDemissao(DemissaoVO demissao) {
         this.demissao = demissao;
     }
+
+    @Override
+    public String toString() {
+        if (getPes_nome() != null && !getPes_nome().isBlank()) {
+            return getPes_nome();
+        }
+        return "Funcionário " + fnc_id;
+    }
 }
