@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.swing.Action;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,14 +24,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.MouseEvent;
-import model.dao.TipoDespesaDAO;
 import model.rn.DespesaRN;
 import model.vo.DespesaVO;
-import model.vo.PessoaVO;
 import model.vo.TipoDespesaVO;
-import model.vo.TipoPessoaVO;
 
 public class DespesaController implements Initializable {
 
@@ -440,7 +434,6 @@ public class DespesaController implements Initializable {
         btnDespesaAtualizar.setDisable(!habilitado);
         btnDespesaExcluir.setDisable(!habilitado);
         btnDespesaNovoTipoDespesa.setDisable(!habilitado);
-        cbDespesaBuscar.setDisable(!habilitado);
         DespesaID.setDisable(!habilitado);
     }
 
@@ -478,12 +471,88 @@ public class DespesaController implements Initializable {
         if (e != null) e.printStackTrace();
     }
 
-    private void limparFormulario() {
+    // --- BUSCA COM FILTROS ---
+
+    @FXML
+    private void onBuscarDespesa(ActionEvent event) {
         try {
-            txtDespesaDescricao.clear();
-            txtDespesaValorPago.clear();
-            dtpDespesaDataRealizacao.setValue(null);
-            if (cbDespesaTipoDespesa != null) cbDespesaTipoDespesa.setValue(null);
-        } catch (Exception ignore) {}
+            String termo = null;
+            if (txtDespesaBusca != null && txtDespesaBusca.getText() != null) {
+                termo = txtDespesaBusca.getText().trim();
+            }
+
+            // Se não houver termo nem outros filtros marcados, carrega todas
+            boolean semTermo = (termo == null || termo.isBlank());
+            boolean semFiltroDatas = rBtnDespesaBuscaSemDatas != null && rBtnDespesaBuscaSemDatas.isSelected();
+            TipoDespesaVO tipoBusca = obterCbDespesaBuscaTipoDespesa();
+
+            if (semTermo && semFiltroDatas && tipoBusca == null) {
+                carregarTabela();
+                return;
+            }
+
+            Integer id = null;
+            String descricaoLike = null;
+
+            if (!semTermo && termo.matches("\\d+")) {
+                try {
+                    id = Integer.parseInt(termo);
+                } catch (NumberFormatException e) {
+                    alerta("ID inválido informado para busca.");
+                    return;
+                }
+            } else if (!semTermo) {
+                descricaoLike = termo;
+            }
+
+            Integer tipoId = (tipoBusca != null && tipoBusca.getTipoDespesa_id() > 0)
+                    ? tipoBusca.getTipoDespesa_id()
+                    : null;
+
+            java.time.LocalDate dtInicial = null;
+            java.time.LocalDate dtFinal = null;
+
+            if (rBtnDespesaBuscaData != null && rBtnDespesaBuscaData.isSelected()) {
+                dtInicial = dtpDespesaBuscaDtInicial != null ? dtpDespesaBuscaDtInicial.getValue() : null;
+                if (dtInicial == null) {
+                    alerta("Informe a data para busca.");
+                    return;
+                }
+                dtFinal = dtInicial;
+            } else if (rBtnDespesaBuscaPeriodo != null && rBtnDespesaBuscaPeriodo.isSelected()) {
+                dtInicial = dtpDespesaBuscaDtInicial != null ? dtpDespesaBuscaDtInicial.getValue() : null;
+                dtFinal = dtpDespesaBuscaDtFinal != null ? dtpDespesaBuscaDtFinal.getValue() : null;
+
+                if (dtInicial == null || dtFinal == null) {
+                    alerta("Informe as duas datas para o período de busca.");
+                    return;
+                }
+                if (dtFinal.isBefore(dtInicial)) {
+                    alerta("Data final não pode ser anterior à data inicial.");
+                    return;
+                }
+            }
+
+            java.util.List<DespesaVO> resultado = despesaRN.buscarComFiltros(
+                    id,
+                    descricaoLike,
+                    tipoId,
+                    dtInicial,
+                    dtFinal
+            );
+
+            if (resultado == null || resultado.isEmpty()) {
+                alerta("Nenhuma despesa encontrada para os filtros informados.");
+                tbvDespesa.setItems(FXCollections.observableArrayList());
+                return;
+            }
+
+            ObservableList<DespesaVO> obs = FXCollections.observableArrayList(resultado);
+            tbvDespesa.setItems(obs);
+            info("Busca de despesas concluída. Registros encontrados: " + obs.size());
+        } catch (Exception e) {
+            erro("Erro ao buscar despesas.", e);
+            alerta("Falha ao buscar despesas: " + e.getMessage());
+        }
     }
 }

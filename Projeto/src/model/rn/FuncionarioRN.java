@@ -69,7 +69,7 @@ public class FuncionarioRN {
         }
         LocalDate nascimento = funcionario.getPes_dt_nascimento();
         if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
-            throw new Exception("Funcionário precisa ter pelo menos 18 anos.");
+            throw new Exception("Funcionï¿½rio precisa ter pelo menos 18 anos.");
         }
 
         if (funcionario.getPes_ativo() == null) {
@@ -178,10 +178,10 @@ public class FuncionarioRN {
             ContratacaoVO contratacao = funcionario.getContratacao();
             if (contratacao == null) {
                 contratacao = new ContratacaoVO();
-                contratacao.setContratacao_fase("Contratação");
+                contratacao.setContratacao_fase("Contrataï¿½ï¿½o");
             }
             if (contratacao.getContratacao_fase() == null || contratacao.getContratacao_fase().isBlank()) {
-                contratacao.setContratacao_fase("Contratação");
+                contratacao.setContratacao_fase("Contrataï¿½ï¿½o");
             }
             if (contratacao.getContratacao_dtContratacao() == null) {
                 LocalDate dt = funcionario.getFnc_dtContratacao() != null ? funcionario.getFnc_dtContratacao() : LocalDate.now();
@@ -355,6 +355,43 @@ public class FuncionarioRN {
         info("Funcionario atualizado com sucesso.");
     }
 
+    public FuncionarioVO buscarPorId(int id) throws Exception {
+        if (id <= 0) {
+            throw new Exception("ID de funcionario invalido.");
+        }
+        try (Connection con = ConexaoDAO.getConexao()) {
+            FuncionarioDAO funcionarioDAO = new FuncionarioDAO(con);
+            return funcionarioDAO.buscarFuncionarioCompletoPorId(id);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao buscar funcionario por ID: " + e.getMessage(), e);
+        }
+    }
+
+    public FuncionarioVO buscarPorDocumento(String documento) throws Exception {
+        if (documento == null || documento.isBlank()) {
+            throw new Exception("Documento obrigatorio.");
+        }
+        try (Connection con = ConexaoDAO.getConexao()) {
+            FuncionarioDAO funcionarioDAO = new FuncionarioDAO(con);
+            return funcionarioDAO.buscarFuncionarioCompletoPorCpf(documento);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao buscar funcionario por documento: " + e.getMessage(), e);
+        }
+    }
+
+    public java.util.List<FuncionarioVO> buscarPorNome(String nome) throws Exception {
+        if (nome == null || nome.isBlank()) {
+            throw new Exception("Nome obrigatorio.");
+        }
+        try (Connection con = ConexaoDAO.getConexao()) {
+            FuncionarioDAO funcionarioDAO = new FuncionarioDAO(con);
+            return funcionarioDAO.buscarFuncionariosCompletosPorNome(nome);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao buscar funcionarios por nome: " + e.getMessage(), e);
+        }
+    }
+
+
 
     public List<CargoVO> listarCargos() throws Exception {
         try (Connection con = ConexaoDAO.getConexao()) {
@@ -369,7 +406,7 @@ public class FuncionarioRN {
             ContratacaoDAO contratacaoDAO = new ContratacaoDAO(con);
             return contratacaoDAO.listarFases();
         } catch (SQLException e) {
-            throw new Exception("Erro ao listar fases de contratação: " + e.getMessage(), e);
+            throw new Exception("Erro ao listar fases de contrataï¿½ï¿½o: " + e.getMessage(), e);
         }
     }
 
@@ -378,7 +415,7 @@ public class FuncionarioRN {
             FuncionarioDAO funcionarioDAO = new FuncionarioDAO(con);
             return funcionarioDAO.listarTodosCompletos();
         } catch (SQLException e) {
-            throw new Exception("Erro ao listar funcionários: " + e.getMessage(), e);
+            throw new Exception("Erro ao listar funcionï¿½rios: " + e.getMessage(), e);
         }
     }
 

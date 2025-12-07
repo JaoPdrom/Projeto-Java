@@ -763,7 +763,6 @@ public class FuncionarioController implements Initializable{
                 return;
             }
 
-            List<FuncionarioVO> todos = funcionarioRN.listarFuncionarios();
             List<FuncionarioVO> filtrados = new ArrayList<>();
 
             if ("ID".equalsIgnoreCase(tipo)) {
@@ -774,27 +773,21 @@ public class FuncionarioController implements Initializable{
                     alerta("Informe um ID numérico válido.");
                     return;
                 }
-                for (FuncionarioVO f : todos) {
-                    if (f != null && f.getFnc_id() == idBuscado) {
-                        filtrados.add(f);
-                    }
+
+                FuncionarioVO encontrado = funcionarioRN.buscarPorId(idBuscado);
+                if (encontrado != null) {
+                    filtrados.add(encontrado);
                 }
             } else if ("Documento".equalsIgnoreCase(tipo)) {
                 String docBuscado = normalizarDocumento(termo);
-                for (FuncionarioVO f : todos) {
-                    if (f != null && normalizarDocumento(f.getPes_cpf()).equals(docBuscado)) {
-                        filtrados.add(f);
-                    }
+                FuncionarioVO encontrado = funcionarioRN.buscarPorDocumento(docBuscado);
+                if (encontrado != null) {
+                    filtrados.add(encontrado);
                 }
             } else { // Nome
-                String nomeBuscado = termo.toLowerCase();
-                for (FuncionarioVO f : todos) {
-                    if (f != null && f.getPes_nome() != null &&
-                            f.getPes_nome().toLowerCase().contains(nomeBuscado)) {
-                        filtrados.add(f);
-                    }
-                }
+                filtrados = funcionarioRN.buscarPorNome(termo);
             }
+
 
             ObservableList<FuncionarioVO> obs = FXCollections.observableArrayList(filtrados);
             if (tbvFuncionario != null) {

@@ -38,7 +38,7 @@
                               <DatePicker fx:id="dtpDespesaBuscaDtInicial" promptText="Inicio" />
                               <RadioButton fx:id="rBtnDespesaBuscaPeriodo" mnemonicParsing="false" text="Periodo" />
                               <DatePicker fx:id="dtpDespesaBuscaDtFinal" promptText="Final" />
-                              <Button fx:id="cbDespesaBuscar" mnemonicParsing="false" text="Buscar" />
+                              <Button fx:id="cbDespesaBuscar" mnemonicParsing="false" onAction="#onBuscarDespesa" text="Buscar" />
                           </items>
                         </ToolBar>
                      </children>

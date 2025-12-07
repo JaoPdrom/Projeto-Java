@@ -21,7 +21,7 @@ public class DespesaDAO {
 
     // Adicionar nova despesa
     public int adicionarNovo(DespesaVO despesa) throws SQLException {
-        String sql = "INSERT INTO tb_despesa (despesa_descricao, despesa_dtRealiazacao, despesa_valor_pago, despesa_tipo_despesa_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO tb_despesa (despesa_descricao, despesa_dtRealizacao, despesa_valor, despesa_tipo_despesa_id) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement despesa_add = con_despesa.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             despesa_add.setString(1, despesa.getDespesa_descricao());
@@ -53,7 +53,7 @@ public class DespesaDAO {
 
     // Update despesa por id
     public void atualizarPorId(DespesaVO despesa) throws SQLException {
-        String sql = "UPDATE tb_despesa SET despesa_descricao = ?, despesa_dtRealiazacao = ?, despesa_valor_pago = ?, despesa_tipo_despesa_id = ? WHERE despesa_id = ?";
+        String sql = "UPDATE tb_despesa SET despesa_descricao = ?, despesa_dtRealizacao = ?, despesa_valor = ?, despesa_tipo_despesa_id = ? WHERE despesa_id = ?";
         try (PreparedStatement despesa_att_id = con_despesa.prepareStatement(sql)) {
             despesa_att_id.setString(1, despesa.getDespesa_descricao());
             despesa_att_id.setDate(2, java.sql.Date.valueOf(despesa.getDespesa_dtRealizacao()));
@@ -122,9 +122,70 @@ public class DespesaDAO {
 
     // Lista todas as despesas
     public List<DespesaVO> buscarTodas() throws SQLException {
-        String sql = "SELECT * FROM tb_despesa ORDER BY despesa_dtRealiazacao DESC, despesa_id DESC";
+        String sql = "SELECT * FROM tb_despesa ORDER BY despesa_dtRealizacao DESC, despesa_id DESC";
         List<DespesaVO> lista = new ArrayList<>();
         try (PreparedStatement ps = con_despesa.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapDespesa(rs));
+                }
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Busca despesas com filtros opcionais de descrição (LIKE), tipo e intervalo de datas.
+     * Campos nulos são ignorados na construção do WHERE.
+     */
+    public List<DespesaVO> buscarComFiltros(
+            String descricaoLike,
+            Integer tipoDespesaId,
+            java.time.LocalDate dtInicial,
+            java.time.LocalDate dtFinal) throws SQLException {
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM tb_despesa WHERE 1=1");
+        List<Object> parametros = new ArrayList<>();
+
+        if (descricaoLike != null && !descricaoLike.isBlank()) {
+            sql.append(" AND despesa_descricao LIKE ?");
+            parametros.add("%" + descricaoLike.trim() + "%");
+        }
+
+        if (tipoDespesaId != null && tipoDespesaId > 0) {
+            sql.append(" AND despesa_tipo_despesa_id = ?");
+            parametros.add(tipoDespesaId);
+        }
+
+        if (dtInicial != null && dtFinal != null) {
+            sql.append(" AND despesa_dtRealizacao BETWEEN ? AND ?");
+            parametros.add(java.sql.Date.valueOf(dtInicial));
+            parametros.add(java.sql.Date.valueOf(dtFinal));
+        } else if (dtInicial != null) {
+            sql.append(" AND despesa_dtRealizacao = ?");
+            parametros.add(java.sql.Date.valueOf(dtInicial));
+        } else if (dtFinal != null) {
+            sql.append(" AND despesa_dtRealizacao = ?");
+            parametros.add(java.sql.Date.valueOf(dtFinal));
+        }
+
+        sql.append(" ORDER BY despesa_dtRealizacao DESC, despesa_id DESC");
+
+        List<DespesaVO> lista = new ArrayList<>();
+        try (PreparedStatement ps = con_despesa.prepareStatement(sql.toString())) {
+            for (int i = 0; i < parametros.size(); i++) {
+                Object p = parametros.get(i);
+                if (p instanceof String) {
+                    ps.setString(i + 1, (String) p);
+                } else if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i + 1, (java.sql.Date) p);
+                } else {
+                    ps.setObject(i + 1, p);
+                }
+            }
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     lista.add(mapDespesa(rs));
@@ -145,7 +206,7 @@ public class DespesaDAO {
 
     // Soma total de despesas no período (inclusive)
     public double somarTotalNoPeriodo(java.util.Date inicio, java.util.Date fim) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(despesa_valor_pago),0) AS total FROM tb_despesa WHERE despesa_dtRealiazacao BETWEEN ? AND ?";
+        String sql = "SELECT COALESCE(SUM(despesa_valor),0) AS total FROM tb_despesa WHERE despesa_dtRealizacao BETWEEN ? AND ?";
         try (PreparedStatement ps = con_despesa.prepareStatement(sql)) {
             ps.setDate(1, new Date(inicio.getTime()));
             ps.setDate(2, new Date(fim.getTime()));
@@ -161,12 +222,12 @@ public class DespesaDAO {
         d.setDespesa_id(rs.getInt("despesa_id"));
         d.setDespesa_descricao(rs.getString("despesa_descricao"));
 
-        Date dataSql = rs.getDate("despesa_dtRealiazacao");
+        Date dataSql = rs.getDate("despesa_dtRealizacao");
         if (dataSql != null) {
             d.setDespesa_dtRealizacao(dataSql.toLocalDate());
         }
 
-        d.setDespesa_valor_pago(rs.getDouble("despesa_valor_pago"));
+        d.setDespesa_valor_pago(rs.getDouble("despesa_valor"));
 
         int tipoId = 0;
         try { 

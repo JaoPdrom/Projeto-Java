@@ -179,11 +179,11 @@ CREATE TABLE IF NOT EXISTS tb_tipoDespesa(
     tipoDespesa_nome VARCHAR(45) NOT NULL
 );
 
--- Tabela de Log de auditoria
-CREATE TABLE IF NOT EXISTS tb_log(
-    log_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    log_acao VARCHAR(100) NOT NULL,
-    log_dataHora DATETIME NOT NULL,
-    log_fnc_id INT NOT NULL,
-    FOREIGN KEY (log_fnc_id) REFERENCES tb_funcionario(fnc_id)
+CREATE TABLE IF NOT EXISTS tb_despesa(
+    despesa_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    despesa_descricao VARCHAR(45) NOT NULL,
+    despesa_dtRealizacao DATE NOT NULL,
+    despesa_valor DOUBLE NOT NULL,
+    despesa_tipo_despesa_id INT NOT NULL,
+    FOREIGN KEY (despesa_tipo_despesa_id) REFERENCES tb_tipoDespesa(tipoDespesa_id)
 );

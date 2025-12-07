@@ -361,4 +361,161 @@ public class FuncionarioDAO {
     }
 
 
+    // Monta um objeto FuncionarioVO completo (campos de pessoa/funcionario + telefones, enderecos e historico)
+    private FuncionarioVO montarFuncionarioCompleto(ResultSet rs) throws SQLException {
+        FuncionarioVO funcionario = new FuncionarioVO();
+
+        funcionario.setFnc_id(rs.getInt("fnc_id"));
+        funcionario.setFnc_numPis(rs.getString("fnc_numPis"));
+        funcionario.setFnc_salario(rs.getDouble("fnc_salario"));
+        funcionario.setPes_cpf(rs.getString("fnc_pes_documento"));
+        funcionario.setPes_nome(rs.getString("pes_nome"));
+        java.sql.Date dtNasc = rs.getDate("pes_dtNascimento");
+        funcionario.setPes_dt_nascimento(dtNasc != null ? dtNasc.toLocalDate() : null);
+        funcionario.setPes_email(rs.getString("pes_email"));
+        funcionario.setPes_ativo(rs.getBoolean("fnc_ativo"));
+
+        int sexoId = rs.getInt("pes_sex_id");
+        if (!rs.wasNull()) {
+            funcionario.setPes_sexo(sexoDAO.buscarPorId(sexoId));
+        }
+
+        int tipoPessoaId = rs.getInt("pes_tipo_pessoa_id");
+        if (!rs.wasNull()) {
+            TipoPessoaVO tipoPessoa = tipoPessoaDAO.buscarPorId(tipoPessoaId);
+            funcionario.setPes_tipo_pessoa(tipoPessoa);
+        }
+
+        CargoVO cargo = cargoDAO.buscarPorId(rs.getInt("fnc_cargo_id"));
+        funcionario.setFnc_cargo(cargo);
+
+        List<TelefoneVO> telefones = telefoneDAO.buscarPorCpf(funcionario.getPes_cpf());
+        funcionario.setTelefone(telefones);
+
+        List<EnderecoVO> enderecos = enderecoDAO.buscarPorDocumento(funcionario.getPes_cpf());
+        funcionario.setEndereco(enderecos);
+
+        List<ContratacaoVO> fases = contratacaoDAO.listarPorFuncionario(funcionario.getFnc_id());
+        if (!fases.isEmpty()) {
+            ContratacaoVO ultima = fases.get(fases.size() - 1);
+            ultima.setFuncionario(funcionario);
+            funcionario.setContratacao(ultima);
+            funcionario.setFnc_dtContratacao(ultima.getContratacao_dtContratacao());
+        }
+
+        List<DemissaoVO> demissoes = demissaoDAO.listarPorFuncionario(funcionario.getFnc_id());
+        if (!demissoes.isEmpty()) {
+            DemissaoVO ultimaDemissao = demissoes.get(0);
+            ultimaDemissao.setFuncionario(funcionario);
+            funcionario.setDemissao(ultimaDemissao);
+            funcionario.setFnc_dtDemissao(ultimaDemissao.getDemissao_data());
+            funcionario.setFnc_motivo_demissao(ultimaDemissao.getDemissao_motivo());
+        }
+
+        return funcionario;
+    }
+
+
+    // Busca completo por ID de funcionario
+    public FuncionarioVO buscarFuncionarioCompletoPorId(int id) throws SQLException {
+        String sql = """
+        SELECT 
+            f.fnc_id,
+            f.fnc_numPis,
+            f.fnc_salario,
+            f.fnc_cargo_id,
+            f.fnc_pes_documento,
+            f.fnc_ativo,
+            p.pes_nome,
+            p.pes_dtNascimento,
+            p.pes_email,
+            p.pes_sex_id,
+            p.pes_tipo_pessoa_id,
+            p.pes_ativo
+        FROM tb_funcionario f
+        JOIN tb_pessoa p ON p.pes_documento = f.fnc_pes_documento
+        WHERE f.fnc_id = ?
+        """;
+
+        try (PreparedStatement ps = con_fnc.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return montarFuncionarioCompleto(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+
+    // Busca completo por CPF/documento da pessoa
+    public FuncionarioVO buscarFuncionarioCompletoPorCpf(String cpf) throws SQLException {
+        String sql = """
+        SELECT 
+            f.fnc_id,
+            f.fnc_numPis,
+            f.fnc_salario,
+            f.fnc_cargo_id,
+            f.fnc_pes_documento,
+            f.fnc_ativo,
+            p.pes_nome,
+            p.pes_dtNascimento,
+            p.pes_email,
+            p.pes_sex_id,
+            p.pes_tipo_pessoa_id,
+            p.pes_ativo
+        FROM tb_funcionario f
+        JOIN tb_pessoa p ON p.pes_documento = f.fnc_pes_documento
+        WHERE p.pes_documento = ?
+        """;
+
+        try (PreparedStatement ps = con_fnc.prepareStatement(sql)) {
+            ps.setString(1, cpf);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return montarFuncionarioCompleto(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+
+    // Busca completa por nome (LIKE)
+    public List<FuncionarioVO> buscarFuncionariosCompletosPorNome(String nome) throws SQLException {
+        String sql = """
+        SELECT 
+            f.fnc_id,
+            f.fnc_numPis,
+            f.fnc_salario,
+            f.fnc_cargo_id,
+            f.fnc_pes_documento,
+            f.fnc_ativo,
+            p.pes_nome,
+            p.pes_dtNascimento,
+            p.pes_email,
+            p.pes_sex_id,
+            p.pes_tipo_pessoa_id,
+            p.pes_ativo
+        FROM tb_funcionario f
+        JOIN tb_pessoa p ON p.pes_documento = f.fnc_pes_documento
+        WHERE p.pes_nome LIKE ?
+        ORDER BY f.fnc_id
+        """;
+
+        List<FuncionarioVO> lista = new ArrayList<>();
+        try (PreparedStatement ps = con_fnc.prepareStatement(sql)) {
+            ps.setString(1, "%" + nome + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    FuncionarioVO funcionario = montarFuncionarioCompleto(rs);
+                    lista.add(funcionario);
+                }
+            }
+        }
+        return lista;
+    }
+
+
 }

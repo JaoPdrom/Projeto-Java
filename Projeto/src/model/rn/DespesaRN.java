@@ -7,6 +7,7 @@ package model.rn;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import model.dao.ConexaoDAO;
@@ -151,6 +152,57 @@ public class DespesaRN {
             return dao.buscarTodas();
         } catch (java.sql.SQLException e) {
             throw new Exception("Erro ao listar despesas: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Busca despesas com múltiplos filtros opcionais.
+     * Regras sugeridas:
+     * - Se id != null: busca direta por ID e ignora demais filtros de texto.
+     * - Caso contrário, combina:
+     *   - descricaoLike (LIKE)
+     *   - tipoDespesaId (igualdade)
+     *   - intervalo de datas (data única ou período)
+     *
+     * Se nenhum filtro for informado, o método retorna todas as despesas.
+     */
+    public List<DespesaVO> buscarComFiltros(
+            Integer id,
+            String descricaoLike,
+            Integer tipoDespesaId,
+            LocalDate dtInicial,
+            LocalDate dtFinal) throws Exception {
+
+        try (Connection con = ConexaoDAO.getConexao()) {
+            DespesaDAO dao = new DespesaDAO(con);
+
+            // Filtro prioritário por ID
+            if (id != null && id > 0) {
+                DespesaVO unica = dao.buscarPorId(id);
+                return unica != null ? java.util.List.of(unica) : java.util.List.of();
+            }
+
+            // Normaliza descrição
+            String desc = (descricaoLike != null && !descricaoLike.isBlank()) ? descricaoLike.trim() : null;
+
+            // Normaliza tipo
+            Integer tipoId = (tipoDespesaId != null && tipoDespesaId > 0) ? tipoDespesaId : null;
+
+            // Normaliza datas
+            LocalDate inicio = dtInicial;
+            LocalDate fim = dtFinal;
+            if (inicio != null && fim == null) {
+                fim = inicio;
+            }
+
+            // Se nenhum filtro informado, retorna todas
+            if (desc == null && tipoId == null && inicio == null && fim == null) {
+                return dao.buscarTodas();
+            }
+
+            return dao.buscarComFiltros(desc, tipoId, inicio, fim);
+        } catch (SQLException e) {
+            throw new Exception("Erro ao buscar despesas com filtros: " + e.getMessage(), e);
         }
     }
 
