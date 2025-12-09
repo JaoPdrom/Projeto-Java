@@ -65,16 +65,6 @@ public class DespesaDAO {
         }
     }
 
-    // Update despesa por descricao
-    public void atualizarPorDescricao(String descricaoAntiga, String descricaoNova) throws SQLException {
-        String sql = "UPDATE tb_despesa SET despesa_descricao = ? WHERE despesa_descricao = ?";
-        try (PreparedStatement despesa_att_desc = con_despesa.prepareStatement(sql)) {
-            despesa_att_desc.setString(1, descricaoNova);
-            despesa_att_desc.setString(2, descricaoAntiga);
-            despesa_att_desc.executeUpdate();
-        }
-    }
-
     // Busca despesa por id
     public DespesaVO buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM tb_despesa WHERE despesa_id = ?";
@@ -202,19 +192,6 @@ public class DespesaDAO {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
-    }
-
-    // Soma total de despesas no período (inclusive)
-    public double somarTotalNoPeriodo(java.util.Date inicio, java.util.Date fim) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(despesa_valor),0) AS total FROM tb_despesa WHERE despesa_dtRealizacao BETWEEN ? AND ?";
-        try (PreparedStatement ps = con_despesa.prepareStatement(sql)) {
-            ps.setDate(1, new Date(inicio.getTime()));
-            ps.setDate(2, new Date(fim.getTime()));
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getDouble("total");
-            }
-        }
-        return 0.0;
     }
 
     private DespesaVO mapDespesa(ResultSet rs) throws SQLException {

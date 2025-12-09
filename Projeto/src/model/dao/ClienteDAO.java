@@ -63,11 +63,6 @@ public class ClienteDAO {
         }
     }
 
-    // compatibilidade: mantém assinatura antiga mas usa documento
-    public ClienteVO buscarPorCpf(String documento) throws SQLException {
-        return buscarPorDocumento(documento);
-    }
-
     // Busca completa (com joins) por documento
     public ClienteVO buscarClienteCompletoPorDocumento(String documento) throws SQLException {
         String sql = """
@@ -300,51 +295,6 @@ public class ClienteDAO {
             }
         }
         return null;
-    }
-
-    public List<ClienteVO> buscarComFiltros(String nome, String tipoCodigo, Boolean ativo) throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT c.cli_id, c.cli_pes_documento, c.cli_dtCadastro FROM tb_cliente c ");
-        sb.append("JOIN tb_pessoa p ON p.pes_documento = c.cli_pes_documento ");
-        sb.append("JOIN tb_tipoPessoa tp ON tp.tipo_pessoa_id = p.pes_tipo_pessoa_id ");
-        sb.append("WHERE 1=1 ");
-        if (nome != null && !nome.isBlank()) sb.append(" AND p.pes_nome LIKE ? ");
-        if (tipoCodigo != null && !tipoCodigo.equalsIgnoreCase("Todos") && !tipoCodigo.isBlank()) sb.append(" AND tp.codigo = ? ");
-        if (ativo != null) sb.append(" AND p.pes_ativo = ? ");
-
-        List<ClienteVO> lista = new ArrayList<>();
-        try (PreparedStatement ps = con_cli.prepareStatement(sb.toString())) {
-            int idx = 1;
-            if (nome != null && !nome.isBlank()) ps.setString(idx++, "%" + nome + "%");
-            if (tipoCodigo != null && !tipoCodigo.equalsIgnoreCase("Todos") && !tipoCodigo.isBlank()) ps.setString(idx++, tipoCodigo.substring(0,1));
-            if (ativo != null) ps.setBoolean(idx++, ativo);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String documento = rs.getString("cli_pes_documento");
-                    PessoaVO pessoa = pessoaDAO.buscarPesCpf(documento);
-                    if (pessoa == null) continue;
-
-                    ClienteVO cli = new ClienteVO();
-                    cli.setPes_cpf(pessoa.getPes_cpf());
-                    cli.setPes_nome(pessoa.getPes_nome());
-                    cli.setPes_sexo(pessoa.getPes_sexo());
-                    cli.setPes_dt_nascimento(pessoa.getPes_dt_nascimento());
-                    cli.setPes_email(pessoa.getPes_email());
-                    cli.setPes_ativo(pessoa.getPes_ativo());
-                    cli.setTelefone(pessoa.getTelefone());
-                    cli.setEndereco(pessoa.getEndereco());
-
-                    cli.setCli_id(rs.getInt("cli_id"));
-                    cli.setCli_pes_cpf(pessoa);
-                    Date dtCad = rs.getDate("cli_dtCadastro");
-                    cli.setCli_dtCadastro(dtCad != null ? ((java.sql.Date) dtCad).toLocalDate() : null);
-
-                    lista.add(cli);
-                }
-            }
-        }
-        return lista;
     }
 
 

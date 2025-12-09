@@ -5,7 +5,7 @@
 
 package model.dao;
 
-import model.vo.PessoaVO;
+// import model.vo.PessoaVO;
 import model.vo.TelefoneVO;
 
 import java.sql.Connection;

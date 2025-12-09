@@ -113,19 +113,4 @@ public class EndPostalDAO {
         }
         return endPostal;
     }
-
-    // update endereço postal por nome da rua
-    public void atualizarPorNomeRua(String nomeRuaAntigo, EndPostalVO endPostalNovo) throws SQLException {
-        String sql = "UPDATE tb_endPostal SET endP_logradouro_id = ?, endP_nomeRua = ?, endP_cep = ?, endP_cid_id = ?, endP_est_sigla = ?, endP_bairro_id = ? WHERE endP_nomeRua = ?";
-        try (PreparedStatement endPostal_att_nome = con_endp.prepareStatement(sql)) {
-            endPostal_att_nome.setInt(1, endPostalNovo.getEndP_logradouro().getLogradouro_id());
-            endPostal_att_nome.setString(2, endPostalNovo.getEndP_nomeRua());
-            endPostal_att_nome.setString(3, endPostalNovo.getEndP_cep());
-            endPostal_att_nome.setInt(4, endPostalNovo.getEndP_cidade().getCid_id());
-            endPostal_att_nome.setString(5, endPostalNovo.getEndP_estado().getEst_sigla());
-            endPostal_att_nome.setInt(6, endPostalNovo.getEndP_bairro().getBairro_id());
-            endPostal_att_nome.setString(7, nomeRuaAntigo);
-            endPostal_att_nome.executeUpdate();
-        }
-    }
 }

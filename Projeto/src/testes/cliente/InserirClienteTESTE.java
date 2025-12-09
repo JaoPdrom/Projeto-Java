@@ -8,7 +8,7 @@ package testes.cliente;
 import model.rn.ClienteRN;
 import model.vo.*;
 
-import java.sql.SQLException;
+// import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class InserirClienteTESTE {

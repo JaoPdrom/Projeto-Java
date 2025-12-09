@@ -5,9 +5,9 @@
 
 package model.dao;
 
-import model.vo.EnderecoVO;
+// import model.vo.EnderecoVO;
 import model.vo.InfoEmpresaVO;
-import model.vo.TelefoneVO;
+// import model.vo.TelefoneVO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

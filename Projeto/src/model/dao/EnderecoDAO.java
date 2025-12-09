@@ -5,11 +5,11 @@
 
 package model.dao;
 
-import model.vo.BairroVO;
-import model.vo.CidadeVO;
+// import model.vo.BairroVO;
+// import model.vo.CidadeVO;
 import model.vo.EnderecoVO;
-import model.vo.EstadoVO;
-import model.vo.LogradouroVO;
+// import model.vo.EstadoVO;
+// import model.vo.LogradouroVO;
 import model.vo.EndPostalVO;
 
 import java.sql.*;
@@ -18,20 +18,20 @@ import java.util.List;
 
 public class EnderecoDAO {
     private Connection con_endp;
-    private LogradouroDAO logradouroDAO;
-    private BairroDAO bairroDAO;
-    private CidadeDAO cidadeDAO;
-    private EstadoDAO estadoDAO;
+    // private LogradouroDAO logradouroDAO;
+    // private BairroDAO bairroDAO;
+    // private CidadeDAO cidadeDAO;
+    // private EstadoDAO estadoDAO;
     private EndPostalDAO endPostalDAO;
     private PesEndDAO pesEndDAO;
 
     public EnderecoDAO(Connection con_endp) {
         this.con_endp = con_endp;
         try {
-        this.logradouroDAO = new LogradouroDAO(con_endp);
-        this.bairroDAO = new BairroDAO(con_endp);
-        this.cidadeDAO = new CidadeDAO(con_endp);
-        this.estadoDAO = new EstadoDAO(con_endp);
+        // this.logradouroDAO = new LogradouroDAO(con_endp);
+        // this.bairroDAO = new BairroDAO(con_endp);
+        // this.cidadeDAO = new CidadeDAO(con_endp);
+        // this.estadoDAO = new EstadoDAO(con_endp);
         this.endPostalDAO = new EndPostalDAO(con_endp);
             this.pesEndDAO = new PesEndDAO(con_endp);
         } catch (SQLException e) {

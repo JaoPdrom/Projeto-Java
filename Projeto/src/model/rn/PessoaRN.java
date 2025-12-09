@@ -19,8 +19,8 @@ public class PessoaRN {
     private TelefoneDAO telefoneDAO;
     private PesEndDAO pesEndDAO;
     private EnderecoDAO enderecoDAO;
-    private TipoPessoaDAO tipoPesDAO;
-    private LogDAO logDAO;
+    // private TipoPessoaDAO tipoPesDAO;
+    // private LogDAO logDAO;
 
     public PessoaRN() {
         try {
@@ -42,7 +42,7 @@ public class PessoaRN {
 
             // DAOs
             this.pessoaDAO = new PessoaDAO(conexao);
-            this.logDAO    = new LogDAO(conexao);
+            // this.logDAO    = new LogDAO(conexao);
             EndPostalDAO endPostalDAO = new EndPostalDAO(conexao);
             EnderecoDAO  enderecoDAO  = new EnderecoDAO(conexao);
             PesEndDAO    pesEndDAO    = new PesEndDAO(conexao);
@@ -120,7 +120,7 @@ public class PessoaRN {
             conexao.setAutoCommit(false); // inicia transação
 
             this.pessoaDAO = new PessoaDAO(conexao);
-            this.logDAO = new LogDAO(conexao);
+            // this.logDAO = new LogDAO(conexao);
             this.enderecoDAO = new EnderecoDAO(conexao);
             this.telefoneDAO = new TelefoneDAO(conexao);
 
@@ -224,7 +224,7 @@ public class PessoaRN {
         try (Connection conexao = ConexaoDAO.getConexao()) {
             // Inicializa os DAOs com a mesma conexão
             this.pessoaDAO = new PessoaDAO(conexao);
-            this.logDAO = new LogDAO(conexao);
+            // this.logDAO = new LogDAO(conexao);
 
             pessoa = pessoaDAO.buscarPesCpf(cpf);
 

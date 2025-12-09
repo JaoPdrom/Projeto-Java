@@ -1,6 +1,6 @@
 package model.vo;
 
-import java.lang.invoke.StringConcatFactory;
+// import java.lang.invoke.StringConcatFactory;
 
 public class CargoVO {
     private int car_id;

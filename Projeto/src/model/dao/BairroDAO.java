@@ -40,26 +40,6 @@ public class BairroDAO {
         return -1; // Retorna -1 se a inserção falhar.
     }
 
-    // update bairro por id
-    public void atualizarPorId(BairroVO bairro) throws SQLException {
-        String sql = "UPDATE tb_bairro SET bairro_descricao = ? WHERE bairro_id = ?";
-        try (PreparedStatement bairro_att = con_bairro.prepareStatement(sql)) {
-            bairro_att.setString(1, bairro.getBairro_descricao());
-            bairro_att.setInt(2, bairro.getBairro_id());
-            bairro_att.executeUpdate();
-        }
-    }
-
-    // update bairro por nome
-    public void atualizarPorNome(String NomeAntiga, String NomeNova) throws SQLException {
-        String sql = "UPDATE tb_bairro SET bairro_descricao = ? WHERE bairro_descricao = ?";
-        try (PreparedStatement bairro_att_nome = con_bairro.prepareStatement(sql)) {
-            bairro_att_nome.setString(1, NomeNova);
-            bairro_att_nome.setString(2, NomeAntiga);
-            bairro_att_nome.executeUpdate();
-        }
-    }
-
     // busca bairro pod id
     public BairroVO buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM tb_bairro WHERE bairro_id = ?";

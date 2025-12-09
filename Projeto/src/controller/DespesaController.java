@@ -450,6 +450,11 @@ public class DespesaController implements Initializable {
         txtDespesaValorPago.clear();
         cbDespesaTipoDespesa.setValue(null);
         dtpDespesaDataRealizacao.setValue(null);
+        rBtnDespesaBuscaSemDatas.setSelected(true);
+        rBtnDespesaBuscaData.setSelected(false);
+        rBtnDespesaBuscaPeriodo.setSelected(false);
+        dtpDespesaBuscaDtInicial.setValue(null);
+        dtpDespesaBuscaDtFinal.setValue(null);
     }
 
     // Cor ANSI para o console (funciona no VS Code, IntelliJ e CMD moderno)
