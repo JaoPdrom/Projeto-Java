@@ -22,8 +22,6 @@ public class BairroDAO {
         this.con_bairro = con_bairro;
     }
 
-    public BairroDAO() throws SQLException {}
-
     // registrar novo bairro
 
     public int adicionarNovo(BairroVO bairro) throws SQLException {
