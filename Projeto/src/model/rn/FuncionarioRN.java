@@ -12,7 +12,6 @@ import model.dao.DemissaoDAO;
 import model.dao.EnderecoDAO;
 import model.dao.FaseContratacaoDAO;
 import model.dao.FuncionarioDAO;
-// import model.dao.LogDAO;
 import model.dao.PesEndDAO;
 import model.dao.TelefoneDAO;
 
@@ -20,9 +19,7 @@ import model.vo.CargoVO;
 import model.vo.ContratacaoVO;
 import model.vo.FaseContratacaoVO;
 import model.vo.FuncionarioVO;
-// import model.vo.LogVO;
 import model.dao.PessoaDAO;
-// import model.vo.PessoaVO;
 import model.vo.TelefoneVO;
 import model.vo.EnderecoVO;
 import model.vo.DemissaoVO;
@@ -72,7 +69,7 @@ public class FuncionarioRN {
         }
         LocalDate nascimento = funcionario.getPes_dt_nascimento();
         if (Period.between(nascimento, LocalDate.now()).getYears() < 18) {
-            throw new Exception("Funcion�rio precisa ter pelo menos 18 anos.");
+            throw new Exception("Funcionário precisa ter pelo menos 18 anos.");
         }
 
         if (funcionario.getPes_ativo() == null) {
@@ -181,11 +178,15 @@ public class FuncionarioRN {
             ContratacaoVO contratacao = funcionario.getContratacao();
             if (contratacao == null) {
                 contratacao = new ContratacaoVO();
-                contratacao.setContratacao_fase("Contrata��o");
             }
 
-            if (contratacao.getContratacao_fase() == null || contratacao.getContratacao_fase().isBlank()) {
-                contratacao.setContratacao_fase("Contrata��o");
+            FaseContratacaoDAO faseContratacaoDAO = new FaseContratacaoDAO(con);
+            if (contratacao.getFase_contratacao() == null) {
+                FaseContratacaoVO fasePadrao = buscarFaseContratacaoPadrao(faseContratacaoDAO);
+                if (fasePadrao == null) {
+                    throw new Exception("Fase de contratação padrão não encontrada.");
+                }
+                contratacao.setFase_contratacao(fasePadrao);
             }
 
             if (contratacao.getContratacao_dtContratacao() == null) {
@@ -335,7 +336,7 @@ public class FuncionarioRN {
             enderecoDAO.sincronizarPorPessoa(documento, enderecos);
 
             ContratacaoVO contratacao = funcionario.getContratacao();
-            if (contratacao != null && contratacao.getContratacao_fase() != null && !contratacao.getContratacao_fase().isBlank()) {
+            if (contratacao != null && contratacao.getFase_contratacao() != null) {
                 if (contratacao.getContratacao_dtContratacao() == null) {
                     LocalDate dt;
                     if (funcionario.getFnc_dtContratacao() != null) {
@@ -344,6 +345,13 @@ public class FuncionarioRN {
                         dt = LocalDate.now();
                     }
                     contratacao.setContratacao_dtContratacao(dt);
+                }
+
+                if (contratacao.getFase_contratacao().getFase_contratacao_id() <= 0) {
+                    FaseContratacaoVO fasePadrao = buscarFaseContratacaoPadrao(new FaseContratacaoDAO(con));
+                    if (fasePadrao != null) {
+                        contratacao.setFase_contratacao(fasePadrao);
+                    }
                 }
 
                 contratacao.setFuncionario(funcionario);
@@ -431,8 +439,19 @@ public class FuncionarioRN {
             }
             return resultado;
         } catch (SQLException e) {
-            throw new Exception("Erro ao listar fases de contrata��o: " + e.getMessage(), e);
+            throw new Exception("Erro ao listar fases de contratação: " + e.getMessage(), e);
         }
+    }
+
+    private FaseContratacaoVO buscarFaseContratacaoPadrao(FaseContratacaoDAO faseContratacaoDAO) throws SQLException {
+        List<FaseContratacaoVO> fases = faseContratacaoDAO.buscarTodas();
+        for (FaseContratacaoVO fase : fases) {
+            if (fase.getFase_contratacao_descricao() != null
+                    && fase.getFase_contratacao_descricao().equalsIgnoreCase("Contratação")) {
+                return fase;
+            }
+        }
+        return fases.isEmpty() ? null : fases.get(0);
     }
 
     public java.util.List<FuncionarioVO> listarFuncionarios() throws Exception {
@@ -440,7 +459,7 @@ public class FuncionarioRN {
             FuncionarioDAO funcionarioDAO = new FuncionarioDAO(con);
             return funcionarioDAO.listarTodosCompletos();
         } catch (SQLException e) {
-            throw new Exception("Erro ao listar funcion�rios: " + e.getMessage(), e);
+            throw new Exception("Erro ao listar funcionarios: " + e.getMessage(), e);
         }
     }
 

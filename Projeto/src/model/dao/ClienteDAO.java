@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import model.vo.BairroVO;
@@ -26,7 +31,7 @@ public class ClienteDAO {
         this.pessoaDAO = new PessoaDAO(con_cli);
     }
 
-    // inserir cliente (linha em tb_cliente)
+    // inserir cliente 
     public int adicionarNovoCliente(ClienteVO cliente) throws SQLException {
         String sql = "INSERT INTO tb_cliente (cli_pes_documento, cli_dtCadastro) VALUES (?, ?)";
         try (PreparedStatement ps = con_cli.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -63,7 +68,7 @@ public class ClienteDAO {
         }
     }
 
-    // Busca completa (com joins) por documento
+    // Busca completa por documento
     public ClienteVO buscarClienteCompletoPorDocumento(String documento) throws SQLException {
         String sql = """
         SELECT
@@ -162,7 +167,7 @@ public class ClienteDAO {
         return null;
     }
 
-    // Busca completa com filtros (nome, tipo, ativo)
+    // Busca completa com filtros 
     public List<ClienteVO> buscarClientesCompletosComFiltros(String nome, String tipoCodigo, Boolean ativo) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("""

@@ -1,4 +1,9 @@
-﻿package controller;
+﻿/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
+package controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -862,74 +867,7 @@ public class ClienteController implements Initializable{
     }
 
 
-    //controle de campos
-    private void habilitarCampos(boolean habilitar){
-        btnClienteSalvar.setDisable(!habilitar);
-        btnClienteEditar.setDisable(!habilitar); 
-        btnClienteAtualizar.setDisable(!habilitar);
-        btnClienteExcluir.setDisable(!habilitar);
-        txtClienteId.setDisable(!habilitar);
-        txtClientePesDocumento.setDisable(!habilitar);
-        txtClientePesNome.setDisable(!habilitar);
-        txtClientePesEmail.setDisable(!habilitar);
-        txtClienteTelCodPais.setDisable(!habilitar);
-        txtClienteTelDdd.setDisable(!habilitar);
-        txtClienteTelNumero.setDisable(!habilitar);
-        txtClienteEndCep.setDisable(!habilitar);
-        txtClienteEndNomeRua.setDisable(!habilitar);
-        txtClienteEndBairro.setDisable(!habilitar);
-        txtClienteEndNumero.setDisable(!habilitar);
-        txtClienteEndComplemento.setDisable(!habilitar);
-
-        cbClientePesTipo.setDisable(!habilitar);
-        cbClientePesSexo.setDisable(!habilitar); 
-        cbClienteEndEstado.setDisable(!habilitar); 
-        cbClienteEndCidade.setDisable(!habilitar); 
-        cbClienteEndLogradouro.setDisable(!habilitar); 
-        dtpClientePesDataNascimento.setDisable(!habilitar);
-        chbClienteAtivo.setDisable(!habilitar);
-    }
-
-    private void limparCamposCliente() {
-        txtClienteBusca.clear();
-        txtClienteId.clear();
-        txtClientePesDocumento.clear();
-        txtClientePesNome.clear();
-        txtClientePesEmail.clear();
-        txtClienteTelCodPais.clear();
-        txtClienteTelDdd.clear();
-        txtClienteTelNumero.clear();
-        txtClienteEndCep.clear();
-        txtClienteEndNomeRua.clear();
-        txtClienteEndBairro.clear();
-        txtClienteEndNumero.clear();
-        txtClienteEndComplemento.clear();
-        cbClientePesSexo.setValue(null);
-        cbClientePesTipo.setValue(null);
-        cbClienteEndEstado.setValue(null);
-        cbClienteEndCidade.setValue(null);
-        cbClienteEndLogradouro.setValue(null);
-        telefoneSelecionadoId = null;
-        enderecoSelecionadoId = null;
-    }
-
-
-    @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {
-        info("Inicializando tela de clientes");
-        try{
-            habilitarCampos(false);
-            carregarTipoPessoa();
-            carregarSexo();
-            carregarEstados();
-            carregarLogradouros();
-            listenerEstado();
-            carregarTabela();
-        } catch (Exception e){
-            erro("Erro ao inicializar", e);
-        }
-    }
-    
+   
     private void carregarTabela(){
         try {
             info("Carregando lista de clientes");
@@ -1204,6 +1142,74 @@ public class ClienteController implements Initializable{
         } catch (Exception e) {
             erro("Erro geral ao selecionar cliente", e);
             carregandoClienteSelecionado = false; // Garante que a flag seja resetada mesmo em caso de erro
+        }
+    }
+
+       //controle de campos
+       private void habilitarCampos(boolean habilitar){
+        btnClienteSalvar.setDisable(!habilitar);
+        btnClienteEditar.setDisable(!habilitar); 
+        btnClienteAtualizar.setDisable(!habilitar);
+        btnClienteExcluir.setDisable(!habilitar);
+        txtClienteId.setDisable(!habilitar);
+        txtClientePesDocumento.setDisable(!habilitar);
+        txtClientePesNome.setDisable(!habilitar);
+        txtClientePesEmail.setDisable(!habilitar);
+        txtClienteTelCodPais.setDisable(!habilitar);
+        txtClienteTelDdd.setDisable(!habilitar);
+        txtClienteTelNumero.setDisable(!habilitar);
+        txtClienteEndCep.setDisable(!habilitar);
+        txtClienteEndNomeRua.setDisable(!habilitar);
+        txtClienteEndBairro.setDisable(!habilitar);
+        txtClienteEndNumero.setDisable(!habilitar);
+        txtClienteEndComplemento.setDisable(!habilitar);
+
+        cbClientePesTipo.setDisable(!habilitar);
+        cbClientePesSexo.setDisable(!habilitar); 
+        cbClienteEndEstado.setDisable(!habilitar); 
+        cbClienteEndCidade.setDisable(!habilitar); 
+        cbClienteEndLogradouro.setDisable(!habilitar); 
+        dtpClientePesDataNascimento.setDisable(!habilitar);
+        chbClienteAtivo.setDisable(!habilitar);
+    }
+
+    private void limparCamposCliente() {
+        txtClienteBusca.clear();
+        txtClienteId.clear();
+        txtClientePesDocumento.clear();
+        txtClientePesNome.clear();
+        txtClientePesEmail.clear();
+        txtClienteTelCodPais.clear();
+        txtClienteTelDdd.clear();
+        txtClienteTelNumero.clear();
+        txtClienteEndCep.clear();
+        txtClienteEndNomeRua.clear();
+        txtClienteEndBairro.clear();
+        txtClienteEndNumero.clear();
+        txtClienteEndComplemento.clear();
+        cbClientePesSexo.setValue(null);
+        cbClientePesTipo.setValue(null);
+        cbClienteEndEstado.setValue(null);
+        cbClienteEndCidade.setValue(null);
+        cbClienteEndLogradouro.setValue(null);
+        telefoneSelecionadoId = null;
+        enderecoSelecionadoId = null;
+    }
+
+
+    @Override
+    public void initialize(URL arg0, ResourceBundle arg1) {
+        info("Inicializando tela de clientes");
+        try{
+            habilitarCampos(false);
+            carregarTipoPessoa();
+            carregarSexo();
+            carregarEstados();
+            carregarLogradouros();
+            listenerEstado();
+            carregarTabela();
+        } catch (Exception e){
+            erro("Erro ao inicializar", e);
         }
     }
 

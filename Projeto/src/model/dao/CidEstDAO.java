@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import java.sql.Connection;
@@ -12,15 +17,6 @@ public class CidEstDAO {
         this.con = con;
     }
 
-    /**
-     * Garante que o relacionamento cidade-estado existe na tabela tb_cidEst.
-     * Se não existir, cria o relacionamento.
-     * 
-     * @param cidadeId ID da cidade
-     * @param estadoSigla Sigla do estado
-     * @return true se o relacionamento foi criado ou já existia, false em caso de erro
-     * @throws SQLException
-     */
     public boolean garantirRelacionamento(int cidadeId, String estadoSigla) throws SQLException {
         if (cidadeId <= 0 || estadoSigla == null || estadoSigla.isBlank()) {
             throw new SQLException("Cidade ID e sigla do estado são obrigatórios.");

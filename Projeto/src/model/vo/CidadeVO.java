@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.vo;
 
 public class CidadeVO {
@@ -26,14 +31,6 @@ public class CidadeVO {
     public void setCid_descricao(String cid_descricao) {
         this.cid_descricao = cid_descricao;
     }
-
-//    public EstadoVO getEstado() {
-//        return estado;
-//    }
-//
-//    public void setEstado(EstadoVO estado) {
-//        this.estado = estado;
-//    }
 
     @Override
     public String toString() {

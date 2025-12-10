@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import model.vo.*;
@@ -46,7 +51,7 @@ public class EndPostalDAO {
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     int id = rs.getInt(1);
-                    endPostal.setEndP_id(id); // ✅ seta no VO
+                    endPostal.setEndP_id(id); // seta no objeto EndPostalVO
                     return id;
                 }
             }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import model.vo.PessoaVO;
@@ -63,13 +68,13 @@ public class PessoaDAO {
         StringBuilder sql = new StringBuilder("UPDATE tb_pessoa SET ");
         List<Object> parametros = new ArrayList<>();
 
-        // CPF normalmente não deve ser alterado, então ignoramos
+        // cpf normalmente não deve ser alterado
         if (!Objects.equals(pessoaAtt.getPes_nome(), pesAntiga.getPes_nome())) {
             sql.append("pes_nome = ?, ");
             parametros.add(pessoaAtt.getPes_nome());
         }
 
-        // sexo (usa ID)
+        // sexo
         if (pessoaAtt.getPes_sexo() != null && pesAntiga.getPes_sexo() != null) {
             if (!Objects.equals(pessoaAtt.getPes_sexo().getSex_id(), pesAntiga.getPes_sexo().getSex_id())) {
                 sql.append("pes_sex_id = ?, ");
@@ -106,20 +111,20 @@ public class PessoaDAO {
             return;
         }
 
-        // Remove última vírgula
+        // remove última vírgula
         sql.setLength(sql.length() - 2);
 
         sql.append(" WHERE pes_documento = ?");
         parametros.add(pessoaAtt.getPes_cpf());
 
-        System.out.println("🔧 SQL Gerado: " + sql);
-        System.out.println("🧩 Parâmetros: " + parametros);
+        System.out.println("sql gerado: " + sql);
+        System.out.println("parâmetros: " + parametros);
 
         try (PreparedStatement ps = con_pessoa.prepareStatement(sql.toString())) {
             for (int i = 0; i < parametros.size(); i++) {
                 Object valor = parametros.get(i);
 
-                // Tratar data local
+                // tratar data local
                 if (valor instanceof java.time.LocalDate data) {
                     ps.setDate(i + 1, java.sql.Date.valueOf(data));
                 } else {
@@ -128,9 +133,9 @@ public class PessoaDAO {
             }
 
             int linhas = ps.executeUpdate();
-            System.out.println("✅ Linhas afetadas: " + linhas);
+            System.out.println("linhas afetadas: " + linhas);
             if (linhas == 0) {
-                throw new SQLException("Nenhuma linha atualizada (CPF não encontrado ou dados idênticos).");
+                throw new SQLException("nenhuma linha atualizada (cpf não encontrado ou dados idênticos).");
             }
         }
     }
@@ -151,11 +156,11 @@ public class PessoaDAO {
                     pessoa.setPes_nome(rs.getString("pes_nome"));
                     pessoa.setPes_email(rs.getString("pes_email"));
 
-                    // ✅ Conversão segura de java.sql.Date → LocalDate
+                    // conversão segura de java.sql.Date → LocalDate
                     java.sql.Date dataSql = rs.getDate("pes_dtNascimento");
                     pessoa.setPes_dt_nascimento(dataSql != null ? dataSql.toLocalDate() : null);
 
-                    // ⚠️ Verifica se sexoDAO está inicializado antes de usar
+                    // verifica se sexoDAO está inicializado antes de usar
                     int idSexo = rs.getInt("pes_sex_id");
                     if (sexoDAO != null && idSexo > 0) {
                         pessoa.setPes_sexo(sexoDAO.buscarPorId(idSexo));
@@ -170,11 +175,11 @@ public class PessoaDAO {
                         }
                     } catch (SQLException ignore) {}
 
-                    // Caso exista o campo ativo
+                    // caso exista o campo ativo
                     try {
                         pessoa.setPes_ativo(rs.getBoolean("pes_ativo"));
                     } catch (SQLException ignore) {
-                        // Campo pode não existir na tabela
+                        // campo pode não existir na tabela
                     }
                 }
             }
@@ -200,7 +205,6 @@ public class PessoaDAO {
                     pessoa.setPes_nome(rs.getString("pes_nome"));
                     pessoa.setPes_sexo(sexoDAO.buscarPorId(rs.getInt("pes_sex_id")));
 
-                    // ✅ Correção da conversão de Date para LocalDate
                     java.sql.Date dataSql = rs.getDate("pes_dtNascimento");
                     if (dataSql != null) {
                         pessoa.setPes_dt_nascimento(dataSql.toLocalDate());
@@ -228,20 +232,8 @@ public class PessoaDAO {
             int linhasAfetadas = ps.executeUpdate();
 
             if (linhasAfetadas == 0) {
-                throw new SQLException("Nenhuma pessoa encontrada com o CPF informado: " + pessoa.getPes_cpf());
+                throw new SQLException("nenhuma pessoa encontrada com o cpf informado: " + pessoa.getPes_cpf());
             }
         }
     }
-
-
-    public void deletarPesCPF(String cpf) throws SQLException {
-        String sql = "DELETE FROM tb_pessoa WHERE pes_documento = ?";
-        try (PreparedStatement stmt = con_pessoa.prepareStatement(sql)) {
-            stmt.setString(1, cpf);
-            stmt.executeUpdate();
-        }
-    }
-
-
-
 }

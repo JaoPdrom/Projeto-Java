@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS db_poo;
 
 USE db_poo;
 
--- Tabelas de localizaÃ§Ã£o
+-- Tabelas de localizacao
 CREATE TABLE IF NOT EXISTS tb_sexo(
     sex_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     sex_descricao VARCHAR(45) NOT NULL
@@ -60,14 +60,12 @@ CREATE TABLE IF NOT EXISTS tb_endereco(
     FOREIGN KEY (end_endP_id) REFERENCES tb_endPostal (endP_id)
 );
 
--- Tabela principal de Pessoa (Ãºnica para clientes, funcionÃ¡rios, etc.)
+-- Tabela principal de Pessoa (unica para clientes, funcionarios, etc.)
 CREATE TABLE IF NOT EXISTS tb_tipoPessoa(
     tipo_pessoa_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     codigo CHAR(1) NOT NULL UNIQUE,
     descricao VARCHAR(50) NOT NULL
 );
-INSERT INTO tb_tipopessoa (codigo, descricao) VALUES ('J', 'Juridica');
-
 
 CREATE TABLE IF NOT EXISTS tb_pessoa(
     pes_documento VARCHAR(14) NOT NULL PRIMARY KEY,
@@ -89,7 +87,7 @@ CREATE TABLE IF NOT EXISTS tb_cliente(
     FOREIGN KEY (cli_pes_documento) REFERENCES tb_pessoa (pes_documento)
 );
 
--- Tabela de relacionamento para permitir mÃºltiplos endereÃ§os por pessoa
+-- Tabela de relacionamento para permitir multiplos enderecos por pessoa
 CREATE TABLE IF NOT EXISTS tb_pesEnd(
     pesEnd_pes_documento VARCHAR(14) NOT NULL,
     pesEnd_end_id INT NOT NULL,
@@ -98,7 +96,7 @@ CREATE TABLE IF NOT EXISTS tb_pesEnd(
     FOREIGN KEY (pesEnd_end_id) REFERENCES tb_endereco(end_id)
 );
 
--- Tabela de relacionamento para permitir mÃºltiplos telefones por pessoa
+-- Tabela de relacionamento para permitir multiplos telefones por pessoa
 CREATE TABLE IF NOT EXISTS tb_telefone(
     tel_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     tel_codPais CHAR(2) NOT NULL,
@@ -108,14 +106,12 @@ CREATE TABLE IF NOT EXISTS tb_telefone(
     FOREIGN KEY (tel_pes_documento) REFERENCES tb_pessoa (pes_documento)
 );
 
--- Tabelas de FuncionÃ¡rios e Cargos
+-- Tabelas de Funcionarios e Cargos
 CREATE TABLE IF NOT EXISTS tb_cargo(
     cargo_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     cargo_descricao VARCHAR(45) NOT NULL,
     cargo_ativo BOOLEAN DEFAULT TRUE NOT NULL
 );
-INSERT INTO tb_cargo (cargo_descricao, cargo_ativo) VALUES ('Motorista', true);
-
 
 CREATE TABLE IF NOT EXISTS tb_funcionario(
     fnc_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -133,11 +129,6 @@ CREATE TABLE IF NOT EXISTS tb_fase_contratacao (
     fase_contratacao_descricao VARCHAR(45) NOT NULL,
     fase_contratacao_ativo BOOLEAN DEFAULT TRUE NOT NULL
 );
-INSERT INTO tb_fase_contratacao (fase_contratacao_descricao, fase_contratacao_ativo) VALUES 
-    ('Entrevista', true),
-    ('Aprovação', true),
-    ('Contratação', true),
-    ('Integração', true);
 
 CREATE TABLE tb_contratacao (
     contratacao_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -160,8 +151,6 @@ CREATE TABLE IF NOT EXISTS tb_tipoPdt(
     tipoPdt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     tipoPdt_descricao VARCHAR(45)
 );
-INSERT INTO tb_tipopdt (tipoPdt_descricao) VALUES ('racao');
-
 
 CREATE TABLE IF NOT EXISTS tb_produto(
     produto_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,

@@ -5,11 +5,7 @@
 
 package model.dao;
 
-// import model.vo.BairroVO;
-// import model.vo.CidadeVO;
 import model.vo.EnderecoVO;
-// import model.vo.EstadoVO;
-// import model.vo.LogradouroVO;
 import model.vo.EndPostalVO;
 
 import java.sql.*;
@@ -18,20 +14,12 @@ import java.util.List;
 
 public class EnderecoDAO {
     private Connection con_endp;
-    // private LogradouroDAO logradouroDAO;
-    // private BairroDAO bairroDAO;
-    // private CidadeDAO cidadeDAO;
-    // private EstadoDAO estadoDAO;
     private EndPostalDAO endPostalDAO;
     private PesEndDAO pesEndDAO;
 
     public EnderecoDAO(Connection con_endp) {
         this.con_endp = con_endp;
         try {
-        // this.logradouroDAO = new LogradouroDAO(con_endp);
-        // this.bairroDAO = new BairroDAO(con_endp);
-        // this.cidadeDAO = new CidadeDAO(con_endp);
-        // this.estadoDAO = new EstadoDAO(con_endp);
         this.endPostalDAO = new EndPostalDAO(con_endp);
             this.pesEndDAO = new PesEndDAO(con_endp);
         } catch (SQLException e) {
@@ -40,7 +28,6 @@ public class EnderecoDAO {
     }
 
     // adicionar novo endereco
-    // Adiciona um novo endereço vinculado a uma pessoa
     public int adicionarNovo(EnderecoVO endereco) throws SQLException {
         String sql = "INSERT INTO tb_endereco (end_endP_id, end_numero, end_complemento) VALUES (?, ?, ?)";
         try (PreparedStatement ps = con_endp.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -55,7 +42,7 @@ public class EnderecoDAO {
         return -1;
     }
 
-    // ✅ Atualiza um endereço existente
+    // atualizar endereço existente
     public void atualizar(EnderecoVO endereco) throws SQLException {
         String sql = "UPDATE tb_endereco SET end_endP_id = ?, end_numero = ?, end_complemento = ? WHERE end_id = ?";
         try (PreparedStatement ps = con_endp.prepareStatement(sql)) {
@@ -86,7 +73,7 @@ public class EnderecoDAO {
         FROM tb_endereco e
         INNER JOIN tb_pesEnd pe ON e.end_id = pe.pesEnd_end_id
         WHERE pe.pesEnd_pes_documento = ?
-    """;
+        """;
 
         try (PreparedStatement ps = con_endp.prepareStatement(sql)) {
             ps.setString(1, documento);
@@ -96,7 +83,7 @@ public class EnderecoDAO {
                     EnderecoVO end = new EnderecoVO();
                     end.setEnd_id(rs.getInt("end_id"));
 
-                    // Criar o objeto de referência (EndPostal) se existir
+                    // criar o objeto de EndPostal se existir
                     EndPostalVO endPostal = endPostalDAO.buscarPorId(rs.getInt("end_endP_id"));
                     end.setEnd_endP_id(endPostal);
 
@@ -110,7 +97,7 @@ public class EnderecoDAO {
         return enderecos;
     }
 
-    // ✅ Busca endereço por ID
+    // busca endereço por ID
     public EnderecoVO buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM tb_endereco WHERE end_id = ?";
         EnderecoVO endereco = null;

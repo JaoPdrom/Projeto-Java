@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import model.vo.ContratacaoVO;
@@ -28,19 +33,21 @@ public class ContratacaoDAO {
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             // Verifica se tem fase válida
             int faseId = 0;
-            if (contratacao.getFase_contratacao() != null && contratacao.getFase_contratacao().getFase_contratacao_id() > 0) {
-                faseId = contratacao.getFase_contratacao().getFase_contratacao_id();
-            } else if (contratacao.getContratacao_fase() != null && !contratacao.getContratacao_fase().isBlank()) {
-                // Compatibilidade: busca fase por descrição se não tiver ID
+            FaseContratacaoVO faseContratacao = contratacao.getFase_contratacao();
+            if (faseContratacao != null && faseContratacao.getFase_contratacao_id() > 0) {
+                faseId = faseContratacao.getFase_contratacao_id();
+            } else if (faseContratacao != null && faseContratacao.getFase_contratacao_descricao() != null
+                    && !faseContratacao.getFase_contratacao_descricao().isBlank()) {
+                // Busca a fase por descrição quando o ID não veio preenchido
                 List<FaseContratacaoVO> fases = faseContratacaoDAO.buscarTodas();
                 for (FaseContratacaoVO fase : fases) {
-                    if (fase.getFase_contratacao_descricao().equalsIgnoreCase(contratacao.getContratacao_fase())) {
+                    if (fase.getFase_contratacao_descricao().equalsIgnoreCase(faseContratacao.getFase_contratacao_descricao())) {
                         faseId = fase.getFase_contratacao_id();
                         contratacao.setFase_contratacao(fase);
                         break;
                     }
                 }
-                // Se não encontrou, busca por "Contratação" como padrão
+                // Se não encontrou pelo nome informado, tenta utilizar a fase padrão "Contratação"
                 if (faseId == 0) {
                     for (FaseContratacaoVO fase : fases) {
                         if (fase.getFase_contratacao_descricao().equalsIgnoreCase("Contratação")) {

@@ -35,7 +35,7 @@ public class BairroDAO {
                 }
             }
         }
-        return -1; // Retorna -1 se a inserção falhar.
+        return -1;
     }
 
     // busca bairro pod id

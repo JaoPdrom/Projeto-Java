@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.vo;
 
 import java.time.LocalDate;
@@ -31,22 +36,6 @@ public class ContratacaoVO {
 
     public void setFase_contratacao(FaseContratacaoVO fase_contratacao) {
         this.fase_contratacao = fase_contratacao;
-    }
-
-    // Métodos de compatibilidade para manter código existente funcionando
-    @Deprecated
-    public String getContratacao_fase() {
-        return fase_contratacao != null ? fase_contratacao.getFase_contratacao_descricao() : null;
-    }
-
-    @Deprecated
-    public void setContratacao_fase(String contratacao_fase) {
-        if (contratacao_fase != null && !contratacao_fase.isBlank()) {
-            if (fase_contratacao == null) {
-                fase_contratacao = new FaseContratacaoVO();
-            }
-            fase_contratacao.setFase_contratacao_descricao(contratacao_fase);
-        }
     }
 
     public LocalDate getContratacao_dtContratacao() {

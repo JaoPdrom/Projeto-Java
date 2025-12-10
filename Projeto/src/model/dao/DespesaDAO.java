@@ -19,7 +19,7 @@ public class DespesaDAO {
         this.con_despesa = con_despesa;
     }
 
-    // Adicionar nova despesa
+    // adicionar nova despesa
     public int adicionarNovo(DespesaVO despesa) throws SQLException {
         String sql = "INSERT INTO tb_despesa (despesa_descricao, despesa_dtRealizacao, despesa_valor, despesa_tipo_despesa_id) VALUES (?, ?, ?, ?)";
 
@@ -51,7 +51,7 @@ public class DespesaDAO {
     }
 
 
-    // Update despesa por id
+    // update despesa por id
     public void atualizarPorId(DespesaVO despesa) throws SQLException {
         String sql = "UPDATE tb_despesa SET despesa_descricao = ?, despesa_dtRealizacao = ?, despesa_valor = ?, despesa_tipo_despesa_id = ? WHERE despesa_id = ?";
         try (PreparedStatement despesa_att_id = con_despesa.prepareStatement(sql)) {
@@ -65,7 +65,7 @@ public class DespesaDAO {
         }
     }
 
-    // Busca despesa por id
+    // busca despesa por id
     public DespesaVO buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM tb_despesa WHERE despesa_id = ?";
         DespesaVO despesa = null;
@@ -80,7 +80,7 @@ public class DespesaDAO {
         return despesa;
     }
 
-    // Busca despesa por descricao
+    // busca despesa por descricao
     public DespesaVO buscarPorDescricao(String descricao) throws SQLException {
         String sql = "SELECT * FROM tb_despesa WHERE despesa_descricao = ?";
         DespesaVO despesa = null;
@@ -95,7 +95,7 @@ public class DespesaDAO {
         return despesa;
     }
 
-    // Busca despesas por descrição (LIKE)
+    // busca despesas por descrição
     public List<DespesaVO> buscarPorDescricaoLike(String termo) throws SQLException {
         String sql = "SELECT * FROM tb_despesa WHERE despesa_descricao LIKE ?";
         List<DespesaVO> lista = new ArrayList<>();
@@ -110,7 +110,7 @@ public class DespesaDAO {
         return lista;
     }
 
-    // Lista todas as despesas
+    // lista todas as despesas
     public List<DespesaVO> buscarTodas() throws SQLException {
         String sql = "SELECT * FROM tb_despesa ORDER BY despesa_dtRealizacao DESC, despesa_id DESC";
         List<DespesaVO> lista = new ArrayList<>();
@@ -124,10 +124,6 @@ public class DespesaDAO {
         return lista;
     }
 
-    /**
-     * Busca despesas com filtros opcionais de descrição (LIKE), tipo e intervalo de datas.
-     * Campos nulos são ignorados na construção do WHERE.
-     */
     public List<DespesaVO> buscarComFiltros(
             String descricaoLike,
             Integer tipoDespesaId,
@@ -185,7 +181,7 @@ public class DespesaDAO {
         return lista;
     }
 
-    // Exclui despesa por id
+    // excluir despesa por id
     public void excluirPorId(int id) throws SQLException {
         String sql = "DELETE FROM tb_despesa WHERE despesa_id = ?";
         try (PreparedStatement ps = con_despesa.prepareStatement(sql)) {

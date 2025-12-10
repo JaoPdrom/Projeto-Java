@@ -1,6 +1,9 @@
-package model.vo;
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
 
-// import java.lang.invoke.StringConcatFactory;
+package model.vo;
 
 public class CargoVO {
     private int car_id;

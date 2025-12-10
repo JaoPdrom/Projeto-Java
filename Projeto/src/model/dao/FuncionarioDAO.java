@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.dao;
 
 import model.vo.*;
@@ -8,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-// import java.util.Date;
 import java.util.List;
 
 public class FuncionarioDAO {
@@ -37,9 +41,6 @@ public class FuncionarioDAO {
 
     // adicionar novo funcionario
     public int adicionarNovoFuncionario(FuncionarioVO funcionario) throws SQLException {
-        // salva os dados da pessoa
-//        pessoaDAO.adicionarNovaPessoa(funcionario);
-
         String sql = "INSERT INTO tb_funcionario (fnc_numPis, fnc_salario, fnc_cargo_id, fnc_pes_documento, fnc_ativo) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement fnc_add = con_fnc.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -59,7 +60,7 @@ public class FuncionarioDAO {
         return -1;
     }
 
-    // Atualiza dados de funcionário e pessoa dentro de uma transação
+    // atualizar dados de funcionário e pessoa
     public void atualizarFuncionario(FuncionarioVO funcionario) throws SQLException {
         String sqlPessoa = """
         UPDATE tb_pessoa
@@ -80,11 +81,10 @@ public class FuncionarioDAO {
         WHERE fnc_pes_documento = ?;
     """;
 
-        // ❌ sem commit/rollback aqui!
         try (PreparedStatement psPessoa = con_fnc.prepareStatement(sqlPessoa);
              PreparedStatement psFunc = con_fnc.prepareStatement(sqlFuncionario)) {
 
-            // --- Atualiza pessoa ---
+            // atualiza pessoa
             psPessoa.setString(1, funcionario.getPes_nome());
             psPessoa.setInt(2, funcionario.getPes_sexo().getSex_id());
             psPessoa.setDate(3, java.sql.Date.valueOf(funcionario.getPes_dt_nascimento()));
@@ -93,7 +93,7 @@ public class FuncionarioDAO {
             psPessoa.setString(6, funcionario.getPes_cpf());
             psPessoa.executeUpdate();
 
-            // --- Atualiza funcionário ---
+            // atualiza funcionário
             psFunc.setString(1, funcionario.getFnc_numPis());
             psFunc.setInt(2, funcionario.getFnc_cargo().getCar_id());
             psFunc.setDouble(3, funcionario.getFnc_salario());
@@ -136,7 +136,7 @@ public class FuncionarioDAO {
     }
 
 
-    // 🔍 Busca genérica por nome (igual PessoaDAO.buscarPesNome)
+    // busca genérica por nome
     public List<FuncionarioVO> buscarFuncNome(String nome) throws SQLException {
         String sql = """
             SELECT 
@@ -218,9 +218,6 @@ public class FuncionarioDAO {
         }
         return null;
     }
-
-
-
 
     public List<FuncionarioVO> listarTodosCompletos() throws SQLException {
         String sql = """
@@ -304,11 +301,11 @@ public class FuncionarioDAO {
     }
 
 
-    // Constrói um objeto FuncionarioVO completo a partir do ResultSet
+    // constroi um objeto FuncionarioVO completo a partir do ResultSet
     private FuncionarioVO extrairFuncionario(ResultSet rs) throws SQLException {
         FuncionarioVO funcionario = new FuncionarioVO();
 
-        // === Campos herdados de PessoaVO ===
+        // campos herdados de PessoaVO
         funcionario.setPes_cpf(rs.getString("pes_documento"));
         funcionario.setPes_nome(rs.getString("pes_nome"));
         funcionario.setPes_email(rs.getString("pes_email"));
@@ -319,19 +316,19 @@ public class FuncionarioDAO {
         funcionario.setPes_ativo(rs.getBoolean("pes_ativo"));
         funcionario.setFnc_numPis(rs.getString("fnc_numPis"));
 
-        // === Sexo ===
+        // sexo
         SexoVO sexo = new SexoVO();
         sexo.setSex_id(rs.getInt("pes_sex_id"));
         sexo.setSex_descricao(rs.getString("sex_descricao"));
         funcionario.setPes_sexo(sexo);
 
-        // === Cargo ===
+        // cargo
         CargoVO cargo = new CargoVO();
-        cargo.setCar_id(rs.getInt("fnc_cargo_id")); // ✅ nome real da coluna
+        cargo.setCar_id(rs.getInt("fnc_cargo_id")); // nome real da coluna
         cargo.setCargo_descricao(rs.getString("cargo_descricao"));
         funcionario.setFnc_cargo(cargo);
 
-        // === Campos específicos de Funcionário ===
+        // campos específicos de Funcionário
         funcionario.setFnc_id(rs.getInt("fnc_id"));
         funcionario.setFnc_salario(rs.getDouble("fnc_salario"));
         funcionario.setFnc_dtContratacao(null);
@@ -341,7 +338,7 @@ public class FuncionarioDAO {
     }
 
 
-    // 🗑️ Soft delete do funcionário e pessoa
+    // soft delete do funcionário e pessoa
     public void deletarFuncionario(FuncionarioVO funcionario) throws SQLException {
         String sqlPessoa = "UPDATE tb_pessoa SET pes_ativo = 0 WHERE pes_documento = ?";
         String sqlFuncionario = "UPDATE tb_funcionario SET fnc_ativo = 0 WHERE fnc_pes_documento = ?";
@@ -350,18 +347,18 @@ public class FuncionarioDAO {
                 PreparedStatement psPessoa = con_fnc.prepareStatement(sqlPessoa);
                 PreparedStatement psFunc = con_fnc.prepareStatement(sqlFuncionario)
         ) {
-            // Desativa na tb_pessoa
+            // desativa na tb_pessoa
             psPessoa.setString(1, funcionario.getPes_cpf());
             psPessoa.executeUpdate();
 
-            // Desativa na tb_funcionario
+            // desativa na tb_funcionario
             psFunc.setString(1, funcionario.getPes_cpf());
             psFunc.executeUpdate();
         }
     }
 
 
-    // Monta um objeto FuncionarioVO completo (campos de pessoa/funcionario + telefones, enderecos e historico)
+    // monta um objeto FuncionarioVO completo (campos de pessoa/funcionario + telefones, enderecos e historico)
     private FuncionarioVO montarFuncionarioCompleto(ResultSet rs) throws SQLException {
         FuncionarioVO funcionario = new FuncionarioVO();
 
@@ -416,7 +413,7 @@ public class FuncionarioDAO {
     }
 
 
-    // Busca completo por ID de funcionario
+    // busca completo por ID de funcionario
     public FuncionarioVO buscarFuncionarioCompletoPorId(int id) throws SQLException {
         String sql = """
         SELECT 
@@ -449,7 +446,7 @@ public class FuncionarioDAO {
     }
 
 
-    // Busca completo por CPF/documento da pessoa
+    // busca completo por CPF/documento da pessoa
     public FuncionarioVO buscarFuncionarioCompletoPorCpf(String cpf) throws SQLException {
         String sql = """
         SELECT 
@@ -482,7 +479,7 @@ public class FuncionarioDAO {
     }
 
 
-    // Busca completa por nome (LIKE)
+    // busca completa por nome
     public List<FuncionarioVO> buscarFuncionariosCompletosPorNome(String nome) throws SQLException {
         String sql = """
         SELECT 
@@ -516,6 +513,4 @@ public class FuncionarioDAO {
         }
         return lista;
     }
-
-
 }

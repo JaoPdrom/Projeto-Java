@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.vo;
 
 import java.time.LocalDate;
-// import java.util.Date;
 
 public class DespesaVO {
     private int despesa_id;

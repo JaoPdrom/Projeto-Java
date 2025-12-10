@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
 
 package controller;
 
@@ -406,76 +410,6 @@ public class DespesaController implements Initializable {
     }
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        carregarTabela();
-        habilitarCampos(false);
-        habilitarCamposPadrao(false);
-        carregarDespesaTipoDespesa();
-
-        txtDespesaValorPago.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) { // perdeu o foco
-                try {
-                    double valor = Double.parseDouble(txtDespesaValorPago.getText().replace(",", "."));
-                    NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
-                    txtDespesaValorPago.setText(nf.format(valor));
-                } catch (NumberFormatException e) {
-                    txtDespesaValorPago.setText("");
-                }
-            }
-        });
-    }
-
-
-    // metodo de campos -- revisar, nem todos os campos precisam ser desabilitados
-    private void habilitarCampos(boolean habilitado){
-        btnDespesaSalvar.setDisable(!habilitado); 
-        btnDespesaEditar.setDisable(!habilitado);
-        btnDespesaAtualizar.setDisable(!habilitado);
-        btnDespesaExcluir.setDisable(!habilitado);
-        btnDespesaNovoTipoDespesa.setDisable(!habilitado);
-        DespesaID.setDisable(!habilitado);
-    }
-
-    // metodo para desabilitar apenas campos que nao pertencem a toolbar
-    private void habilitarCamposPadrao(boolean habilitado){
-        txtDespesaDescricao.setDisable(!habilitado); // tirar
-        txtDespesaValorPago.setDisable(!habilitado); // tirar
-        dtpDespesaDataRealizacao.setDisable(!habilitado); // tirar
-        cbDespesaTipoDespesa.setDisable(!habilitado); // tirar
-    }
-
-    private void limparCamposDespesa(){
-        txtDespesaDescricao.clear();
-        txtDespesaValorPago.clear();
-        cbDespesaTipoDespesa.setValue(null);
-        dtpDespesaDataRealizacao.setValue(null);
-        rBtnDespesaBuscaSemDatas.setSelected(true);
-        rBtnDespesaBuscaData.setSelected(false);
-        rBtnDespesaBuscaPeriodo.setSelected(false);
-        dtpDespesaBuscaDtInicial.setValue(null);
-        dtpDespesaBuscaDtFinal.setValue(null);
-    }
-
-    // Cor ANSI para o console (funciona no VS Code, IntelliJ e CMD moderno)
-    private static final String RESET = "\u001B[0m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String YELLOW = "\u001B[33m";
-    private static final String RED = "\u001B[31m";
-
-    private void info(String msg) {
-        System.out.println(GREEN + "[INFO:DespesaController] " + msg + RESET);
-    }
-
-    private void alerta(String msg) {
-        System.out.println(YELLOW + "[AVISO:DespesaController] " + msg + RESET);
-    }
-
-    private void erro(String msg, Exception e) {
-        System.err.println(RED + "[ERRO:DespesaController] " + msg + RESET);
-        if (e != null) e.printStackTrace();
-    }
-
     // --- BUSCA COM FILTROS ---
 
     @FXML
@@ -568,5 +502,75 @@ public class DespesaController implements Initializable {
             erro("Erro ao buscar despesas.", e);
             alerta("Falha ao buscar despesas: " + e.getMessage());
         }
+    }
+
+    // metodo de campos -- revisar, nem todos os campos precisam ser desabilitados
+    private void habilitarCampos(boolean habilitado){
+        btnDespesaSalvar.setDisable(!habilitado); 
+        btnDespesaEditar.setDisable(!habilitado);
+        btnDespesaAtualizar.setDisable(!habilitado);
+        btnDespesaExcluir.setDisable(!habilitado);
+        btnDespesaNovoTipoDespesa.setDisable(!habilitado);
+        DespesaID.setDisable(!habilitado);
+    }
+
+    // metodo para desabilitar apenas campos que nao pertencem a toolbar
+    private void habilitarCamposPadrao(boolean habilitado){
+        txtDespesaDescricao.setDisable(!habilitado); // tirar
+        txtDespesaValorPago.setDisable(!habilitado); // tirar
+        dtpDespesaDataRealizacao.setDisable(!habilitado); // tirar
+        cbDespesaTipoDespesa.setDisable(!habilitado); // tirar
+    }
+
+    private void limparCamposDespesa(){
+        txtDespesaDescricao.clear();
+        txtDespesaValorPago.clear();
+        cbDespesaTipoDespesa.setValue(null);
+        dtpDespesaDataRealizacao.setValue(null);
+        rBtnDespesaBuscaSemDatas.setSelected(true);
+        rBtnDespesaBuscaData.setSelected(false);
+        rBtnDespesaBuscaPeriodo.setSelected(false);
+        dtpDespesaBuscaDtInicial.setValue(null);
+        dtpDespesaBuscaDtFinal.setValue(null);
+    }
+
+    // Cor ANSI para o console (funciona no VS Code, IntelliJ e CMD moderno)
+    private static final String RESET = "\u001B[0m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String RED = "\u001B[31m";
+
+    private void info(String msg) {
+        System.out.println(GREEN + "[INFO:DespesaController] " + msg + RESET);
+    }
+
+    private void alerta(String msg) {
+        System.out.println(YELLOW + "[AVISO:DespesaController] " + msg + RESET);
+    }
+
+    private void erro(String msg, Exception e) {
+        System.err.println(RED + "[ERRO:DespesaController] " + msg + RESET);
+        if (e != null) e.printStackTrace();
+    }
+
+    // inicializacao
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        carregarTabela();
+        habilitarCampos(false);
+        habilitarCamposPadrao(false);
+        carregarDespesaTipoDespesa();
+
+        txtDespesaValorPago.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) { // perdeu o foco
+                try {
+                    double valor = Double.parseDouble(txtDespesaValorPago.getText().replace(",", "."));
+                    NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.of("pt", "BR"));
+                    txtDespesaValorPago.setText(nf.format(valor));
+                } catch (NumberFormatException e) {
+                    txtDespesaValorPago.setText("");
+                }
+            }
+        });
     }
 }

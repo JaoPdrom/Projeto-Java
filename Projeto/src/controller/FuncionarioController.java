@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package controller;
 
 import java.net.URL;
@@ -28,6 +33,7 @@ import model.vo.CargoVO;
 import model.vo.EndPostalVO;
 import model.vo.EnderecoVO;
 import model.vo.FuncionarioVO;
+import model.vo.FaseContratacaoVO;
 import model.vo.EstadoVO;
 import model.vo.CidadeVO;
 import model.vo.LogradouroVO;
@@ -263,6 +269,26 @@ public class FuncionarioController implements Initializable{
             return cbFuncionarioContratacaoFase.getValue();
         }
         return null;
+    }
+
+    private FaseContratacaoVO obterFaseContratacaoPadrao() {
+        if (cbFuncionarioContratacaoFase != null && cbFuncionarioContratacaoFase.getItems() != null
+                && !cbFuncionarioContratacaoFase.getItems().isEmpty()) {
+            for (ContratacaoVO item : cbFuncionarioContratacaoFase.getItems()) {
+                if (item.getFase_contratacao() != null
+                        && item.getFase_contratacao().getFase_contratacao_descricao() != null
+                        && item.getFase_contratacao().getFase_contratacao_descricao().equalsIgnoreCase("Contratação")) {
+                    return item.getFase_contratacao();
+                }
+            }
+            ContratacaoVO primeiro = cbFuncionarioContratacaoFase.getItems().get(0);
+            if (primeiro != null) {
+                return primeiro.getFase_contratacao();
+            }
+        }
+        FaseContratacaoVO fasePadrao = new FaseContratacaoVO();
+        fasePadrao.setFase_contratacao_descricao("Contratação");
+        return fasePadrao;
     }
 
     private String obterTipoBusca() {
@@ -615,11 +641,8 @@ public class FuncionarioController implements Initializable{
 
             if (selecionada != null && selecionada.getFase_contratacao() != null) {
                 contratacao.setFase_contratacao(selecionada.getFase_contratacao());
-            } else if (selecionada != null && selecionada.getContratacao_fase() != null) {
-                // Compatibilidade com código antigo
-                contratacao.setContratacao_fase(selecionada.getContratacao_fase());
             } else {
-                contratacao.setContratacao_fase("Contratação");
+                contratacao.setFase_contratacao(obterFaseContratacaoPadrao());
             }
 
             if (dtContratacao != null) {
@@ -830,7 +853,6 @@ public class FuncionarioController implements Initializable{
     }
 
     private void habilitarCampos(boolean habilitado){
-        // txtFuncionarioBusca.setDisable(!habilitado);
         txtFuncionarioPesDocumento.setDisable(!habilitado);
         txtFuncionarioPesNome.setDisable(!habilitado);
         txtFuncionarioPesEmail.setDisable(!habilitado);
@@ -845,7 +867,6 @@ public class FuncionarioController implements Initializable{
         txtFuncionarioNumPis.setDisable(!habilitado);
         txtFuncionarioSalario.setDisable(!habilitado);
         txtFuncionarioDemissaoMotivo.setDisable(!habilitado);
-        // lbFuncionarioId.setDisable(!habilitado);
         
         dtpFuncionarioPesDtNascimento.setDisable(!habilitado);
         dtpFuncionarioDtContratacao.setDisable(!habilitado);
@@ -865,7 +886,6 @@ public class FuncionarioController implements Initializable{
         btnFuncionarioEditar.setDisable(!habilitado);
         btnFuncionarioAtualizar.setDisable(!habilitado);
         btnFuncionarioExcluir.setDisable(!habilitado);
-        // btnFuncionarioCancelar.setDisable(!habilitado);
     }
 
     private void limparCampos() {
@@ -981,8 +1001,6 @@ public class FuncionarioController implements Initializable{
             return;
         }
         funcionarioSelecionado = funcionario;
-        // habilitarCampos(true);
-        // habilitarBotoes(true);
         btnFuncionarioEditar.setDisable(false);
         btnFuncionarioExcluir.setDisable(false);
 
@@ -1065,21 +1083,17 @@ public class FuncionarioController implements Initializable{
 
         if (cbFuncionarioContratacaoFase != null && funcionario.getContratacao() != null) {
             ContratacaoVO contratacaoFunc = funcionario.getContratacao();
-            if (contratacaoFunc.getFase_contratacao() != null && contratacaoFunc.getFase_contratacao().getFase_contratacao_id() > 0) {
-                // Usar a nova estrutura com FaseContratacaoVO
+            FaseContratacaoVO faseContratacao = contratacaoFunc.getFase_contratacao();
+            if (faseContratacao != null) {
                 cbFuncionarioContratacaoFase.getItems().stream()
-                    .filter(f -> f.getFase_contratacao() != null && 
-                            f.getFase_contratacao().getFase_contratacao_id() == contratacaoFunc.getFase_contratacao().getFase_contratacao_id())
-                    .findFirst().ifPresent(cbFuncionarioContratacaoFase::setValue);
-            } else if (contratacaoFunc.getContratacao_fase() != null) {
-                // Compatibilidade: comparar por descrição se não tiver ID
-                cbFuncionarioContratacaoFase.getItems().stream()
-                    .filter(f -> {
-                        if (f.getFase_contratacao() != null) {
-                            return f.getFase_contratacao().getFase_contratacao_descricao().equalsIgnoreCase(contratacaoFunc.getContratacao_fase());
-                        }
-                        return f.getContratacao_fase() != null && f.getContratacao_fase().equalsIgnoreCase(contratacaoFunc.getContratacao_fase());
-                    })
+                    .filter(f -> f.getFase_contratacao() != null &&
+                            ((faseContratacao.getFase_contratacao_id() > 0 &&
+                                    f.getFase_contratacao().getFase_contratacao_id() == faseContratacao.getFase_contratacao_id())
+                            || (faseContratacao.getFase_contratacao_id() <= 0 &&
+                                    faseContratacao.getFase_contratacao_descricao() != null &&
+                                    f.getFase_contratacao().getFase_contratacao_descricao() != null &&
+                                    f.getFase_contratacao().getFase_contratacao_descricao()
+                                            .equalsIgnoreCase(faseContratacao.getFase_contratacao_descricao()))))
                     .findFirst().ifPresent(cbFuncionarioContratacaoFase::setValue);
             }
         }

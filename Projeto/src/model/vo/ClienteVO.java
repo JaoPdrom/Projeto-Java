@@ -12,7 +12,6 @@ public class ClienteVO extends PessoaVO{
     private int cli_id;
     private PessoaVO cli_pes_cpf;
     private LocalDate cli_dtCadastro;
-    // TipoCliente removido; PF/PJ agora está em Pessoa (TipoPessoa)
 
     public ClienteVO() {}
 
@@ -46,6 +45,4 @@ public class ClienteVO extends PessoaVO{
     public void setCli_dtCadastro(LocalDate cli_dtCadastro) {
         this.cli_dtCadastro = cli_dtCadastro;
     }
-
-    // TipoCliente removido
 }

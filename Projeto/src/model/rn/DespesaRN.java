@@ -155,17 +155,6 @@ public class DespesaRN {
         }
     }
 
-    /**
-     * Busca despesas com múltiplos filtros opcionais.
-     * Regras sugeridas:
-     * - Se id != null: busca direta por ID e ignora demais filtros de texto.
-     * - Caso contrário, combina:
-     *   - descricaoLike (LIKE)
-     *   - tipoDespesaId (igualdade)
-     *   - intervalo de datas (data única ou período)
-     *
-     * Se nenhum filtro for informado, o método retorna todas as despesas.
-     */
     public List<DespesaVO> buscarComFiltros(
             Integer id,
             String descricaoLike,
@@ -185,7 +174,6 @@ public class DespesaRN {
                     return java.util.List.of();
                 }
             }
-
 
             // Normaliza descrição
             String desc = null;

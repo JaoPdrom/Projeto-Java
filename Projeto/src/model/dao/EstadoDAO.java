@@ -55,6 +55,4 @@ public class EstadoDAO {
         }
         return lista;
     }
-
-
 }

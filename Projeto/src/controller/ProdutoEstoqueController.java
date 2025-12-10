@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package controller;
 
 import java.net.URL;
@@ -123,7 +128,7 @@ public class ProdutoEstoqueController implements Initializable {
     private LocalDate lerData(DatePicker picker, String nomeCampo, boolean obrigatoria) throws Exception {
         if (picker == null || picker.getValue() == null) {
             if (obrigatoria) {
-                throw new Exception("Selecione " + nomeCampo + ".");
+                throw new Exception("Selecione " + nomeCampo);
             }
             return null;
         }

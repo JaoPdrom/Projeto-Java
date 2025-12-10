@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package model.vo;
 
 import java.time.LocalDate;
@@ -15,13 +20,13 @@ public class PessoaVO {
     private List<TelefoneVO> telefone;
     private List<EnderecoVO> endereco;
 
-    // Construtor padrão
+    // construtor padrão
     public PessoaVO() {
         this.telefone = new ArrayList<>();
         this.endereco = new ArrayList<>();
     }
 
-    // Construtor completo
+    // construtor completo
     public PessoaVO(String pes_cpf, String pes_nome, SexoVO pes_sexo, LocalDate pes_dt_nascimento, String pes_email, Boolean pes_ativo, List<TelefoneVO> telefone, List<EnderecoVO> endereco) {
         this.pes_cpf = pes_cpf;
         this.pes_nome = pes_nome;

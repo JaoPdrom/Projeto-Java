@@ -92,7 +92,7 @@ public class ProdutoDAO {
                     produto.setProduto_peso(rs.getInt("produto_peso"));
                     produto.setProduto_ativo(rs.getBoolean("produto_ativo"));
 
-                    // Buscando o Tipo de Produto
+                    // buscando o tipo de produto
                     TipoProdutoDAO tipoPdtDAO = new TipoProdutoDAO(con_produto);
                     TipoProdutoVO tipoProduto = tipoPdtDAO.buscarPorId(rs.getInt("produto_tipoPdt"));
                     produto.setProduto_tipoPdt(tipoProduto);
@@ -102,7 +102,7 @@ public class ProdutoDAO {
         return produto;
     }
 
-    // busca produto por nome exato (retorna um)
+    // busca produto por nome exato
     public ProdutoVO buscarPorNome(String nome) throws SQLException {
         String sql = "SELECT * FROM tb_produto WHERE produto_nome = ?";
         ProdutoVO produto = null;
@@ -116,7 +116,7 @@ public class ProdutoDAO {
                     produto.setProduto_peso(rs.getInt("produto_peso"));
                     produto.setProduto_ativo(rs.getBoolean("produto_ativo"));
 
-                    // Buscando o Tipo de Produto
+                    // buscando o tipo de produto
                     TipoProdutoDAO tipoPdtDAO = new TipoProdutoDAO(con_produto);
                     TipoProdutoVO tipoProduto = tipoPdtDAO.buscarPorId(rs.getInt("produto_tipoPdt"));
                     produto.setProduto_tipoPdt(tipoProduto);
@@ -148,7 +148,7 @@ public class ProdutoDAO {
         return lista;
     }
 
-    // listar todos (opcionalmente apenas ativos)
+    // listar todos
     public List<ProdutoVO> buscarTodos(boolean apenasAtivos) throws SQLException {
         String sql = "SELECT * FROM tb_produto" + (apenasAtivos ? " WHERE produto_ativo = TRUE" : "") + " ORDER BY produto_nome";
         List<ProdutoVO> lista = new ArrayList<>();
@@ -169,7 +169,7 @@ public class ProdutoDAO {
         return lista;
     }
 
-    // listar por tipo (opcionalmente apenas ativos)
+    // listar por tipo
     public List<ProdutoVO> buscarPorTipo(int tipoId, boolean apenasAtivos) throws SQLException {
         String sql = "SELECT * FROM tb_produto WHERE produto_tipoPdt = ?" + (apenasAtivos ? " AND produto_ativo = TRUE" : "") + " ORDER BY produto_nome";
         List<ProdutoVO> lista = new ArrayList<>();
@@ -191,15 +191,13 @@ public class ProdutoDAO {
         return lista;
     }
 
-    // desativar (remoção lógica)
+    // desativar
     public void desativarPorId(int produtoId) throws SQLException {
         String sql = "UPDATE tb_produto SET produto_ativo = FALSE WHERE produto_id = ?";
         try (PreparedStatement ps = con_produto.prepareStatement(sql)) {
             ps.setInt(1, produtoId);
             ps.executeUpdate();
         }
-    }
-
-    
+    }  
 
 }

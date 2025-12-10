@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.vo.CidadeVO;
-// import model.vo.EstadoVO;
 
 public class CidadeDAO {
     private Connection con;
@@ -60,6 +59,4 @@ public class CidadeDAO {
         }
         return cidades;
     }
-
-
 }

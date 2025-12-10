@@ -27,8 +27,6 @@ public class PessoaRN {
         } catch (Exception e) {
             System.err.println("Erro ao inicializar DAOs em pessoaRN." + e.getMessage());
         }
-        
-        // this.logDAO = new LogDAO(null);
     }
 
     // add pessoa
@@ -39,8 +37,7 @@ public class PessoaRN {
             conexao.setAutoCommit(false);
 
             // DAOs
-            this.pessoaDAO = new PessoaDAO(conexao);
-            // this.logDAO    = new LogDAO(conexao);
+            this.pessoaDAO = new PessoaDAO(conexao);    
             EndPostalDAO endPostalDAO = new EndPostalDAO(conexao);
             EnderecoDAO  enderecoDAO  = new EnderecoDAO(conexao);
             PesEndDAO    pesEndDAO    = new PesEndDAO(conexao);
@@ -184,7 +181,7 @@ public class PessoaRN {
                 throw new Exception("Documento é um campo obrigatório.");
             }
 
-            FuncionarioVO funcionario = funcionarioDAO.buscarFuncCpf(documento); // ok se seu DAO ainda usa CPF
+            FuncionarioVO funcionario = funcionarioDAO.buscarFuncCpf(documento);
 
             if (funcionario != null) {
                 throw new Exception("Pessoa é um funcionário, método ainda não implementado");
@@ -219,9 +216,7 @@ public class PessoaRN {
         PessoaVO pessoa = null;
 
         try (Connection conexao = ConexaoDAO.getConexao()) {
-            // Inicializa os DAOs com a mesma conexão
             this.pessoaDAO = new PessoaDAO(conexao);
-            // this.logDAO = new LogDAO(conexao);
 
             pessoa = pessoaDAO.buscarPesCpf(cpf);
 
@@ -235,7 +230,7 @@ public class PessoaRN {
 
     public List<PessoaVO> buscarTodasPessoas(String nome) throws Exception {
         if (nome == null || nome.isBlank()) {
-            nome = ""; // busca todos
+            nome = "";
         }
 
         List<PessoaVO> pessoas;

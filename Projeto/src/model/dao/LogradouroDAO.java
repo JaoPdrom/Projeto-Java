@@ -54,11 +54,3 @@ public class LogradouroDAO {
         return logradouros;
     }
 }
-
-/*
-        carregarEstados();
-        carregarCidades();
-        carregarSexo();
-        carregarBairro();
-        carregarLogradouro();
- */

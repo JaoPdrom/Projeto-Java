@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025.
+ * Criado por Joao Pedro Missiagia. Todos os direitos reservados.
+ */
+
 package controller;
 
 import java.io.IOException;
@@ -7,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-// import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 
@@ -19,8 +23,7 @@ public class VboxMainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Pode deixar vazio; a tela principal abre sem conteúdo
-        // e o handler abaixo carrega o Cliente quando o menu é clicado.
+
     }
 
     @FXML

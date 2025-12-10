@@ -5,7 +5,6 @@
 
 package model.dao;
 
-// import model.vo.PessoaVO;
 import model.vo.TelefoneVO;
 
 import java.sql.Connection;
@@ -23,14 +22,14 @@ public class TelefoneDAO {
         this.con_telefone = con_telefone;
     }
 
-    // Adiciona um novo telefone (garantindo o vínculo com a pessoa)
+    // adiciona um novo telefone
     public int adicionarNovo(TelefoneVO telefone, String documentoPessoa) throws SQLException {
         String sql = "INSERT INTO tb_telefone (tel_codPais, tel_ddd, tel_numero, tel_pes_documento) VALUES (?, ?, ?, ?)";
         try (PreparedStatement tel_add = con_telefone.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             tel_add.setString(1, telefone.getTel_codPais());
             tel_add.setString(2, telefone.getTel_ddd());
             tel_add.setString(3, telefone.getTel_numero());
-            tel_add.setString(4, documentoPessoa); // <- garante o vínculo com pessoa
+            tel_add.setString(4, documentoPessoa);
             tel_add.executeUpdate();
             try (ResultSet rs = tel_add.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -49,7 +48,7 @@ public class TelefoneDAO {
                 tel_att.setString(1, tel.getTel_codPais());
                 tel_att.setString(2, tel.getTel_ddd());
                 tel_att.setString(3, tel.getTel_numero());
-                tel_att.setInt(4, tel.getTel_id()); // importante para identificar o telefone específico
+                tel_att.setInt(4, tel.getTel_id());
                 tel_att.setString(5, documento);
                 tel_att.executeUpdate();
             }
@@ -58,7 +57,7 @@ public class TelefoneDAO {
 
 
 
-    // Atualiza um telefone com base no seu ID.
+    // atualiza um telefone com base no seu ID
     public void atualizarPorId(TelefoneVO telefone) throws SQLException {
         String sql = "UPDATE tb_telefone SET tel_codPais = ?, tel_ddd = ?, tel_numero = ?, tel_pes_documento = ? WHERE tel_id = ?";
         try (PreparedStatement tel_att = con_telefone.prepareStatement(sql)) {
@@ -71,7 +70,7 @@ public class TelefoneDAO {
         }
     }
 
-    // Atualiza o número de telefone com base no número antigo.
+    // atualiza o número de telefone com base no número antigo
     public void atualizarPorNumero(String numeroAntigo, String numeroNovo) throws SQLException {
         String sql = "UPDATE tb_telefone SET tel_numero = ? WHERE tel_numero = ?";
         try (PreparedStatement tel_att_numero = con_telefone.prepareStatement(sql)) {
@@ -81,7 +80,7 @@ public class TelefoneDAO {
         }
     }
 
-    // Busca um telefone com base no seu ID.
+    // busca um telefone com base no seu ID
     public TelefoneVO buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM tb_telefone WHERE tel_id = ?";
         try (PreparedStatement stmt = con_telefone.prepareStatement(sql)) {
@@ -101,7 +100,7 @@ public class TelefoneDAO {
         return null;
     }
 
-    // Busca um ou mais telefones com base no CPF da pessoa.
+    // busca um ou mais telefones com base no CPF da pessoa
     public List<TelefoneVO> buscarPorCpf(String cpf) throws SQLException {
         String sql = "SELECT * FROM tb_telefone WHERE tel_pes_documento = ?";
         List<TelefoneVO> listaTelefones = new ArrayList<>();
@@ -121,9 +120,4 @@ public class TelefoneDAO {
         }
         return listaTelefones;
     }
-
-    public void deletarPorCpf(String cpf) throws SQLException {
-
-    }
 }
-
