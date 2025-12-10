@@ -19,8 +19,6 @@ public class PessoaRN {
     private TelefoneDAO telefoneDAO;
     private PesEndDAO pesEndDAO;
     private EnderecoDAO enderecoDAO;
-    // private TipoPessoaDAO tipoPesDAO;
-    // private LogDAO logDAO;
 
     public PessoaRN() {
         try {
@@ -120,44 +118,43 @@ public class PessoaRN {
             conexao.setAutoCommit(false); // inicia transação
 
             this.pessoaDAO = new PessoaDAO(conexao);
-            // this.logDAO = new LogDAO(conexao);
             this.enderecoDAO = new EnderecoDAO(conexao);
             this.telefoneDAO = new TelefoneDAO(conexao);
 
-            // 1️⃣ validações básicas
+            // validações básicas
             if (pessoaAtt.getPes_cpf() == null || pessoaAtt.getPes_cpf().isEmpty()) {
                 throw new Exception("CPF é obrigatório para atualização.");
             }
 
-            // 2️⃣ verifica se pessoa existe no banco
+            // verifica se pessoa existe no banco
             PessoaVO pessoaExistente = pessoaDAO.buscarPesCpf(pessoaAtt.getPes_cpf());
             if (pessoaExistente == null) {
                 throw new Exception("Pessoa não encontrada para CPF: " + pessoaAtt.getPes_cpf());
             }
 
-            // 3️⃣ executa o update parcial (só campos alterados)
+            // executa o update parcial (só campos alterados)
             pessoaDAO.atualizarPessoa(pessoaAtt);
 
-            // 4️⃣ atualiza telefones, se enviados
+            // atualiza telefones, se enviados
             if (pessoaAtt.getTelefone() != null && !pessoaAtt.getTelefone().isEmpty()) {
                 telefoneDAO.atualizarTelefoneCpf(pessoaAtt.getPes_cpf(), pessoaAtt.getTelefone());
             }
 
-            // 5️⃣ atualiza endereços, se enviados
+            // atualiza endereços, se enviados
             if (pessoaAtt.getEndereco() != null && !pessoaAtt.getEndereco().isEmpty()) {
                 enderecoDAO.sincronizarPorPessoa(pessoaAtt.getPes_cpf(), pessoaAtt.getEndereco());
             }
 
             conexao.commit();
-            System.out.println("✅ Pessoa atualizada com sucesso via PessoaRN!");
+            System.out.println("Pessoa atualizada com sucesso via PessoaRN!");
 
         } catch (Exception e) {
             if (conexao != null) {
                 try {
                     conexao.rollback();
-                    System.err.println("⛔ Rollback executado: " + e.getMessage());
+                    System.err.println("Rollback executado: " + e.getMessage());
                 } catch (SQLException ex) {
-                    System.err.println("⚠️ Erro ao executar rollback: " + ex.getMessage());
+                    System.err.println("Erro ao executar rollback: " + ex.getMessage());
                 }
             }
             throw e;
@@ -167,7 +164,7 @@ public class PessoaRN {
                     conexao.setAutoCommit(true);
                     conexao.close();
                 } catch (SQLException e) {
-                    System.err.println("⚠️ Erro ao fechar conexão: " + e.getMessage());
+                    System.err.println("Erro ao fechar conexão: " + e.getMessage());
                 }
             }
         }}

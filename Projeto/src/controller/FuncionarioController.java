@@ -613,7 +613,10 @@ public class FuncionarioController implements Initializable{
             ContratacaoVO selecionada = obterContratacaoFase();
             ContratacaoVO contratacao = new ContratacaoVO();
 
-            if (selecionada != null && selecionada.getContratacao_fase() != null) {
+            if (selecionada != null && selecionada.getFase_contratacao() != null) {
+                contratacao.setFase_contratacao(selecionada.getFase_contratacao());
+            } else if (selecionada != null && selecionada.getContratacao_fase() != null) {
+                // Compatibilidade com código antigo
                 contratacao.setContratacao_fase(selecionada.getContratacao_fase());
             } else {
                 contratacao.setContratacao_fase("Contratação");
@@ -747,7 +750,11 @@ public class FuncionarioController implements Initializable{
     @FXML
     private void onBuscarFuncionario(ActionEvent event) {
         try {
-            String termo = txtFuncionarioBusca != null ? txtFuncionarioBusca.getText() : null;
+            String termo = null;
+            if (txtFuncionarioBusca != null) {
+                termo = txtFuncionarioBusca.getText();
+            }
+
             if (termo != null) {
                 termo = termo.trim();
             }
@@ -858,7 +865,7 @@ public class FuncionarioController implements Initializable{
         btnFuncionarioEditar.setDisable(!habilitado);
         btnFuncionarioAtualizar.setDisable(!habilitado);
         btnFuncionarioExcluir.setDisable(!habilitado);
-        btnFuncionarioCancelar.setDisable(!habilitado);
+        // btnFuncionarioCancelar.setDisable(!habilitado);
     }
 
     private void limparCampos() {
@@ -977,6 +984,7 @@ public class FuncionarioController implements Initializable{
         // habilitarCampos(true);
         // habilitarBotoes(true);
         btnFuncionarioEditar.setDisable(false);
+        btnFuncionarioExcluir.setDisable(false);
 
 
         if (lbFuncionarioId != null) {
@@ -1008,8 +1016,13 @@ public class FuncionarioController implements Initializable{
         }
 
         if (txtFuncionarioSalario != null) {
-            txtFuncionarioSalario.setText(funcionario.getFnc_salario() > 0 ? String.valueOf(funcionario.getFnc_salario()) : "");
+            String salarioTexto = "";
+            if (funcionario.getFnc_salario() > 0) {
+                salarioTexto = String.valueOf(funcionario.getFnc_salario());
+            }
+            txtFuncionarioSalario.setText(salarioTexto);
         }
+
 
         if (dtpFuncionarioDtContratacao != null) {
             if (funcionario.getContratacao() != null && funcionario.getContratacao().getContratacao_dtContratacao() != null) {
@@ -1024,8 +1037,13 @@ public class FuncionarioController implements Initializable{
         }
 
         if (txtFuncionarioDemissaoMotivo != null) {
-            txtFuncionarioDemissaoMotivo.setText(funcionario.getFnc_motivo_demissao() != null ? funcionario.getFnc_motivo_demissao() : "");
+            String motivo = "";
+            if (funcionario.getFnc_motivo_demissao() != null) {
+                motivo = funcionario.getFnc_motivo_demissao();
+            }
+            txtFuncionarioDemissaoMotivo.setText(motivo);
         }
+
 
         if (cbFuncionarioPesTipo != null && funcionario.getPes_tipo_pessoa() != null) {
             cbFuncionarioPesTipo.getItems().stream()
@@ -1046,9 +1064,24 @@ public class FuncionarioController implements Initializable{
         }
 
         if (cbFuncionarioContratacaoFase != null && funcionario.getContratacao() != null) {
-            cbFuncionarioContratacaoFase.getItems().stream()
-                .filter(f -> funcionario.getContratacao().getContratacao_fase().equalsIgnoreCase(f.getContratacao_fase()))
-                .findFirst().ifPresent(cbFuncionarioContratacaoFase::setValue);
+            ContratacaoVO contratacaoFunc = funcionario.getContratacao();
+            if (contratacaoFunc.getFase_contratacao() != null && contratacaoFunc.getFase_contratacao().getFase_contratacao_id() > 0) {
+                // Usar a nova estrutura com FaseContratacaoVO
+                cbFuncionarioContratacaoFase.getItems().stream()
+                    .filter(f -> f.getFase_contratacao() != null && 
+                            f.getFase_contratacao().getFase_contratacao_id() == contratacaoFunc.getFase_contratacao().getFase_contratacao_id())
+                    .findFirst().ifPresent(cbFuncionarioContratacaoFase::setValue);
+            } else if (contratacaoFunc.getContratacao_fase() != null) {
+                // Compatibilidade: comparar por descrição se não tiver ID
+                cbFuncionarioContratacaoFase.getItems().stream()
+                    .filter(f -> {
+                        if (f.getFase_contratacao() != null) {
+                            return f.getFase_contratacao().getFase_contratacao_descricao().equalsIgnoreCase(contratacaoFunc.getContratacao_fase());
+                        }
+                        return f.getContratacao_fase() != null && f.getContratacao_fase().equalsIgnoreCase(contratacaoFunc.getContratacao_fase());
+                    })
+                    .findFirst().ifPresent(cbFuncionarioContratacaoFase::setValue);
+            }
         }
 
         if (funcionario.getTelefone() != null && !funcionario.getTelefone().isEmpty()) {

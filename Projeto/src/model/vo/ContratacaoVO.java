@@ -4,15 +4,15 @@ import java.time.LocalDate;
 
 public class ContratacaoVO {
     private int contratacao_id;
-    private String contratacao_fase;
+    private FaseContratacaoVO fase_contratacao;
     private LocalDate contratacao_dtContratacao;
     private FuncionarioVO funcionario;
 
     public ContratacaoVO() {}
 
-    public ContratacaoVO(int contratacao_id, String contratacao_fase, LocalDate contratacao_dtContratacao, FuncionarioVO funcionario) {
+    public ContratacaoVO(int contratacao_id, FaseContratacaoVO fase_contratacao, LocalDate contratacao_dtContratacao, FuncionarioVO funcionario) {
         this.contratacao_id = contratacao_id;
-        this.contratacao_fase = contratacao_fase;
+        this.fase_contratacao = fase_contratacao;
         this.contratacao_dtContratacao = contratacao_dtContratacao;
         this.funcionario = funcionario;
     }
@@ -25,12 +25,28 @@ public class ContratacaoVO {
         this.contratacao_id = contratacao_id;
     }
 
-    public String getContratacao_fase() {
-        return contratacao_fase;
+    public FaseContratacaoVO getFase_contratacao() {
+        return fase_contratacao;
     }
 
+    public void setFase_contratacao(FaseContratacaoVO fase_contratacao) {
+        this.fase_contratacao = fase_contratacao;
+    }
+
+    // Métodos de compatibilidade para manter código existente funcionando
+    @Deprecated
+    public String getContratacao_fase() {
+        return fase_contratacao != null ? fase_contratacao.getFase_contratacao_descricao() : null;
+    }
+
+    @Deprecated
     public void setContratacao_fase(String contratacao_fase) {
-        this.contratacao_fase = contratacao_fase;
+        if (contratacao_fase != null && !contratacao_fase.isBlank()) {
+            if (fase_contratacao == null) {
+                fase_contratacao = new FaseContratacaoVO();
+            }
+            fase_contratacao.setFase_contratacao_descricao(contratacao_fase);
+        }
     }
 
     public LocalDate getContratacao_dtContratacao() {
@@ -51,6 +67,6 @@ public class ContratacaoVO {
 
     @Override
     public String toString() {
-        return contratacao_fase != null ? contratacao_fase : "";
+        return fase_contratacao != null ? fase_contratacao.getFase_contratacao_descricao() : "";
     }
 }

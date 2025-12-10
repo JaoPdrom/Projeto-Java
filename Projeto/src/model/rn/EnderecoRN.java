@@ -140,10 +140,22 @@ public class EnderecoRN {
             con.commit();
             return endId;
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ignore) {}
+            if (con != null) {
+                try { 
+                    con.rollback();
+                } catch (SQLException ignore) {
+
+                }
+            }
             throw new Exception("Erro ao adicionar endereço: " + e.getMessage(), e);
         } finally {
-            if (con != null) try { con.close(); } catch (SQLException ignore) {}
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException ignore) {
+
+                }
+            }
         }
     }
 
@@ -167,10 +179,22 @@ public class EnderecoRN {
 
             con.commit();
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ignore) {}
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ignore) {
+
+                }
+            }
             throw new Exception("Erro ao atualizar endereço: " + e.getMessage(), e);
         } finally {
-            if (con != null) try { con.close(); } catch (SQLException ignore) {}
+            if (con != null) {
+                try {
+                    con.close(); 
+                } catch (SQLException ignore) {
+
+                }
+            }
         }
     }
 
@@ -214,7 +238,13 @@ public class EnderecoRN {
 
             con.commit();
         } catch (SQLException e) {
-            if (con != null) try { con.rollback(); } catch (SQLException ignore) {}
+            if (con != null) {
+                try {
+                    con.rollback(); 
+                } catch (SQLException ignore) {
+
+                }
+            }
             throw new Exception("Erro ao sincronizar endereços: " + e.getMessage(), e);
         } finally {
             if (con != null) try { con.close(); } catch (SQLException ignore) {}
@@ -237,6 +267,12 @@ public class EnderecoRN {
         }
 
         try {
+            // Garante que o relacionamento cidade-estado existe em tb_cidEst
+            CidEstDAO cidEstDAO = new CidEstDAO(con);
+            int cidadeId = endPostal.getEndP_cidade().getCid_id();
+            String estadoSigla = endPostal.getEndP_estado().getEst_sigla();
+            cidEstDAO.garantirRelacionamento(cidadeId, estadoSigla);
+
             EndPostalDAO dao = new EndPostalDAO(con);
             EndPostalVO existente = dao.buscarPorCep(endPostal.getEndP_cep());
             if (existente != null) {

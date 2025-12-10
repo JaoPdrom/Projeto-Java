@@ -880,12 +880,14 @@ SELECT * FROM tb_despesa;
 -- Table tb_contratacao
 -- -----------------------------------------------------
 -- Pressupõe que existam funcionários com fnc_id 1..4 em tb_funcionario
-INSERT INTO tb_contratacao (contratacao_id, contratacao_fase, contratacao_data, contratacao_fnc_id)
+-- Pressupõe que existam fases em tb_fase_contratacao (1=Entrevista, 2=Aprovação, 3=Contratação, 4=Integração)
+-- Nota: Usando fase_id 3 (Contratação) como padrão, ajuste conforme necessário
+INSERT INTO tb_contratacao (contratacao_id, contratacao_fase_id, contratacao_data, contratacao_fnc_id)
 VALUES
-    (NULL, 'Contratação',        '2008-07-12', 2),
-    (NULL, 'Período de teste',   '2015-09-08', 3),
-    (NULL, 'Promoção de cargo',  '2020-11-22', 7),
-    (NULL, 'Recontratação',      '2021-05-07', 11);
+    (NULL, 3, '2008-07-12', 2),
+    (NULL, 3, '2015-09-08', 3),
+    (NULL, 3, '2020-11-22', 7),
+    (NULL, 3, '2021-05-07', 11);
 SELECT * FROM tb_contratacao;
 
 -- -----------------------------------------------------

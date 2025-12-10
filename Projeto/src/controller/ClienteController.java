@@ -5,9 +5,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.property.SimpleStringProperty;
-// import model.dao.TipoPessoaDAO;
+import java.util.Optional;
+
 import model.rn.ClienteRN;
 import model.rn.EnderecoRN;
 import model.rn.PessoaRN;
@@ -88,6 +92,8 @@ public class ClienteController implements Initializable{
     // IDs do item selecionado para permitir atualização correta
     private Integer telefoneSelecionadoId;
     private Integer enderecoSelecionadoId;
+    // Flag para indicar que estamos carregando dados de um cliente selecionado
+    private boolean carregandoClienteSelecionado = false;
 
     // -- CARREGADORES DE COMBOBOX
     public void carregarTipoPessoa() throws SQLException{
@@ -285,11 +291,13 @@ public class ClienteController implements Initializable{
                 info("Campos cbClienteEndCidade desabilitados.");
             }
 
-            // Limpa campos de endereço dependentes
-            txtClienteEndNomeRua.clear();
-            txtClienteEndCep.clear();
-            txtClienteEndNumero.clear();
-            txtClienteEndComplemento.clear();
+            // Limpa campos de endereço dependentes apenas se não estiver carregando cliente selecionado
+            if (!carregandoClienteSelecionado) {
+                txtClienteEndNomeRua.clear();
+                txtClienteEndCep.clear();
+                txtClienteEndNumero.clear();
+                txtClienteEndComplemento.clear();
+            }
         });
     }
 
@@ -414,6 +422,8 @@ public class ClienteController implements Initializable{
             String v = txtClientePesDocumento.getText();
             if (v != null) {
                 documento = v.trim();
+                // Normaliza o documento (remove formatação)
+                documento = normalizarDocumento(documento);
             }
         }
 
@@ -425,12 +435,25 @@ public class ClienteController implements Initializable{
     }
 
 
+    private String normalizarDocumento(String doc) {
+        if (doc == null) {
+            return "";
+        }
+        // Remove todos os caracteres não numéricos
+        return doc.replaceAll("\\D", "");
+    }
+
     private PessoaVO criarBasePessoa() throws Exception {
         try {
             //leitura dos campos
             String documento = null;
             if (txtClientePesDocumento.getText() != null) {
                 documento = txtClientePesDocumento.getText().trim();
+            }
+            
+            // Normaliza o documento (remove formatação)
+            if (documento != null && !documento.isBlank()) {
+                documento = normalizarDocumento(documento);
             }
 
             String nome = null;
@@ -457,6 +480,11 @@ public class ClienteController implements Initializable{
             //validacoes
             if (documento == null || documento.isBlank()) {
                 throw new IllegalArgumentException("Documento é obrigatório.");
+            }
+            
+            // Valida formato do documento (deve ter 11 dígitos para CPF ou 14 para CNPJ)
+            if (documento.length() != 11 && documento.length() != 14) {
+                throw new IllegalArgumentException("Documento inválido. CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.");
             }
 
             if (nome == null || nome.isBlank()) {
@@ -516,9 +544,7 @@ public class ClienteController implements Initializable{
         clienteVO.setTelefone(pessoaVO.getTelefone());
         clienteVO.setCli_dtCadastro(LocalDate.now());
 
-        clienteRN.salvarNovo(clienteVO);
-        
-        
+        clienteRN.salvarNovo(clienteVO);        
     }
 
     // METODOS FMXL
@@ -562,6 +588,8 @@ public class ClienteController implements Initializable{
         try {
             criarEndereco();
             info("Endereço criado para cliente");
+            carregarTabela();
+            limparCamposCliente();
         } catch (Exception e) {
             erro("Erro ao adicionar endereco", e);
         }
@@ -581,7 +609,6 @@ public class ClienteController implements Initializable{
         } catch (Exception e) {
             erro("Erro ao entrar em modo de edição", e);
         }
-
     }
 
     @FXML
@@ -618,19 +645,65 @@ public class ClienteController implements Initializable{
                 CidadeVO cidade = obterCbCidadeSelecionado();
                 LogradouroVO logradouro = obterCbLogradouroSelecionado();
 
-                String cep = txtClienteEndCep != null && txtClienteEndCep.getText() != null ? txtClienteEndCep.getText().trim() : null;
-                String rua = txtClienteEndNomeRua != null && txtClienteEndNomeRua.getText() != null ? txtClienteEndNomeRua.getText().trim() : null;
-                String numero = txtClienteEndNumero != null && txtClienteEndNumero.getText() != null ? txtClienteEndNumero.getText().trim() : null;
-                String complemento = txtClienteEndComplemento != null && txtClienteEndComplemento.getText() != null ? txtClienteEndComplemento.getText().trim() : null;
-                String bairroTxt = txtClienteEndBairro != null && txtClienteEndBairro.getText() != null ? txtClienteEndBairro.getText().trim() : null;
+                String cep = null;
+                if (txtClienteEndCep != null && txtClienteEndCep.getText() != null) {
+                    cep = txtClienteEndCep.getText().trim();
+                }
 
-                if (estado == null) { alerta("Estado é obrigatório"); return; }
-                if (cidade == null) { alerta("Cidade é obrigatória"); return; }
-                if (logradouro == null) { alerta("Logradouro é obrigatório"); return; }
-                if (bairroTxt == null || bairroTxt.isBlank()) { alerta("Bairro é obrigatório"); return; }
-                if (rua == null || rua.isBlank()) { alerta("Nome da rua é obrigatório"); return; }
-                if (cep == null || cep.isBlank()) { alerta("CEP é obrigatório"); return; }
-                if (numero == null || numero.isBlank()) { alerta("Número é obrigatório"); return; }
+                String rua = null;
+                if (txtClienteEndNomeRua != null && txtClienteEndNomeRua.getText() != null) {
+                    rua = txtClienteEndNomeRua.getText().trim();
+                }
+
+                String numero = null;
+                if (txtClienteEndNumero != null && txtClienteEndNumero.getText() != null) {
+                    numero = txtClienteEndNumero.getText().trim();
+                }
+
+                String complemento = null;
+                if (txtClienteEndComplemento != null && txtClienteEndComplemento.getText() != null) {
+                    complemento = txtClienteEndComplemento.getText().trim();
+                }
+
+                String bairroTxt = null;
+                if (txtClienteEndBairro != null && txtClienteEndBairro.getText() != null) {
+                    bairroTxt = txtClienteEndBairro.getText().trim();
+                }
+
+                if (estado == null) {
+                    alerta("Estado é obrigatório");
+                    return;
+                }
+
+                if (cidade == null) {
+                    alerta("Cidade é obrigatória");
+                    return;
+                }
+
+                if (logradouro == null) {
+                    alerta("Logradouro é obrigatório");
+                    return;
+                }
+
+                if (bairroTxt == null || bairroTxt.isBlank()) {
+                    alerta("Bairro é obrigatório");
+                    return;
+                }
+
+                if (rua == null || rua.isBlank()) {
+                    alerta("Nome da rua é obrigatório");
+                    return;
+                }
+
+                if (cep == null || cep.isBlank()) {
+                    alerta("CEP é obrigatório");
+                    return;
+                }
+
+                if (numero == null || numero.isBlank()) {
+                    alerta("Número é obrigatório");
+                    return;
+                }
 
                 EndPostalVO ep = new EndPostalVO();
                 ep.setEndP_estado(estado);
@@ -645,7 +718,15 @@ public class ClienteController implements Initializable{
                 EnderecoVO end = new EnderecoVO();
                 end.setEnd_endP_id(ep);
                 end.setEnd_numero(numero);
-                end.setEnd_complemento(complemento != null && !complemento.isBlank() ? complemento : null);
+
+                if (complemento != null && !complemento.isBlank()) {
+                    end.setEnd_complemento(complemento);
+                } else {
+                    end.setEnd_complemento(null);
+                }
+
+
+                // end.setEnd_complemento(complemento != null && !complemento.isBlank() ? complemento : null);
                 if (enderecoSelecionadoId != null) {
                     end.setEnd_id(enderecoSelecionadoId);
                 }
@@ -666,6 +747,57 @@ public class ClienteController implements Initializable{
     }
 
     @FXML
+    private void handleBtnClienteExcluirAction(ActionEvent event) {
+        info("Botão de exclusão pressionado.");
+        try {
+            // Verifica se há cliente selecionado na tabela
+            ClienteVO clienteSelecionado = tbvCliente.getSelectionModel().getSelectedItem();
+            if (clienteSelecionado == null) {
+                alerta("Selecione um cliente na tabela para excluir.");
+                return;
+            }
+
+            String documento = clienteSelecionado.getPes_cpf();
+            String nome = clienteSelecionado.getPes_nome();
+            
+            if (documento == null || documento.isBlank()) {
+                alerta("Não é possível excluir: documento do cliente não encontrado.");
+                return;
+            }
+
+            // Confirmação de exclusão
+            Alert alertaConfirmacao = new Alert(AlertType.CONFIRMATION);
+            alertaConfirmacao.setTitle("Confirmar exclusão");
+            alertaConfirmacao.setHeaderText("Deseja realmente excluir este cliente?");
+            String texto = "Cliente: " + (nome != null ? nome : "N/A") + "\nDocumento: " + documento;
+            alertaConfirmacao.setContentText(texto);
+
+            Optional<ButtonType> resultado = alertaConfirmacao.showAndWait();
+            if (resultado.isEmpty() || resultado.get() != ButtonType.OK) {
+                info("Exclusão cancelada pelo usuário.");
+                return;
+            }
+
+            // Executa a exclusão
+            clienteRN.deletarCliente(documento);
+            alerta("Cliente excluído com sucesso.");
+            
+            // Limpa campos e atualiza tabela
+            limparCamposCliente();
+            habilitarCampos(false);
+            if (tbvCliente != null && tbvCliente.getSelectionModel() != null) {
+                tbvCliente.getSelectionModel().clearSelection();
+            }
+            carregarTabela();
+            info("Cliente removido e tabela atualizada.");
+            
+        } catch (Exception e) {
+            erro("Erro ao excluir cliente", e);
+            alerta("Falha ao excluir cliente: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleBtnClienteBuscarAction(ActionEvent event) {
         try {
             String termo = null;
@@ -681,7 +813,7 @@ public class ClienteController implements Initializable{
                 return;
             }
 
-            //apenasDigitos com 11 caracteres eh CPF; apenasDigitos (outro tamanho) eh ID; caso contrário -> nome
+            //apenas digitos com 11 caracteres eh CPF; apenas digitos (outro tamanho) eh ID; caso contrário -> nome
             String apenasDigitos = termo.replaceAll("\\D", "");
             List<ClienteVO> resultado = new ArrayList<>();
             if (!apenasDigitos.isBlank() && apenasDigitos.length() == 11) {
@@ -796,8 +928,6 @@ public class ClienteController implements Initializable{
         } catch (Exception e){
             erro("Erro ao inicializar", e);
         }
-        // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'initialize'");
     }
     
     private void carregarTabela(){
@@ -823,14 +953,31 @@ public class ClienteController implements Initializable{
             });
 
 
-            tbcClientePesNome.setCellValueFactory(cd -> new SimpleStringProperty(
-                cd.getValue() != null && cd.getValue().getPes_nome() != null ? cd.getValue().getPes_nome() : ""));
+            tbcClientePesNome.setCellValueFactory(cd -> {
+                String nome = "";
+                if (cd.getValue() != null && cd.getValue().getPes_nome() != null) {
+                    nome = cd.getValue().getPes_nome();
+                }
+                return new SimpleStringProperty(nome);
+            });
 
-            tbcClientePesDocumento.setCellValueFactory(cd -> new SimpleStringProperty(
-                cd.getValue() != null && cd.getValue().getPes_cpf() != null ? cd.getValue().getPes_cpf() : ""));
 
-            tbcClientePesEmail.setCellValueFactory(cd -> new SimpleStringProperty(
-                cd.getValue() != null && cd.getValue().getPes_email() != null ? cd.getValue().getPes_email() : ""));
+            tbcClientePesDocumento.setCellValueFactory(cd -> {
+                String documento = "";
+                if (cd.getValue() != null && cd.getValue().getPes_cpf() != null) {
+                    documento = cd.getValue().getPes_cpf();
+                }
+                return new SimpleStringProperty(documento);
+            });
+
+
+            tbcClientePesEmail.setCellValueFactory(cd -> {
+                String email = "";
+                if (cd.getValue() != null && cd.getValue().getPes_email() != null) {
+                    email = cd.getValue().getPes_email();
+                }
+                return new SimpleStringProperty(email);
+            });
 
             tbcClientePesTipo.setCellValueFactory(cd -> {
                 String tipo = "";
@@ -843,8 +990,15 @@ public class ClienteController implements Initializable{
                 }
                 return new SimpleStringProperty(tipo);
             });
-            tbcClienteStatus.setCellValueFactory(cd -> new SimpleStringProperty(
-                cd.getValue() != null && cd.getValue().getPes_ativo() != null && cd.getValue().getPes_ativo() ? "Ativo" : "Inativo"));
+
+            tbcClienteStatus.setCellValueFactory(cd -> {
+                String status = "Inativo";
+                if (cd.getValue() != null && cd.getValue().getPes_ativo() != null && cd.getValue().getPes_ativo()) {
+                    status = "Ativo";
+                }
+                return new SimpleStringProperty(status);
+            });
+
 
             tbvCliente.setItems(obs);
             info("Tabela de clientes carregada: " + obs.size() + " registros");
@@ -859,13 +1013,16 @@ public class ClienteController implements Initializable{
             ClienteVO clienteSelecionado = tbvCliente.getSelectionModel().getSelectedItem();
             limparCamposCliente();
             btnClienteEditar.setDisable(false);
-            btnClienteAtualizar.setDisable(false);
+            btnClienteAtualizar.setDisable(true);
             btnClienteExcluir.setDisable(false);
 
             if (clienteSelecionado == null) {
                 info("Nenhum cliente selecionado na tabela.");
                 return;
             }
+            
+            // Marca que estamos carregando dados de um cliente selecionado
+            carregandoClienteSelecionado = true;
 
             info("Cliente selecionado: " + clienteSelecionado.getPes_nome());
 
@@ -875,6 +1032,14 @@ public class ClienteController implements Initializable{
             txtClientePesNome.setText(clienteSelecionado.getPes_nome());
             txtClientePesEmail.setText(clienteSelecionado.getPes_email());
             dtpClientePesDataNascimento.setValue(clienteSelecionado.getPes_dt_nascimento());
+            
+            // Checkbox de ativo
+            if (clienteSelecionado.getPes_ativo() != null) {
+                chbClienteAtivo.setSelected(clienteSelecionado.getPes_ativo());
+            } else {
+                chbClienteAtivo.setSelected(true); // padrão ativo
+            }
+            
             info("Dados básicos preenchidos com sucesso.");
 
             // sexo
@@ -911,7 +1076,12 @@ public class ClienteController implements Initializable{
             try {
                 if (clienteSelecionado.getTelefone() != null && !clienteSelecionado.getTelefone().isEmpty()) {
                     TelefoneVO tel = clienteSelecionado.getTelefone().get(0);
-                    try { telefoneSelecionadoId = tel.getTel_id(); } catch (Exception ignore) { telefoneSelecionadoId = null; }
+                    try { 
+                        telefoneSelecionadoId = tel.getTel_id(); 
+                    } catch (Exception ignore) { 
+                        telefoneSelecionadoId = null; 
+                    }
+
                     txtClienteTelCodPais.setText(tel.getTel_codPais());
                     txtClienteTelDdd.setText(tel.getTel_ddd());
                     txtClienteTelNumero.setText(tel.getTel_numero());
@@ -927,14 +1097,41 @@ public class ClienteController implements Initializable{
             try {
                 if (clienteSelecionado.getEndereco() != null && !clienteSelecionado.getEndereco().isEmpty()) {
                     EnderecoVO end = clienteSelecionado.getEndereco().get(0);
-                    try { enderecoSelecionadoId = end.getEnd_id(); } catch (Exception ignore) { enderecoSelecionadoId = null; }
+                    try { 
+                        enderecoSelecionadoId = end.getEnd_id(); 
+                    } catch (Exception ignore) { 
+                        enderecoSelecionadoId = null; 
+                    }
                     EndPostalVO endPostal = end.getEnd_endP_id();
 
                     if (endPostal != null) {
-                        txtClienteEndCep.setText(endPostal.getEndP_cep());
-                        txtClienteEndNomeRua.setText(endPostal.getEndP_nomeRua());
-                        if (endPostal.getEndP_bairro() != null)
-                            txtClienteEndBairro.setText(endPostal.getEndP_bairro().getBairro_descricao());
+                        // CEP e nome da rua - preenche antes de setar estado para evitar que o listener limpe
+                        String cep = endPostal.getEndP_cep();
+                        String nomeRua = endPostal.getEndP_nomeRua();
+                        String bairroDesc = null;
+                        if (endPostal.getEndP_bairro() != null) {
+                            bairroDesc = endPostal.getEndP_bairro().getBairro_descricao();
+                        }
+                        
+                        info("EndPostal carregado - CEP: " + cep + ", Rua: " + nomeRua + ", Bairro: " + bairroDesc);
+                        
+                        if (cep != null && !cep.isBlank()) {
+                            txtClienteEndCep.setText(cep);
+                            info("CEP preenchido: " + cep);
+                        } else {
+                            info("CEP está null ou vazio");
+                        }
+                        
+                        if (nomeRua != null && !nomeRua.isBlank()) {
+                            txtClienteEndNomeRua.setText(nomeRua);
+                            info("Nome da rua preenchido: " + nomeRua);
+                        } else {
+                            info("Nome da rua está null ou vazio");
+                        }
+                        
+                        if (bairroDesc != null && !bairroDesc.isBlank()) {
+                            txtClienteEndBairro.setText(bairroDesc);
+                        }
 
                         // Seleciona Logradouro no combo se disponível
                         LogradouroVO logradouro = endPostal.getEndP_logradouro();
@@ -948,19 +1145,46 @@ public class ClienteController implements Initializable{
                         EstadoVO estado = endPostal.getEndP_estado();
                         CidadeVO cidade = endPostal.getEndP_cidade();
 
-                        if (estado != null) {
-                            cbClienteEndEstado.setValue(estado);
+                        if (estado != null && estado.getEst_sigla() != null) {
+                            // Salva CEP e nome da rua antes de setar estado (o listener pode limpar)
+                            String cepSalvo = txtClienteEndCep.getText();
+                            String ruaSalva = txtClienteEndNomeRua.getText();
+                            String bairroSalvo = txtClienteEndBairro.getText();
+                            
+                            // Busca o estado na lista do combobox pelo ID/sigla antes de setar
+                            cbClienteEndEstado.getItems().stream()
+                                .filter(e -> e.getEst_sigla() != null && e.getEst_sigla().equals(estado.getEst_sigla()))
+                                .findFirst()
+                                .ifPresent(cbClienteEndEstado::setValue);
+                            
+                            // Carrega cidades do estado selecionado
                             carregarCidadesPorEstado(estado.getEst_sigla());
+                            
+                            // Restaura CEP e nome da rua após o listener limpar
+                            if (cepSalvo != null && !cepSalvo.isBlank()) {
+                                txtClienteEndCep.setText(cepSalvo);
+                            }
+                            if (ruaSalva != null && !ruaSalva.isBlank()) {
+                                txtClienteEndNomeRua.setText(ruaSalva);
+                            }
+                            if (bairroSalvo != null && !bairroSalvo.isBlank()) {
+                                txtClienteEndBairro.setText(bairroSalvo);
+                            }
+                            
+                            // Seleciona a cidade após carregar as cidades (método é síncrono)
+                            if (cidade != null && cidade.getCid_id() > 0) {
+                                cbClienteEndCidade.getItems().stream()
+                                    .filter(c -> c.getCid_id() == cidade.getCid_id())
+                                    .findFirst()
+                                    .ifPresent(cbClienteEndCidade::setValue);
+                                info("Cidade definida como: " + cidade.getCid_descricao() + " (ID: " + cidade.getCid_id() + ")");
+                            } else {
+                                info("Cidade não encontrada - ID: " + (cidade != null ? cidade.getCid_id() : "null") + ", Descrição: " + (cidade != null ? cidade.getCid_descricao() : "null"));
+                            }
+                            
                             info("Estado definido como: " + estado.getEst_sigla());
                         } else {
                             alerta("Estado não definido.");
-                        }
-
-                        if (cidade != null) {
-                            cbClienteEndCidade.setValue(cidade);
-                            info("Cidade definida como: " + cidade.getCid_descricao());
-                        } else {
-                            alerta("Cidade não definida.");
                         }
                     }
 
@@ -973,9 +1197,13 @@ public class ClienteController implements Initializable{
             } catch (Exception e) {
                 erro("Erro ao definir endereço", e);
             }
+            
+            // Reseta a flag após carregar todos os dados
+            carregandoClienteSelecionado = false;
 
         } catch (Exception e) {
             erro("Erro geral ao selecionar cliente", e);
+            carregandoClienteSelecionado = false; // Garante que a flag seja resetada mesmo em caso de erro
         }
     }
 
@@ -997,7 +1225,4 @@ public class ClienteController implements Initializable{
         System.err.println(RED + "[ERRO:ClienteController] " + msg + RESET);
         if (e != null) e.printStackTrace();
     }
-
-    
-    
 }

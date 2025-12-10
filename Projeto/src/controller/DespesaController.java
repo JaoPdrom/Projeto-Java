@@ -510,23 +510,32 @@ public class DespesaController implements Initializable {
                 descricaoLike = termo;
             }
 
-            Integer tipoId = (tipoBusca != null && tipoBusca.getTipoDespesa_id() > 0)
-                    ? tipoBusca.getTipoDespesa_id()
-                    : null;
+            Integer tipoId = null;
+            if (tipoBusca != null && tipoBusca.getTipoDespesa_id() > 0) {
+                tipoId = tipoBusca.getTipoDespesa_id();
+            }
+
 
             java.time.LocalDate dtInicial = null;
             java.time.LocalDate dtFinal = null;
 
             if (rBtnDespesaBuscaData != null && rBtnDespesaBuscaData.isSelected()) {
-                dtInicial = dtpDespesaBuscaDtInicial != null ? dtpDespesaBuscaDtInicial.getValue() : null;
+                if (dtpDespesaBuscaDtInicial != null) {
+                    dtInicial = dtpDespesaBuscaDtInicial.getValue();
+                }
                 if (dtInicial == null) {
                     alerta("Informe a data para busca.");
                     return;
                 }
                 dtFinal = dtInicial;
             } else if (rBtnDespesaBuscaPeriodo != null && rBtnDespesaBuscaPeriodo.isSelected()) {
-                dtInicial = dtpDespesaBuscaDtInicial != null ? dtpDespesaBuscaDtInicial.getValue() : null;
-                dtFinal = dtpDespesaBuscaDtFinal != null ? dtpDespesaBuscaDtFinal.getValue() : null;
+                if (dtpDespesaBuscaDtInicial != null) {
+                    dtInicial = dtpDespesaBuscaDtInicial.getValue();
+                }
+                if (dtpDespesaBuscaDtFinal != null) {
+                    dtFinal = dtpDespesaBuscaDtFinal.getValue();
+                }
+
 
                 if (dtInicial == null || dtFinal == null) {
                     alerta("Informe as duas datas para o período de busca.");

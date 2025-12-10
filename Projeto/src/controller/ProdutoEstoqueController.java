@@ -232,15 +232,26 @@ public class ProdutoEstoqueController implements Initializable {
     private void configurarTabela() {
         tbcProdutoId.setCellValueFactory(celula -> {
             ProdutoVO produto = celula.getValue().getEst_produto_id();
-            Integer valor = produto != null ? produto.getProduto_id() : null;
+            Integer valor;
+            if (produto != null) {
+                valor = produto.getProduto_id();
+            } else {
+                valor = null;
+            }
             return new ReadOnlyObjectWrapper<>(valor);
         });
 
         tbcProdutoNome.setCellValueFactory(celula -> {
             ProdutoVO produto = celula.getValue().getEst_produto_id();
-            String valor = produto != null ? produto.getProduto_nome() : null;
+            String valor;
+            if (produto != null) {
+                valor = produto.getProduto_nome();
+            } else {
+                valor = null;
+            }
             return new ReadOnlyObjectWrapper<>(valor);
         });
+
 
         tbcProdutoTipo.setCellValueFactory(celula -> {
             ProdutoVO produto = celula.getValue().getEst_produto_id();
@@ -253,9 +264,15 @@ public class ProdutoEstoqueController implements Initializable {
 
         tbcProdutoPeso.setCellValueFactory(celula -> {
             ProdutoVO produto = celula.getValue().getEst_produto_id();
-            Integer valor = produto != null ? produto.getProduto_peso() : null;
+            Integer valor;
+            if (produto != null) {
+                valor = produto.getProduto_peso();
+            } else {
+                valor = null;
+            }
             return new ReadOnlyObjectWrapper<>(valor);
         });
+
 
         tbcProdutoEstoqueValor.setCellValueFactory(celula ->
             new ReadOnlyObjectWrapper<>(celula.getValue().getEst_custo())
@@ -263,9 +280,15 @@ public class ProdutoEstoqueController implements Initializable {
 
         tbcProdutoAtivo.setCellValueFactory(celula -> {
             ProdutoVO produto = celula.getValue().getEst_produto_id();
-            Boolean valor = produto != null ? produto.getProduto_ativo() : Boolean.FALSE;
+            Boolean valor;
+            if (produto != null) {
+                valor = produto.getProduto_ativo();
+            } else {
+                valor = Boolean.FALSE;
+            }
             return new ReadOnlyObjectWrapper<>(valor);
         });
+
 
         tbvProdutoEstoque.setItems(dadosTabela);
     }
@@ -369,7 +392,15 @@ public class ProdutoEstoqueController implements Initializable {
         Alert alertaConfirmacao = new Alert(AlertType.CONFIRMATION);
         alertaConfirmacao.setTitle("Confirmar exclusao");
         alertaConfirmacao.setHeaderText("Deseja realmente excluir este produto?");
-        alertaConfirmacao.setContentText(nomeProduto != null ? "Produto: " + nomeProduto : "");
+        
+        String texto;
+        if (nomeProduto != null) {
+            texto = "Produto: " + nomeProduto;
+        } else {
+            texto = "";
+        }
+        alertaConfirmacao.setContentText(texto);
+
         Optional<ButtonType> resultado = alertaConfirmacao.showAndWait();
         return resultado.isPresent() && resultado.get() == ButtonType.OK;
     }

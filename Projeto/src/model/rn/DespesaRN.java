@@ -179,14 +179,25 @@ public class DespesaRN {
             // Filtro prioritário por ID
             if (id != null && id > 0) {
                 DespesaVO unica = dao.buscarPorId(id);
-                return unica != null ? java.util.List.of(unica) : java.util.List.of();
+                if (unica != null) {
+                    return java.util.List.of(unica);
+                } else {
+                    return java.util.List.of();
+                }
             }
 
+
             // Normaliza descrição
-            String desc = (descricaoLike != null && !descricaoLike.isBlank()) ? descricaoLike.trim() : null;
+            String desc = null;
+            if (descricaoLike != null && !descricaoLike.isBlank()) {
+                desc = descricaoLike.trim();
+            }
 
             // Normaliza tipo
-            Integer tipoId = (tipoDespesaId != null && tipoDespesaId > 0) ? tipoDespesaId : null;
+            Integer tipoId = null;
+            if (tipoDespesaId != null && tipoDespesaId > 0) {
+                tipoId = tipoDespesaId;
+            }
 
             // Normaliza datas
             LocalDate inicio = dtInicial;

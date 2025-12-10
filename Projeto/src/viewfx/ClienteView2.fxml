@@ -14,7 +14,7 @@
                   <Button fx:id="btnClienteSalvar" mnemonicParsing="false" onAction="#handleBtnClienteSalvarAction" text="Salvar" />
                   <Button fx:id="btnClienteEditar" mnemonicParsing="false" onAction="#handleBtnClienteEditar" text="Editar" />
                   <Button fx:id="btnClienteAtualizar" mnemonicParsing="false" onAction="#handleBtnClienteAtualizar" text="Atualizar" />
-                  <Button fx:id="btnClienteExcluir" mnemonicParsing="false" text="Excluir" />
+                  <Button fx:id="btnClienteExcluir" mnemonicParsing="false" onAction="#handleBtnClienteExcluirAction" text="Excluir" />
                   <Button fx:id="btnClienteCancelar" mnemonicParsing="false" onAction="#handleBtnClienteCancelarAction" text="Cancelar" />
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                   <Label text="Busca:" />

@@ -128,11 +128,23 @@ CREATE TABLE IF NOT EXISTS tb_funcionario(
     FOREIGN KEY (fnc_pes_documento) REFERENCES tb_pessoa(pes_documento)
 );
 
+CREATE TABLE IF NOT EXISTS tb_fase_contratacao (
+    fase_contratacao_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    fase_contratacao_descricao VARCHAR(45) NOT NULL,
+    fase_contratacao_ativo BOOLEAN DEFAULT TRUE NOT NULL
+);
+INSERT INTO tb_fase_contratacao (fase_contratacao_descricao, fase_contratacao_ativo) VALUES 
+    ('Entrevista', true),
+    ('Aprovação', true),
+    ('Contratação', true),
+    ('Integração', true);
+
 CREATE TABLE tb_contratacao (
     contratacao_id INT AUTO_INCREMENT PRIMARY KEY,
-    contratacao_fase VARCHAR(45) NOT NULL,
+    contratacao_fase_id INT NOT NULL,
     contratacao_data DATE NOT NULL,
     contratacao_fnc_id INT NOT NULL,
+    FOREIGN KEY (contratacao_fase_id) REFERENCES tb_fase_contratacao(fase_contratacao_id),
     FOREIGN KEY (contratacao_fnc_id) REFERENCES tb_funcionario(fnc_id)
 );
 

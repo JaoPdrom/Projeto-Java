@@ -86,6 +86,7 @@ public class ClienteDAO {
             b.bairro_descricao,
             l.logradouro_id      AS logradouro_id,
             l.log_descricao AS log_descricao,
+            cid.cid_id      AS cidade_id,
             cid.cid_descricao AS cidade,
             est.est_sigla     AS estado,
             tel.tel_id        AS tel_id,
@@ -142,7 +143,9 @@ public class ClienteDAO {
                     endPostal.setEndP_cep(rs.getString("endP_cep"));
                     endPostal.setEndP_bairro(new BairroVO(0, rs.getString("bairro_descricao")));
                     endPostal.setEndP_logradouro(new LogradouroVO(rs.getInt("logradouro_id"), rs.getString("log_descricao")));
-                    endPostal.setEndP_cidade(new CidadeVO(0, rs.getString("cidade")));
+                    int cidadeId = rs.getInt("cidade_id");
+                    if (rs.wasNull()) cidadeId = 0;
+                    endPostal.setEndP_cidade(new CidadeVO(cidadeId, rs.getString("cidade")));
                     endPostal.setEndP_estado(new EstadoVO(rs.getString("estado"), null));
 
                     EnderecoVO end = new EnderecoVO();
@@ -183,6 +186,7 @@ public class ClienteDAO {
             b.bairro_descricao,
             l.logradouro_id      AS logradouro_id,
             l.log_descricao AS log_descricao,
+            cid.cid_id      AS cidade_id,
             cid.cid_descricao AS cidade,
             est.est_sigla     AS estado,
             tel.tel_id        AS tel_id,
@@ -248,7 +252,9 @@ public class ClienteDAO {
                     endPostal.setEndP_cep(rs.getString("endP_cep"));
                     endPostal.setEndP_bairro(new BairroVO(0, rs.getString("bairro_descricao")));
                     endPostal.setEndP_logradouro(new LogradouroVO(rs.getInt("logradouro_id"), rs.getString("log_descricao")));
-                    endPostal.setEndP_cidade(new CidadeVO(0, rs.getString("cidade")));
+                    int cidadeId = rs.getInt("cidade_id");
+                    if (rs.wasNull()) cidadeId = 0;
+                    endPostal.setEndP_cidade(new CidadeVO(cidadeId, rs.getString("cidade")));
                     endPostal.setEndP_estado(new EstadoVO(rs.getString("estado"), null));
 
                     EnderecoVO end = new EnderecoVO();
@@ -337,44 +343,42 @@ public class ClienteDAO {
         tel.tel_ddd,
         tel.tel_numero
 
-    FROM tb_cliente c
-    JOIN tb_pessoa p
-      ON c.cli_pes_documento = p.pes_documento
+        FROM tb_cliente c
+        JOIN tb_pessoa p
+        ON c.cli_pes_documento = p.pes_documento
 
-    -- Tipo de pessoa / Sexo
-    LEFT JOIN tb_tipoPessoa tp
-      ON tp.tipo_pessoa_id = p.pes_tipo_pessoa_id
-    LEFT JOIN tb_sexo s
-      ON s.sex_id = p.pes_sex_id
+        -- Tipo de pessoa / Sexo
+        LEFT JOIN tb_tipoPessoa tp
+        ON tp.tipo_pessoa_id = p.pes_tipo_pessoa_id
+        LEFT JOIN tb_sexo s
+        ON s.sex_id = p.pes_sex_id
 
-    -- Endereço(s) da pessoa
-    LEFT JOIN tb_pesEnd pe
-      ON pe.pesEnd_pes_documento = p.pes_documento
-    LEFT JOIN tb_endereco e
-      ON e.end_id = pe.pesEnd_end_id
-    LEFT JOIN tb_endPostal ep
-      ON ep.endP_id = e.end_endP_id
-    LEFT JOIN tb_bairro b
-      ON b.bairro_id = ep.endP_bairro_id
-    LEFT JOIN tb_logradouro l
-      ON l.logradouro_id = ep.endP_logradouro_id
+        -- Endereço(s) da pessoa
+        LEFT JOIN tb_pesEnd pe
+        ON pe.pesEnd_pes_documento = p.pes_documento
+        LEFT JOIN tb_endereco e
+        ON e.end_id = pe.pesEnd_end_id
+        LEFT JOIN tb_endPostal ep
+        ON ep.endP_id = e.end_endP_id
+        LEFT JOIN tb_bairro b
+        ON b.bairro_id = ep.endP_bairro_id
+        LEFT JOIN tb_logradouro l
+        ON l.logradouro_id = ep.endP_logradouro_id
 
-    -- Cidade/Estado via chave composta em tb_cidEst
-    LEFT JOIN tb_cidEst ce
-      ON ce.cidEstPai_cid_id = ep.endP_cid_id
-     AND ce.cidEstPai_est_sigla = ep.endP_est_sigla
-    LEFT JOIN tb_cidade cid
-      ON cid.cid_id = ce.cidEstPai_cid_id
-    LEFT JOIN tb_estado est
-      ON est.est_sigla = ce.cidEstPai_est_sigla
+        -- Cidade/Estado via chave composta em tb_cidEst
+        LEFT JOIN tb_cidEst ce
+        ON ce.cidEstPai_cid_id = ep.endP_cid_id
+        AND ce.cidEstPai_est_sigla = ep.endP_est_sigla
+        LEFT JOIN tb_cidade cid
+        ON cid.cid_id = ce.cidEstPai_cid_id
+        LEFT JOIN tb_estado est
+        ON est.est_sigla = ce.cidEstPai_est_sigla
 
         -- Telefones (pode haver vários)
         LEFT JOIN tb_telefone tel
-      ON tel.tel_pes_documento = p.pes_documento
-    ;
-    """;
-
-
+        ON tel.tel_pes_documento = p.pes_documento
+        ;
+        """;
 
 
         try (PreparedStatement ps = con_cli.prepareStatement(sql);

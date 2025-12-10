@@ -10,6 +10,7 @@ import model.dao.ContratacaoDAO;
 import model.dao.ConexaoDAO;
 import model.dao.DemissaoDAO;
 import model.dao.EnderecoDAO;
+import model.dao.FaseContratacaoDAO;
 import model.dao.FuncionarioDAO;
 // import model.dao.LogDAO;
 import model.dao.PesEndDAO;
@@ -17,6 +18,7 @@ import model.dao.TelefoneDAO;
 
 import model.vo.CargoVO;
 import model.vo.ContratacaoVO;
+import model.vo.FaseContratacaoVO;
 import model.vo.FuncionarioVO;
 // import model.vo.LogVO;
 import model.dao.PessoaDAO;
@@ -28,6 +30,7 @@ import model.vo.DemissaoVO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.Period;
@@ -85,7 +88,7 @@ public class FuncionarioRN {
 
         if (pis.length() != 11) {
 
-            throw new Exception("N??mero do PIS deve conter 11 d??gitos.");
+            throw new Exception("Numero do PIS deve conter 11 digitos.");
 
         }
 
@@ -144,7 +147,7 @@ public class FuncionarioRN {
 
                 (funcionario.getFnc_motivo_demissao() == null || funcionario.getFnc_motivo_demissao().isBlank())) {
 
-            throw new Exception("Motivo da demiss??o obrigat??rio quando informar a data de demiss??o.");
+            throw new Exception("Motivo da demissao obrigatorio quando informar a data de demissao.");
 
         }
 
@@ -180,13 +183,22 @@ public class FuncionarioRN {
                 contratacao = new ContratacaoVO();
                 contratacao.setContratacao_fase("Contrata��o");
             }
+
             if (contratacao.getContratacao_fase() == null || contratacao.getContratacao_fase().isBlank()) {
                 contratacao.setContratacao_fase("Contrata��o");
             }
+
             if (contratacao.getContratacao_dtContratacao() == null) {
-                LocalDate dt = funcionario.getFnc_dtContratacao() != null ? funcionario.getFnc_dtContratacao() : LocalDate.now();
+                LocalDate dt;
+                if (funcionario.getFnc_dtContratacao() != null) {
+                    dt = funcionario.getFnc_dtContratacao();
+                } else {
+                    dt = LocalDate.now();
+                }
                 contratacao.setContratacao_dtContratacao(dt);
             }
+
+
             contratacao.setFuncionario(funcionario);
             ContratacaoDAO contratacaoDAO = new ContratacaoDAO(con);
             contratacaoDAO.adicionar(contratacao);
@@ -325,9 +337,15 @@ public class FuncionarioRN {
             ContratacaoVO contratacao = funcionario.getContratacao();
             if (contratacao != null && contratacao.getContratacao_fase() != null && !contratacao.getContratacao_fase().isBlank()) {
                 if (contratacao.getContratacao_dtContratacao() == null) {
-                    LocalDate dt = funcionario.getFnc_dtContratacao() != null ? funcionario.getFnc_dtContratacao() : LocalDate.now();
+                    LocalDate dt;
+                    if (funcionario.getFnc_dtContratacao() != null) {
+                        dt = funcionario.getFnc_dtContratacao();
+                    } else {
+                        dt = LocalDate.now();
+                    }
                     contratacao.setContratacao_dtContratacao(dt);
                 }
+
                 contratacao.setFuncionario(funcionario);
                 contratacaoDAO.adicionar(contratacao);
             }
@@ -403,8 +421,15 @@ public class FuncionarioRN {
     }
     public java.util.List<ContratacaoVO> listarFasesContratacao() throws Exception {
         try (Connection con = ConexaoDAO.getConexao()) {
-            ContratacaoDAO contratacaoDAO = new ContratacaoDAO(con);
-            return contratacaoDAO.listarFases();
+            FaseContratacaoDAO faseContratacaoDAO = new FaseContratacaoDAO(con);
+            List<FaseContratacaoVO> fases = faseContratacaoDAO.buscarTodas();
+            List<ContratacaoVO> resultado = new ArrayList<>();
+            for (FaseContratacaoVO fase : fases) {
+                ContratacaoVO vo = new ContratacaoVO();
+                vo.setFase_contratacao(fase);
+                resultado.add(vo);
+            }
+            return resultado;
         } catch (SQLException e) {
             throw new Exception("Erro ao listar fases de contrata��o: " + e.getMessage(), e);
         }
