@@ -18,8 +18,6 @@ import model.vo.TipoDespesaVO;
 
 public class DespesaRN {
 
-    // Métodos padrão: adicionar, atualizar, consultar por id, consultar por descrição (tipo), consultar todas
-
     public int adicionarDespesa(model.vo.DespesaVO despesa) throws Exception {
         java.sql.Connection con = null;
         try {
